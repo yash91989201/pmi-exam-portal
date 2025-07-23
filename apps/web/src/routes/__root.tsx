@@ -2,14 +2,9 @@ import Header from "@/components/header";
 import Loader from "@/components/loader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { link, orpc } from "@/utils/orpc";
+import { orpcClient, queryUtils } from "@/utils/orpc";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
-import type { RouterClient } from "@orpc/server";
-import { createTanstackQueryUtils } from "@orpc/tanstack-query";
-import type { appRouter } from "../../../server/src/routers";
-import { createORPCClient } from "@orpc/client";
 import {
   HeadContent,
   Outlet,
@@ -20,7 +15,8 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
 
 export interface RouterAppContext {
-  orpc: typeof orpc;
+  orpcClient: typeof orpcClient;
+  queryUtils: typeof queryUtils;
   queryClient: QueryClient;
 }
 
@@ -50,24 +46,21 @@ function RootComponent() {
     select: (s) => s.isLoading,
   });
 
-  const [client] = useState<RouterClient<typeof appRouter>>(() => createORPCClient(link));
-  const [orpcUtils] = useState(() => createTanstackQueryUtils(client));
-
   return (
     <>
       <HeadContent />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          disableTransitionOnChange
-          storageKey="vite-ui-theme"
-        >
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            {isFetching ? <Loader /> : <Outlet />}
-          </div>
-          <Toaster richColors />
-        </ThemeProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        disableTransitionOnChange
+        storageKey="theme"
+      >
+        <div className="grid grid-rows-[auto_1fr] h-svh">
+          <Header />
+          {isFetching ? <Loader /> : <Outlet />}
+        </div>
+        <Toaster richColors />
+      </ThemeProvider>
       <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
     </>
