@@ -11,12 +11,6 @@
       "@/*": [
         "./src/*"
       ],
-      "shared": [
-        "../../packages/shared/dist/index"
-      ],
-      "shared/*": [
-        "../../packages/shared/dist/*"
-      ]
     },
     "outDir": "./dist",
     "types": [

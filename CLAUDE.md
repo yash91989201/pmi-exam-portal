@@ -4,121 +4,101 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a PMI Exam Portal built with the Better-T-Stack, a modern full-stack TypeScript application featuring:
-
-- **Monorepo Structure**: Uses Bun workspaces with separate `apps/` and `packages/` directories
-- **Frontend**: React + TanStack Router + Vite (runs on port 3001)
-- **Backend**: Hono + oRPC API server (runs on port 3000)
+This is a PMI exam portal built with the Better-T-Stack, featuring a modern TypeScript monorepo with:
+- **Frontend**: React + TanStack Router + Vite (port 3001)
+- **Backend**: Hono + ORPC + Bun (port 3000)
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: Better Auth with email/password
-- **Shared Package**: Common types, schemas, and database definitions
-- **Runtime**: Bun for package management and execution
+- **Package Manager**: Bun with workspaces
 
 ## Development Commands
 
-### Primary Development
+### Running the Application
 ```bash
-# Start all services (recommended for development)
-bun dev
+bun dev              # Start both web and server in development
+bun dev:web          # Start only frontend (port 3001)
+bun dev:server       # Start only backend (port 3000)
+```
 
-# Start individual services
-bun dev:web     # Frontend only (port 3001)
-bun dev:server  # Backend only (port 3000)
+### Building and Type Checking  
+```bash
+bun build            # Build all applications
+bun check-types      # TypeScript check across all apps
 ```
 
 ### Database Operations
 ```bash
-# Start PostgreSQL with Docker
-bun db:start    # Start in detached mode
-bun db:watch    # Start with logs visible
-bun db:stop     # Stop containers
-bun db:down     # Stop and remove containers
-
-# Schema management
-bun db:push     # Push schema changes to database
-bun db:generate # Generate migrations
-bun db:migrate  # Run migrations
-bun db:studio   # Open Drizzle Studio UI
-```
-
-### Build and Type Checking
-```bash
-bun build       # Build all applications
-bun check-types # Type check all applications
+bun db:push          # Push schema changes to database
+bun db:studio        # Open Drizzle Studio UI
+bun db:generate      # Generate migration files
+bun db:migrate       # Run migrations
+bun db:start         # Start PostgreSQL via Docker Compose
+bun db:watch         # Start PostgreSQL with logs
+bun db:stop          # Stop PostgreSQL container
+bun db:down          # Stop and remove PostgreSQL container
 ```
 
 ## Architecture
 
 ### Monorepo Structure
+- `apps/server/` - Hono backend with ORPC APIs
+- `apps/web/` - React frontend with TanStack Router
+- Shared type safety between frontend and backend via ORPC
+
+### Backend Architecture (`apps/server/`)
+- **Entry Point**: `src/index.ts` - Hono app with CORS, auth routes, and RPC handler
+- **Authentication**: Better Auth with Drizzle adapter, email/password + admin plugin
+- **Database**: Drizzle ORM with PostgreSQL, schema in `src/db/schema/`
+- **API Layer**: ORPC procedures in `src/routers/`, type-safe with middleware
+- **Context**: Session and database access via `src/lib/context.ts`
+- **Environment**: Type-safe env vars via `@t3-oss/env-core` in `src/env.ts`
+
+### Frontend Architecture (`apps/web/`)
+- **Routing**: File-based routing with TanStack Router in `src/routes/`
+- **API Client**: ORPC client with TanStack Query integration
+- **Authentication**: Better Auth React client with admin plugin
+- **Components**: shadcn/ui components in `src/components/`
+- **Styling**: TailwindCSS with next-themes for dark mode
+
+### Key Patterns
+
+**ORPC Procedures**:
+- `publicProcedure` - No authentication required
+- `protectedProcedure` - Requires authenticated session
+- Middleware for auth checking with proper error handling
+
+**Database Schema**:
+- Better Auth tables: `user`, `session`, `account`, `verification`
+- User roles, banning, and admin functionality built-in
+
+**Type Safety**:
+- Full end-to-end type safety from database to frontend
+- ORPC provides OpenAPI integration and type inference
+- Environment variables validated with Zod schemas
+
+## Environment Setup
+
+### Required Environment Variables
+Create `apps/server/.env`:
 ```
-apps/
-├── web/           # React frontend with TanStack Router
-│   ├── src/
-│   │   ├── components/    # UI components (shadcn/ui based)
-│   │   ├── routes/        # File-based routing
-│   │   ├── lib/           # Client utilities
-│   │   └── utils/         # ORPC client setup
-├── server/        # Hono backend with ORPC
-│   ├── src/
-│   │   ├── db/            # Database connection
-│   │   ├── lib/           # Server utilities (auth, ORPC setup)
-│   │   └── routers/       # API route definitions
-
-packages/
-└── shared/        # Shared types, schemas, and database definitions
-    ├── src/
-    │   ├── db/schema/     # Drizzle database schemas
-    │   ├── types/         # Shared TypeScript types
-    │   └── validation/    # Zod schemas
+DATABASE_URL=postgresql://...
+BETTER_AUTH_SECRET=your-secret-key
+BETTER_AUTH_URL=http://localhost:3000
+CORS_ORIGIN=http://localhost:3001
+RESEND_API_KEY=your-resend-key
 ```
 
-### Key Architecture Patterns
+### Database Setup
+The project requires PostgreSQL. Use Docker Compose for local development:
+```bash
+bun db:start  # Starts PostgreSQL container
+bun db:push   # Apply schema to database
+```
 
-**Type-Safe API Communication**: Uses ORPC for end-to-end type safety between frontend and backend. The client is configured in `apps/web/src/utils/orpc.ts` with automatic error handling via toast notifications.
+## Testing and Development
 
-**Authentication Flow**: Better Auth handles authentication with session-based auth. Protected routes use `protectedProcedure` middleware in the backend (`apps/server/src/lib/orpc.ts`).
-
-**Database Layer**: Drizzle ORM with PostgreSQL. All schemas are defined in the shared package (`packages/shared/src/db/schema/`) and consumed by both applications. Database configuration is in `apps/server/drizzle.config.ts`.
-
-**Shared Package Architecture**: The `shared` package exports database schemas, types, and validation schemas with proper TypeScript module resolution. It auto-builds on changes during development.
-
-### Environment Configuration
-
-The server requires these environment variables (see `apps/server/.env.example`):
-- `DATABASE_URL`: PostgreSQL connection string
-- `CORS_ORIGIN`: Frontend URL for CORS
-- `BETTER_AUTH_SECRET`: Authentication secret
-- `BETTER_AUTH_URL`: Base URL for auth callbacks
-- `RESEND_API_KEY`: Email service API key
-
-### Development Database Setup
-
-The project uses Docker for PostgreSQL:
-1. Run `bun db:start` to start PostgreSQL container
-2. Configure `DATABASE_URL` in `apps/server/.env`
-3. Run `bun db:push` to create tables
-4. Use `bun db:studio` to inspect database
-
-### File-Based Routing
-
-The frontend uses TanStack Router with file-based routing in `apps/web/src/routes/`. Route files automatically generate type-safe navigation with the `@tanstack/router-plugin`.
-
-### Component Architecture
-
-UI components use shadcn/ui with Tailwind CSS v4. Components are in `apps/web/src/components/` with a `ui/` subdirectory for base components. The project uses `next-themes` for dark mode support.
-
-## Working with the Codebase
-
-- **Adding API Endpoints**: Create procedures in `apps/server/src/routers/index.ts` using `publicProcedure` or `protectedProcedure`
-- **Database Changes**: Update schemas in `packages/shared/src/db/schema/`, then run `bun db:push`
-- **Adding Routes**: Create new route files in `apps/web/src/routes/` following TanStack Router conventions
-- **Shared Types**: Add common types to `packages/shared/src/types/` for use across applications
-- **Environment Variables**: Add new variables to `apps/server/.env.example` and update validation in `apps/server/src/env.ts`
-
-## Important Notes
-
-- The shared package must be built before other applications can use it in production builds
-- ORPC provides full type safety - changes to backend procedures automatically type the frontend client
-- Better Auth requires proper CORS configuration for cross-origin requests
-- All database operations should use the shared schemas for consistency
-- The project uses Bun's workspace protocol (`workspace:*`) for internal package dependencies
+- Use Drizzle Studio (`bun db:studio`) for database inspection
+- The backend serves at `http://localhost:3000` with `/api/auth/**` for auth endpoints
+- Frontend development server at `http://localhost:3001`
+- RPC endpoints available at `/rpc/*` for type-safe API calls
+- Authentication state managed through Better Auth with cookie-based sessions
