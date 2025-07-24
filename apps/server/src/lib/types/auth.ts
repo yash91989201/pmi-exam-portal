@@ -4,7 +4,7 @@ import type {
   AccountSchema,
   SessionSchema,
   VerificationSchema
-} from "./schema"
+} from "@/lib/schema/auth"
 
 export type User = z.infer<typeof UserSchema>
 export type Account = z.infer<typeof AccountSchema>
