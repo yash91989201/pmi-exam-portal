@@ -1,5 +1,6 @@
+import "@/index.css";
+
 import Header from "@/components/header";
-import Loader from "@/components/loader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { orpcClient, queryUtils } from "@/utils/orpc";
@@ -9,10 +10,8 @@ import {
   HeadContent,
   Outlet,
   createRootRouteWithContext,
-  useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import "../index.css";
 
 export interface RouterAppContext {
   orpcClient: typeof orpcClient;
@@ -21,11 +20,10 @@ export interface RouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-  component: RootComponent,
   head: () => ({
     meta: [
       {
-        title: "pmi-exam-portal",
+        title: "PMI Exam Portal",
       },
       {
         name: "description",
@@ -39,25 +37,23 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       },
     ],
   }),
+  component: RootComponent,
 });
 
 function RootComponent() {
-  const isFetching = useRouterState({
-    select: (s) => s.isLoading,
-  });
 
   return (
     <>
       <HeadContent />
       <ThemeProvider
         attribute="class"
+        storageKey="theme"
         defaultTheme="dark"
         disableTransitionOnChange
-        storageKey="theme"
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          {isFetching ? <Loader /> : <Outlet />}
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>

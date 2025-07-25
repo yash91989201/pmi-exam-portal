@@ -19,7 +19,8 @@
     "db:start": "bun run --filter server db:start",
     "db:watch": "bun run --filter server db:watch",
     "db:stop": "bun run --filter server db:stop",
-    "db:down": "bun run --filter server db:down"
+    "db:down": "bun run --filter server db:down",
+    "update": "bun run --filter web update && bun run --filter server update"
   },
   "packageManager": "bun@1.2.18",
   "devDependencies": {
