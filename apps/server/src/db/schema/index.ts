@@ -1,5 +1,5 @@
 import { pgTable, smallint, text, varchar } from "drizzle-orm/pg-core";
-
+import { relations } from "drizzle-orm";
 export * from "./auth";
 
 export const exam = pgTable("exam", {
@@ -27,3 +27,22 @@ export const option = pgTable("option", {
     onDelete: "cascade",
   }),
 });
+
+export const examRelations = relations(exam, ({ many }) => ({
+  questions: many(question),
+}));
+
+export const questionRelations = relations(question, ({ one, many }) => ({
+  exam: one(exam, {
+    fields: [question.examId],
+    references: [exam.id],
+  }),
+  options: many(option),
+}));
+
+export const optionRelations = relations(option, ({ one }) => ({
+  question: one(question, {
+    fields: [option.questionId],
+    references: [question.id],
+  }),
+}));

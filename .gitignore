@@ -1,3 +1,6 @@
 node_modules
 .turbo
 .serena
+
+# Lock files - package managers handle dependency resolution
+bun.lock
