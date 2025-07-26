@@ -1,6 +1,5 @@
 import { pgTable, smallint, text, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-
 export * from "./auth";
 
 export const exam = pgTable("exam", {
@@ -29,7 +28,6 @@ export const option = pgTable("option", {
   }),
 });
 
-// Relations
 export const examRelations = relations(exam, ({ many }) => ({
   questions: many(question),
 }));
