@@ -53,7 +53,7 @@ export const verification = pgTable("verification", {
 });
 
 // Relations
-export const userRelations = relations(user, ({ one, many }) => ({
+export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
 }));
