@@ -42,14 +42,12 @@ app.use("/rpc/*", async (c, next) => {
 
 // Serve static assets from the built web app
 app.use('/assets/*', serveStatic({ 
-	root: path.join(process.cwd(), '../web/dist'),
-	rewriteRequestPath: (path) => path
+	root: path.join(process.cwd(), '../web/dist')
 }));
 
 // Serve favicon
 app.use('/favicon.ico', serveStatic({ 
-	root: path.join(process.cwd(), '../web/dist'),
-	rewriteRequestPath: () => '/favicon.ico'
+	root: path.join(process.cwd(), '../web/dist')
 }));
 
 // SSR route handler for all other routes
@@ -63,6 +61,7 @@ app.get("*", async (c) => {
 		// For now, we serve the built HTML which will be hydrated on the client
 		return c.html(html);
 	} catch (error) {
+		console.error('Error serving HTML:', error);
 		// Fallback HTML template if built file doesn't exist
 		const fallbackHtml = `
 <!DOCTYPE html>
