@@ -122,6 +122,7 @@ Required environment variables defined in `apps/server/src/env.ts`:
 - Protect server routes with `protectedProcedure`
 - Access user session in components via router context
 - Better Auth handles session management and CSRF protection
+- Implemented admin login functionality using `authClient.signIn.email`.
 
 ## Component Architecture
 

@@ -6,10 +6,8 @@ import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
-	redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
@@ -39,27 +37,12 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 			},
 		],
 	}),
-	beforeLoad: async ({ location }) => {
-		if (location.pathname === "/login") {
-			return;
-		}
-
+	beforeLoad: async () => {
 		const session = await authClient.getSession();
 
-		if (!session.data) {
-			throw redirect({
-				to: location.pathname === "/admin" ? "/auth/admin/login" : "/",
-				search: {
-					redirect: location.href,
-				},
-			});
-		}
-		throw redirect({
-			to: session.data.user.role === "admin" ? "/admin" : "/user",
-			search: {
-				redirect: location.href,
-			},
-		});
+		return {
+			session: session.data,
+		};
 	},
 	component: RootComponent,
 });
@@ -75,7 +58,6 @@ function RootComponent() {
 				disableTransitionOnChange
 			>
 				<div className="grid h-svh grid-rows-[auto_1fr]">
-					<Header />
 					<Outlet />
 				</div>
 				<Toaster richColors />

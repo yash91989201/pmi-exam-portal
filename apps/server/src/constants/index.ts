@@ -1,8 +1,8 @@
-export const DEFAULT_ADMIN_ID = "v4kfx87rk4sxvs9bsqk8wr11"
+export const ADMIN_SETTINGS = {
+	enable_registration: {
+		values: ["0", "1"],
+		default: "1",
+	},
+};
 
-export const ADMIN_SETTING_KEYS = {
-  enableRegistration: {
-    key: "enable_registration",
-    values: ["0", "1"]
-  },
-} as const
+export const DEFAULT_ADMIN_ID = "b7ayq48ovfl0vt8mhxuu623g";

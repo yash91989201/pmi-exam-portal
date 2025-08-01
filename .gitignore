@@ -1,14 +1,17 @@
 # Logs
-loge
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 dev-debug.log
+
 # Dependency directories
 node_modules/
+
 # Environment variables
 .env
+
 # Editor directories and files
 .idea
 .vscode
@@ -17,66 +20,12 @@ node_modules/
 *.njsproj
 *.sln
 *.sw?
+
 # OS specific
 .DS_Store
 
-# Task files
-# tasks.json
-# tasks/ 
-node_modules
+# Turbo
 .turbo
+
+# Serena
 .serena
-# Lock files - package managers handle dependency resolution
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-dev-debug.log
-# Dependency directories
-node_modules/
-# Environment variables
-.env
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-# OS specific
-.DS_Store
-
-# Task files
-# tasks.json
-# tasks/ 
-=======
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-dev-debug.log
-# Dependency directories
-node_modules/
-# Environment variables
-.env
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-# OS specific
-.DS_Store
-
-# Task files
-# tasks.json
-# tasks/ 
->>>>>>> Stashed changes
