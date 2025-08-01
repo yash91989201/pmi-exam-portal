@@ -4,26 +4,14 @@ import { useRouter } from "@tanstack/react-router";
 import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
+import { AdminSignupSchema } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 import { orpcClient } from "@/utils/orpc";
-
-const SignupSchema = z
-	.object({
-		email: z.email("Invalid email address").min(1, "Email is required"),
-		password: z.string().min(8, "Password must be at least 8 characters"),
-		confirmPassword: z.string().min(1, "Please confirm your password"),
-		name: z.string().min(2, "Name must be at least 2 characters"),
-	})
-	.refine((data) => data.password === data.confirmPassword, {
-		message: "Passwords do not match",
-		path: ["confirmPassword"],
-	});
 
 export function SignUpForm() {
 	const router = useRouter();
@@ -38,9 +26,7 @@ export function SignUpForm() {
 	});
 
 	const { mutateAsync: updateDefaultAdmin } = useMutation({
-		mutationFn: async (generatedId: string) => {
-			return orpcClient.adminSetting.updateDefaultAdmin({ generatedId });
-		},
+		mutationFn: orpcClient.adminSetting.updateDefaultAdmin,
 	});
 
 	const form = useForm({
@@ -51,26 +37,24 @@ export function SignUpForm() {
 			name: "",
 		},
 		validators: {
-			onSubmit: SignupSchema,
+			onSubmit: AdminSignupSchema,
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				const res = await authClient.signUp.email({
+				const signupRes = await authClient.signUp.email({
 					name: value.name,
 					email: value.email,
 					password: value.password,
 				});
 
-				if (res.error) {
-					throw new Error(res.error.message);
+				if (signupRes.error) {
+					throw new Error(signupRes.error.message);
 				}
 
-				// Update the user ID to DEFAULT_ADMIN_ID and set role to admin
-				if (res.data?.user?.id) {
-					await updateDefaultAdmin(res.data.user.id);
-				}
+				await updateDefaultAdmin({ generatedId: signupRes.data.user.id });
 
 				await disableAdminRegistration();
+
 				toast.success("First Admin account created successfully!");
 
 				router.navigate({
@@ -79,7 +63,11 @@ export function SignUpForm() {
 			} catch (error) {
 				console.error(error);
 
-				toast.error("Failed to create admin account. Please try again.");
+				toast.error(
+					error instanceof Error
+						? error.message
+						: "Failed to create admin account. Please try again.",
+				);
 			}
 		},
 	});

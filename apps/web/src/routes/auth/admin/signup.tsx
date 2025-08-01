@@ -12,11 +12,13 @@ import {
 
 export const Route = createFileRoute("/auth/admin/signup")({
 	loader: async ({ context }) => {
-		const result = await context.orpcClient.adminSetting.registrationEnabled();
-		if (!result.success || !result.data?.enabled) {
+		const queryRes =
+			await context.orpcClient.adminSetting.registrationEnabled();
+
+		if (!queryRes.success || !queryRes.data?.enabled) {
 			return {
 				registrationAllowed: false,
-				error: result.message || "Admin registration is currently disabled.",
+				error: queryRes.message,
 			};
 		}
 		return { registrationAllowed: true };
