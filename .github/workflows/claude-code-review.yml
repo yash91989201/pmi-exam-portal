@@ -36,7 +36,7 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github_token: ${{GH_WRITE_ACCESS_TOKEN}}
+          github_token: ${{CLAUDE_CODE_GH_TOKEN}}
 
           # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
           # model: "claude-opus-4-20250514"
