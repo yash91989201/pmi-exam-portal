@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUserIndexRouteImport } from './routes/_authenticated/user/index'
@@ -16,6 +17,11 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthAdminSignupRouteImport } from './routes/auth/admin/signup'
 import { Route as AuthAdminLoginRouteImport } from './routes/auth/admin/login'
 
+const MoviesRoute = MoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -48,6 +54,7 @@ const AuthAdminLoginRoute = AuthAdminLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/movies': typeof MoviesRoute
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -55,6 +62,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/movies': typeof MoviesRoute
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -64,6 +72,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/movies': typeof MoviesRoute
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -73,16 +82,24 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/movies'
     | '/auth/admin/login'
     | '/auth/admin/signup'
     | '/admin'
     | '/user'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/admin/login' | '/auth/admin/signup' | '/admin' | '/user'
+  to:
+    | '/'
+    | '/movies'
+    | '/auth/admin/login'
+    | '/auth/admin/signup'
+    | '/admin'
+    | '/user'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/movies'
     | '/auth/admin/login'
     | '/auth/admin/signup'
     | '/_authenticated/admin/'
@@ -92,12 +109,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  MoviesRoute: typeof MoviesRoute
   AuthAdminLoginRoute: typeof AuthAdminLoginRoute
   AuthAdminSignupRoute: typeof AuthAdminSignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/movies': {
+      id: '/movies'
+      path: '/movies'
+      fullPath: '/movies'
+      preLoaderRoute: typeof MoviesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -160,6 +185,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  MoviesRoute: MoviesRoute,
   AuthAdminLoginRoute: AuthAdminLoginRoute,
   AuthAdminSignupRoute: AuthAdminSignupRoute,
 }
