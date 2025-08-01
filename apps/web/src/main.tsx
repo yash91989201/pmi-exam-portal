@@ -1,27 +1,21 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 import Loader from "@/components/loader";
-import { routeTree } from "@/routeTree.gen";
-import { orpcClient, queryClient, queryUtils } from "@/utils/orpc";
+import { createRouter } from "@/router";
+import { queryClient } from "@/utils/orpc";
 
-const router = createRouter({
-	routeTree,
-	defaultPreload: "intent",
+const router = createRouter();
+
+// Configure router with additional options for client-side
+router.update({
 	defaultPendingComponent: () => <Loader />,
-	context: { orpcClient, queryClient, queryUtils },
 	Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
 		return (
 			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 		);
 	},
 });
-
-declare module "@tanstack/react-router" {
-	interface Register {
-		router: typeof router;
-	}
-}
 
 const rootElement = document.getElementById("app");
 
