@@ -26,7 +26,7 @@ export const adminSetting = {
 					message: "Registration toggled successfully",
 				};
 			} catch (error) {
-				console.log(error);
+				console.error(error);
 				return {
 					success: false,
 					message:
@@ -48,7 +48,8 @@ export const adminSetting = {
 					data: { enabled },
 				};
 			} catch (error) {
-				console.log(error);
+				console.error(error);
+
 				return {
 					success: false,
 					message:

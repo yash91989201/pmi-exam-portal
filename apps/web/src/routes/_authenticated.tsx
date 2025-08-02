@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
 	beforeLoad: async ({ context, location }) => {
@@ -17,13 +17,13 @@ export const Route = createFileRoute("/_authenticated")({
 
 		const isAdmin = session.user.role === "admin";
 
-		if (isAdmin && location.pathname.startsWith("/_authenticated/user")) {
+		if (isAdmin && location.pathname.startsWith("/user")) {
 			throw redirect({
 				to: "/admin",
 			});
 		}
 
-		if (!isAdmin && location.pathname.startsWith("/_authenticated/admin")) {
+		if (!isAdmin && location.pathname.startsWith("/admin")) {
 			throw redirect({
 				to: "/user",
 			});
@@ -33,5 +33,5 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function RouteComponent() {
-	return <div>Hello "/_authenticated"!</div>;
+	return <Outlet />;
 }
