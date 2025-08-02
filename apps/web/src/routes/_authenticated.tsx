@@ -29,9 +29,5 @@ export const Route = createFileRoute("/_authenticated")({
 			});
 		}
 	},
-	component: RouteComponent,
+	component: () => <Outlet />,
 });
-
-function RouteComponent() {
-	return <Outlet />;
-}
