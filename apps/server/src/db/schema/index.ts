@@ -29,6 +29,11 @@ export const option = pgTable("option", {
 		.references(() => question.id),
 });
 
+export const adminSetting = pgTable("admin_setting", {
+	key: text("key").primaryKey(),
+	value: text("value").notNull(),
+});
+
 export const examRelations = relations(exam, ({ many }) => ({
 	questions: many(question),
 }));
@@ -47,8 +52,3 @@ export const optionRelations = relations(option, ({ one }) => ({
 		references: [question.id],
 	}),
 }));
-
-export const adminSetting = pgTable("admin_setting", {
-	key: text("key").primaryKey(),
-	value: text("value").notNull(),
-});
