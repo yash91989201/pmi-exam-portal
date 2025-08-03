@@ -1,6 +1,7 @@
 import z from "zod";
 
 export * from "./auth";
+export * from "./exam";
 
 export const ToggleRegistrationInput = z.object({
 	enabled: z.boolean(),

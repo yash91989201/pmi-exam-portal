@@ -15,6 +15,8 @@ import { Route as AuthenticatedUserIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthAdminSignupRouteImport } from './routes/auth/admin/signup'
 import { Route as AuthAdminLoginRouteImport } from './routes/auth/admin/login'
+import { Route as AuthenticatedAdminDashboardExamsIndexRouteImport } from './routes/_authenticated/admin/dashboard/exams/index'
+import { Route as AuthenticatedAdminDashboardExamsNewExamRouteImport } from './routes/_authenticated/admin/dashboard/exams/new-exam'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -45,6 +47,18 @@ const AuthAdminLoginRoute = AuthAdminLoginRouteImport.update({
   path: '/auth/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminDashboardExamsIndexRoute =
+  AuthenticatedAdminDashboardExamsIndexRouteImport.update({
+    id: '/admin/dashboard/exams/',
+    path: '/admin/dashboard/exams/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAdminDashboardExamsNewExamRoute =
+  AuthenticatedAdminDashboardExamsNewExamRouteImport.update({
+    id: '/admin/dashboard/exams/new-exam',
+    path: '/admin/dashboard/exams/new-exam',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +66,8 @@ export interface FileRoutesByFullPath {
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/user': typeof AuthenticatedUserIndexRoute
+  '/admin/dashboard/exams/new-exam': typeof AuthenticatedAdminDashboardExamsNewExamRoute
+  '/admin/dashboard/exams': typeof AuthenticatedAdminDashboardExamsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +75,8 @@ export interface FileRoutesByTo {
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/user': typeof AuthenticatedUserIndexRoute
+  '/admin/dashboard/exams/new-exam': typeof AuthenticatedAdminDashboardExamsNewExamRoute
+  '/admin/dashboard/exams': typeof AuthenticatedAdminDashboardExamsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,6 +86,8 @@ export interface FileRoutesById {
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/user/': typeof AuthenticatedUserIndexRoute
+  '/_authenticated/admin/dashboard/exams/new-exam': typeof AuthenticatedAdminDashboardExamsNewExamRoute
+  '/_authenticated/admin/dashboard/exams/': typeof AuthenticatedAdminDashboardExamsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -77,8 +97,17 @@ export interface FileRouteTypes {
     | '/auth/admin/signup'
     | '/admin'
     | '/user'
+    | '/admin/dashboard/exams/new-exam'
+    | '/admin/dashboard/exams'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/admin/login' | '/auth/admin/signup' | '/admin' | '/user'
+  to:
+    | '/'
+    | '/auth/admin/login'
+    | '/auth/admin/signup'
+    | '/admin'
+    | '/user'
+    | '/admin/dashboard/exams/new-exam'
+    | '/admin/dashboard/exams'
   id:
     | '__root__'
     | '/'
@@ -87,6 +116,8 @@ export interface FileRouteTypes {
     | '/auth/admin/signup'
     | '/_authenticated/admin/'
     | '/_authenticated/user/'
+    | '/_authenticated/admin/dashboard/exams/new-exam'
+    | '/_authenticated/admin/dashboard/exams/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -140,17 +171,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/dashboard/exams/': {
+      id: '/_authenticated/admin/dashboard/exams/'
+      path: '/admin/dashboard/exams'
+      fullPath: '/admin/dashboard/exams'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardExamsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin/dashboard/exams/new-exam': {
+      id: '/_authenticated/admin/dashboard/exams/new-exam'
+      path: '/admin/dashboard/exams/new-exam'
+      fullPath: '/admin/dashboard/exams/new-exam'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardExamsNewExamRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedUserIndexRoute: typeof AuthenticatedUserIndexRoute
+  AuthenticatedAdminDashboardExamsNewExamRoute: typeof AuthenticatedAdminDashboardExamsNewExamRoute
+  AuthenticatedAdminDashboardExamsIndexRoute: typeof AuthenticatedAdminDashboardExamsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedUserIndexRoute: AuthenticatedUserIndexRoute,
+  AuthenticatedAdminDashboardExamsNewExamRoute:
+    AuthenticatedAdminDashboardExamsNewExamRoute,
+  AuthenticatedAdminDashboardExamsIndexRoute:
+    AuthenticatedAdminDashboardExamsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
