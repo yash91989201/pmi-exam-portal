@@ -47,3 +47,8 @@ export const optionRelations = relations(option, ({ one }) => ({
 		references: [question.id],
 	}),
 }));
+
+export const adminSetting = pgTable("admin_setting", {
+	key: text("key").primaryKey(),
+	value: text("value").notNull(),
+});
