@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1753951903919,
-      "tag": "0000_clean_power_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1753953151537,
-      "tag": "0001_gigantic_mariko_yashida",
+      "when": 1754192216593,
+      "tag": "0000_amusing_domino",
       "breakpoints": true
     }
   ]
