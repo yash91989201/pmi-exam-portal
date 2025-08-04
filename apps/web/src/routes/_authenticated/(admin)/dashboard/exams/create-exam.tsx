@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { ExamForm } from "@/components/admin/exam-form";
+import { CreateExamForm } from "@/components/admin/exams/create-exam-form";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 
 export const Route = createFileRoute(
-	"/_authenticated/admin/dashboard/exams/new-exam",
+	"/_authenticated/(admin)/dashboard/exams/create-exam",
 )({
 	component: RouteComponent,
 });
@@ -21,7 +21,7 @@ function RouteComponent() {
 		<div className="container mx-auto space-y-6 p-6">
 			<div className="flex items-center gap-4">
 				<Button variant="ghost" size="sm" asChild>
-					<Link to="/admin/dashboard/exams">
+					<Link to="/dashboard/exams">
 						<ArrowLeft className="mr-2 h-4 w-4" />
 						Back to Exams
 					</Link>
@@ -43,7 +43,7 @@ function RouteComponent() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<ExamForm />
+						<CreateExamForm />
 					</CardContent>
 				</Card>
 			</div>

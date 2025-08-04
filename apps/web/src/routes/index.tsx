@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
 		const isAdmin = session.user.role === "admin";
 
 		throw redirect({
-			to: isAdmin ? "/admin" : "/user",
+			to: isAdmin ? "/dashboard" : "/exams",
 		});
 	},
 	component: HomeComponent,

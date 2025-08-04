@@ -9,7 +9,9 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 
-export const Route = createFileRoute("/_authenticated/admin/dashboard/exams/")({
+export const Route = createFileRoute(
+	"/_authenticated/(admin)/dashboard/exams/",
+)({
 	component: RouteComponent,
 });
 
@@ -26,7 +28,7 @@ function RouteComponent() {
 					</p>
 				</div>
 				<Button asChild>
-					<Link to="/admin/dashboard/exams/new-exam">
+					<Link to="/dashboard/exams/new">
 						<Plus className="mr-2 h-4 w-4" />
 						Create New Exam
 					</Link>

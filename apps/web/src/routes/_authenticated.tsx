@@ -8,25 +8,25 @@ export const Route = createFileRoute("/_authenticated")({
 			if (location.pathname.startsWith("/_authenticated/admin")) {
 				throw redirect({
 					to: "/auth/admin/login",
-				});
+				})
 			}
 			throw redirect({
 				to: "/",
-			});
+			})
 		}
 
 		const isAdmin = session.user.role === "admin";
 
 		if (isAdmin && location.pathname.startsWith("/user")) {
 			throw redirect({
-				to: "/admin",
-			});
+				to: "/dashboard",
+			})
 		}
 
 		if (!isAdmin && location.pathname.startsWith("/admin")) {
 			throw redirect({
-				to: "/user",
-			});
+				to: "/orders",
+			})
 		}
 	},
 	component: () => <Outlet />,

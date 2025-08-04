@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AdminLoginForm } from "@/components/admin/login-form";
+import { AdminLoginForm } from "@/components/admin/auth/login-form";
 import { buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter, // Add this line
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";

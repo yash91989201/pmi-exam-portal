@@ -21,7 +21,7 @@ import { type ExamFormData, ExamFormSchema } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
 import { orpcClient } from "@/utils/orpc";
 
-export function ExamForm() {
+export function CreateExamForm() {
 	const router = useRouter();
 
 	const form = useForm({
@@ -52,7 +52,7 @@ export function ExamForm() {
 				if (response.success) {
 					toast.success(response.message || "Exam created successfully!");
 					router.navigate({
-						to: "/admin",
+						to: "/dashboard",
 					});
 				} else {
 					toast.error(response.message || "Failed to create exam");
