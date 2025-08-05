@@ -17,6 +17,7 @@ export const AdminNavbar = () => {
 						<Link
 							key={href}
 							to={href}
+							activeOptions={{ exact: true }}
 							activeProps={{
 								className: "underline",
 							}}
