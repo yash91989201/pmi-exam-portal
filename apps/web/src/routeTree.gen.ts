@@ -11,12 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticateduserRouteRouteImport } from './routes/_authenticated/(user)/route'
 import { Route as AuthAdminSignupRouteImport } from './routes/auth/admin/signup'
 import { Route as AuthAdminLoginRouteImport } from './routes/auth/admin/login'
 import { Route as AuthenticateduserOrdersRouteImport } from './routes/_authenticated/(user)/orders'
 import { Route as AuthenticateduserExamsRouteImport } from './routes/_authenticated/(user)/exams'
 import { Route as AuthenticateduserCertificatesRouteImport } from './routes/_authenticated/(user)/certificates'
-import { Route as AuthenticatedadminDashboardIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/index'
+import { Route as AuthenticatedadminDashboardRouteRouteImport } from './routes/_authenticated/(admin)/dashboard/route'
 import { Route as AuthenticatedadminDashboardOrdersRouteImport } from './routes/_authenticated/(admin)/dashboard/orders'
 import { Route as AuthenticatedadminDashboardUsersIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/users/index'
 import { Route as AuthenticatedadminDashboardExamsIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/exams/index'
@@ -31,6 +32,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticateduserRouteRoute = AuthenticateduserRouteRouteImport.update({
+  id: '/(user)',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthAdminSignupRoute = AuthAdminSignupRouteImport.update({
   id: '/auth/admin/signup',
   path: '/auth/admin/signup',
@@ -42,74 +47,74 @@ const AuthAdminLoginRoute = AuthAdminLoginRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticateduserOrdersRoute = AuthenticateduserOrdersRouteImport.update({
-  id: '/(user)/orders',
+  id: '/orders',
   path: '/orders',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => AuthenticateduserRouteRoute,
 } as any)
 const AuthenticateduserExamsRoute = AuthenticateduserExamsRouteImport.update({
-  id: '/(user)/exams',
+  id: '/exams',
   path: '/exams',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => AuthenticateduserRouteRoute,
 } as any)
 const AuthenticateduserCertificatesRoute =
   AuthenticateduserCertificatesRouteImport.update({
-    id: '/(user)/certificates',
+    id: '/certificates',
     path: '/certificates',
-    getParentRoute: () => AuthenticatedRoute,
+    getParentRoute: () => AuthenticateduserRouteRoute,
   } as any)
-const AuthenticatedadminDashboardIndexRoute =
-  AuthenticatedadminDashboardIndexRouteImport.update({
-    id: '/(admin)/dashboard/',
-    path: '/dashboard/',
+const AuthenticatedadminDashboardRouteRoute =
+  AuthenticatedadminDashboardRouteRouteImport.update({
+    id: '/(admin)/dashboard',
+    path: '/dashboard',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedadminDashboardOrdersRoute =
   AuthenticatedadminDashboardOrdersRouteImport.update({
-    id: '/(admin)/dashboard/orders',
-    path: '/dashboard/orders',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedadminDashboardRouteRoute,
   } as any)
 const AuthenticatedadminDashboardUsersIndexRoute =
   AuthenticatedadminDashboardUsersIndexRouteImport.update({
-    id: '/(admin)/dashboard/users/',
-    path: '/dashboard/users/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => AuthenticatedadminDashboardRouteRoute,
   } as any)
 const AuthenticatedadminDashboardExamsIndexRoute =
   AuthenticatedadminDashboardExamsIndexRouteImport.update({
-    id: '/(admin)/dashboard/exams/',
-    path: '/dashboard/exams/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/exams/',
+    path: '/exams/',
+    getParentRoute: () => AuthenticatedadminDashboardRouteRoute,
   } as any)
 const AuthenticatedadminDashboardExamsCreateExamRoute =
   AuthenticatedadminDashboardExamsCreateExamRouteImport.update({
-    id: '/(admin)/dashboard/exams/create-exam',
-    path: '/dashboard/exams/create-exam',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/exams/create-exam',
+    path: '/exams/create-exam',
+    getParentRoute: () => AuthenticatedadminDashboardRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticateduserRouteRouteWithChildren
+  '/dashboard': typeof AuthenticatedadminDashboardRouteRouteWithChildren
   '/certificates': typeof AuthenticateduserCertificatesRoute
   '/exams': typeof AuthenticateduserExamsRoute
   '/orders': typeof AuthenticateduserOrdersRoute
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
-  '/dashboard': typeof AuthenticatedadminDashboardIndexRoute
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/dashboard/exams': typeof AuthenticatedadminDashboardExamsIndexRoute
   '/dashboard/users': typeof AuthenticatedadminDashboardUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticateduserRouteRouteWithChildren
+  '/dashboard': typeof AuthenticatedadminDashboardRouteRouteWithChildren
   '/certificates': typeof AuthenticateduserCertificatesRoute
   '/exams': typeof AuthenticateduserExamsRoute
   '/orders': typeof AuthenticateduserOrdersRoute
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
-  '/dashboard': typeof AuthenticatedadminDashboardIndexRoute
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/dashboard/exams': typeof AuthenticatedadminDashboardExamsIndexRoute
   '/dashboard/users': typeof AuthenticatedadminDashboardUsersIndexRoute
@@ -118,13 +123,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/(user)': typeof AuthenticateduserRouteRouteWithChildren
+  '/_authenticated/(admin)/dashboard': typeof AuthenticatedadminDashboardRouteRouteWithChildren
   '/_authenticated/(user)/certificates': typeof AuthenticateduserCertificatesRoute
   '/_authenticated/(user)/exams': typeof AuthenticateduserExamsRoute
   '/_authenticated/(user)/orders': typeof AuthenticateduserOrdersRoute
   '/auth/admin/login': typeof AuthAdminLoginRoute
   '/auth/admin/signup': typeof AuthAdminSignupRoute
   '/_authenticated/(admin)/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
-  '/_authenticated/(admin)/dashboard/': typeof AuthenticatedadminDashboardIndexRoute
   '/_authenticated/(admin)/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/_authenticated/(admin)/dashboard/exams/': typeof AuthenticatedadminDashboardExamsIndexRoute
   '/_authenticated/(admin)/dashboard/users/': typeof AuthenticatedadminDashboardUsersIndexRoute
@@ -133,26 +139,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/certificates'
     | '/exams'
     | '/orders'
     | '/auth/admin/login'
     | '/auth/admin/signup'
     | '/dashboard/orders'
-    | '/dashboard'
     | '/dashboard/exams/create-exam'
     | '/dashboard/exams'
     | '/dashboard/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/certificates'
     | '/exams'
     | '/orders'
     | '/auth/admin/login'
     | '/auth/admin/signup'
     | '/dashboard/orders'
-    | '/dashboard'
     | '/dashboard/exams/create-exam'
     | '/dashboard/exams'
     | '/dashboard/users'
@@ -160,13 +166,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_authenticated/(user)'
+    | '/_authenticated/(admin)/dashboard'
     | '/_authenticated/(user)/certificates'
     | '/_authenticated/(user)/exams'
     | '/_authenticated/(user)/orders'
     | '/auth/admin/login'
     | '/auth/admin/signup'
     | '/_authenticated/(admin)/dashboard/orders'
-    | '/_authenticated/(admin)/dashboard/'
     | '/_authenticated/(admin)/dashboard/exams/create-exam'
     | '/_authenticated/(admin)/dashboard/exams/'
     | '/_authenticated/(admin)/dashboard/users/'
@@ -195,6 +202,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/(user)': {
+      id: '/_authenticated/(user)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticateduserRouteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/auth/admin/signup': {
       id: '/auth/admin/signup'
       path: '/auth/admin/signup'
@@ -214,84 +228,111 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof AuthenticateduserOrdersRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticateduserRouteRoute
     }
     '/_authenticated/(user)/exams': {
       id: '/_authenticated/(user)/exams'
       path: '/exams'
       fullPath: '/exams'
       preLoaderRoute: typeof AuthenticateduserExamsRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticateduserRouteRoute
     }
     '/_authenticated/(user)/certificates': {
       id: '/_authenticated/(user)/certificates'
       path: '/certificates'
       fullPath: '/certificates'
       preLoaderRoute: typeof AuthenticateduserCertificatesRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticateduserRouteRoute
     }
-    '/_authenticated/(admin)/dashboard/': {
-      id: '/_authenticated/(admin)/dashboard/'
+    '/_authenticated/(admin)/dashboard': {
+      id: '/_authenticated/(admin)/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedadminDashboardIndexRouteImport
+      preLoaderRoute: typeof AuthenticatedadminDashboardRouteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/(admin)/dashboard/orders': {
       id: '/_authenticated/(admin)/dashboard/orders'
-      path: '/dashboard/orders'
+      path: '/orders'
       fullPath: '/dashboard/orders'
       preLoaderRoute: typeof AuthenticatedadminDashboardOrdersRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedadminDashboardRouteRoute
     }
     '/_authenticated/(admin)/dashboard/users/': {
       id: '/_authenticated/(admin)/dashboard/users/'
-      path: '/dashboard/users'
+      path: '/users'
       fullPath: '/dashboard/users'
       preLoaderRoute: typeof AuthenticatedadminDashboardUsersIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedadminDashboardRouteRoute
     }
     '/_authenticated/(admin)/dashboard/exams/': {
       id: '/_authenticated/(admin)/dashboard/exams/'
-      path: '/dashboard/exams'
+      path: '/exams'
       fullPath: '/dashboard/exams'
       preLoaderRoute: typeof AuthenticatedadminDashboardExamsIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedadminDashboardRouteRoute
     }
     '/_authenticated/(admin)/dashboard/exams/create-exam': {
       id: '/_authenticated/(admin)/dashboard/exams/create-exam'
-      path: '/dashboard/exams/create-exam'
+      path: '/exams/create-exam'
       fullPath: '/dashboard/exams/create-exam'
       preLoaderRoute: typeof AuthenticatedadminDashboardExamsCreateExamRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedadminDashboardRouteRoute
     }
   }
 }
 
-interface AuthenticatedRouteChildren {
+interface AuthenticateduserRouteRouteChildren {
   AuthenticateduserCertificatesRoute: typeof AuthenticateduserCertificatesRoute
   AuthenticateduserExamsRoute: typeof AuthenticateduserExamsRoute
   AuthenticateduserOrdersRoute: typeof AuthenticateduserOrdersRoute
+}
+
+const AuthenticateduserRouteRouteChildren: AuthenticateduserRouteRouteChildren =
+  {
+    AuthenticateduserCertificatesRoute: AuthenticateduserCertificatesRoute,
+    AuthenticateduserExamsRoute: AuthenticateduserExamsRoute,
+    AuthenticateduserOrdersRoute: AuthenticateduserOrdersRoute,
+  }
+
+const AuthenticateduserRouteRouteWithChildren =
+  AuthenticateduserRouteRoute._addFileChildren(
+    AuthenticateduserRouteRouteChildren,
+  )
+
+interface AuthenticatedadminDashboardRouteRouteChildren {
   AuthenticatedadminDashboardOrdersRoute: typeof AuthenticatedadminDashboardOrdersRoute
-  AuthenticatedadminDashboardIndexRoute: typeof AuthenticatedadminDashboardIndexRoute
   AuthenticatedadminDashboardExamsCreateExamRoute: typeof AuthenticatedadminDashboardExamsCreateExamRoute
   AuthenticatedadminDashboardExamsIndexRoute: typeof AuthenticatedadminDashboardExamsIndexRoute
   AuthenticatedadminDashboardUsersIndexRoute: typeof AuthenticatedadminDashboardUsersIndexRoute
 }
 
+const AuthenticatedadminDashboardRouteRouteChildren: AuthenticatedadminDashboardRouteRouteChildren =
+  {
+    AuthenticatedadminDashboardOrdersRoute:
+      AuthenticatedadminDashboardOrdersRoute,
+    AuthenticatedadminDashboardExamsCreateExamRoute:
+      AuthenticatedadminDashboardExamsCreateExamRoute,
+    AuthenticatedadminDashboardExamsIndexRoute:
+      AuthenticatedadminDashboardExamsIndexRoute,
+    AuthenticatedadminDashboardUsersIndexRoute:
+      AuthenticatedadminDashboardUsersIndexRoute,
+  }
+
+const AuthenticatedadminDashboardRouteRouteWithChildren =
+  AuthenticatedadminDashboardRouteRoute._addFileChildren(
+    AuthenticatedadminDashboardRouteRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticateduserRouteRoute: typeof AuthenticateduserRouteRouteWithChildren
+  AuthenticatedadminDashboardRouteRoute: typeof AuthenticatedadminDashboardRouteRouteWithChildren
+}
+
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticateduserCertificatesRoute: AuthenticateduserCertificatesRoute,
-  AuthenticateduserExamsRoute: AuthenticateduserExamsRoute,
-  AuthenticateduserOrdersRoute: AuthenticateduserOrdersRoute,
-  AuthenticatedadminDashboardOrdersRoute:
-    AuthenticatedadminDashboardOrdersRoute,
-  AuthenticatedadminDashboardIndexRoute: AuthenticatedadminDashboardIndexRoute,
-  AuthenticatedadminDashboardExamsCreateExamRoute:
-    AuthenticatedadminDashboardExamsCreateExamRoute,
-  AuthenticatedadminDashboardExamsIndexRoute:
-    AuthenticatedadminDashboardExamsIndexRoute,
-  AuthenticatedadminDashboardUsersIndexRoute:
-    AuthenticatedadminDashboardUsersIndexRoute,
+  AuthenticateduserRouteRoute: AuthenticateduserRouteRouteWithChildren,
+  AuthenticatedadminDashboardRouteRoute:
+    AuthenticatedadminDashboardRouteRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

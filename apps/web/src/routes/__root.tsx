@@ -57,7 +57,7 @@ function RootComponent() {
 				defaultTheme="dark"
 				disableTransitionOnChange
 			>
-				<div className="grid h-svh grid-rows-[auto_1fr]">
+				<div className="grid h-svh grid-rows-[auto_1fr] gap-y-6">
 					<Outlet />
 				</div>
 				<Toaster richColors />

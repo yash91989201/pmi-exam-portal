@@ -17,7 +17,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	return (
-		<div className="container mx-auto space-y-6 p-6">
+		<div className="space-y-3">
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="font-bold text-3xl tracking-tight">
@@ -28,7 +28,7 @@ function RouteComponent() {
 					</p>
 				</div>
 				<Button asChild>
-					<Link to="/dashboard/exams/new">
+					<Link to="/dashboard/exams/create-exam">
 						<Plus className="mr-2 h-4 w-4" />
 						Create New Exam
 					</Link>

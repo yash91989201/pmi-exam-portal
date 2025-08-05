@@ -8,10 +8,8 @@ export const Route = createFileRoute("/")({
 			return;
 		}
 
-		const isAdmin = session.user.role === "admin";
-
 		throw redirect({
-			to: isAdmin ? "/dashboard" : "/exams",
+			to: session.user.role === "admin" ? "/dashboard" : "/exams",
 		});
 	},
 	component: HomeComponent,

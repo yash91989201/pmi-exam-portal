@@ -1,14 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { CreateExamForm } from "@/components/admin/exams/create-exam-form";
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -20,35 +12,14 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-			<div className="container mx-auto space-y-8 p-6">
-				{/* Breadcrumb Navigation */}
-				<Breadcrumb>
-					<BreadcrumbList>
-						<BreadcrumbItem>
-							<BreadcrumbLink asChild>
-								<Link to="/dashboard">Dashboard</Link>
-							</BreadcrumbLink>
-						</BreadcrumbItem>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<BreadcrumbLink asChild>
-								<Link to="/dashboard/exams">Exams</Link>
-							</BreadcrumbLink>
-						</BreadcrumbItem>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<BreadcrumbPage>Create New Exam</BreadcrumbPage>
-						</BreadcrumbItem>
-					</BreadcrumbList>
-				</Breadcrumb>
-
+		<div className="">
+			<div className="container mx-auto space-y-6">
 				{/* Header Section */}
 				<div className="space-y-6">
 					<div className="flex items-center gap-4">
 						<Button variant="ghost" size="sm" asChild>
 							<Link to="/dashboard/exams">
-								<ArrowLeft className="mr-2 h-4 w-4" />
+								<ArrowLeft className="size-4.5" />
 								Back to Exams
 							</Link>
 						</Button>
