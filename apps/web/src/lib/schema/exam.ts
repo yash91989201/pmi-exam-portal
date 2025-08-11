@@ -26,7 +26,8 @@ const QuestionSchema = z.object({
 export const ExamFormSchema = z.object({
 	id: z.cuid2(),
 	certification: z.string().min(1, "Certification is required"),
-	mark: z.number().int().positive("Mark must be a positive integer"),
+	// Allow non-negative here because total is derived and starts at 0 before computation
+	mark: z.number().int().nonnegative("Mark must be a non-negative integer"),
 	questions: z
 		.array(QuestionSchema)
 		.min(1, "At least one question is required")

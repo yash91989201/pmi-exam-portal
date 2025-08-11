@@ -1,7 +1,8 @@
+import { forwardRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button, buttonVariants } from "@/components/ui/button";
 
-export const AdminNavbar = () => {
+export const AdminNavbar = forwardRef<HTMLElement>((_, ref) => {
 	const links = [
 		{ href: "/dashboard", label: "Dashboard" },
 		{ href: "/dashboard/exams", label: "Exams" },
@@ -9,10 +10,10 @@ export const AdminNavbar = () => {
 	];
 
 	return (
-		<nav className="border-border border-b bg-background py-4">
-			<div className="container mx-auto flex items-center justify-between">
-				<div className="flex items-center gap-8">
-					<img src="/pmi_logo.webp" alt="PMI Logo" className="h-12 w-auto" />
+		<nav ref={ref} className="border-border border-b bg-background py-6">
+			<div className="container mx-auto flex items-center justify-between gap-6">
+				<img src="/pmi_logo.webp" alt="PMI Logo" className="h-12 w-auto" />
+				<div className="flex flex-1 items-center gap-5">
 					{links.map(({ href, label }) => (
 						<Link
 							key={href}
@@ -38,4 +39,4 @@ export const AdminNavbar = () => {
 			</div>
 		</nav>
 	);
-};
+});
