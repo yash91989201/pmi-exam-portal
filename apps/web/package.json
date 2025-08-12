@@ -12,6 +12,7 @@
     "update": "bun update --latest"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.84.1",
     "@tanstack/react-router-devtools": "^1.130.13",
     "@tanstack/router-plugin": "^1.130.15",
     "@types/node": "^24.2.0",
@@ -20,8 +21,8 @@
     "@vitejs/plugin-react": "^4.7.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
-    "vite": "^7.0.6",
-    "@tanstack/react-query-devtools": "^5.84.1"
+    "typescript": "^5.9.2",
+    "vite": "^7.0.6"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -33,6 +34,7 @@
     "@tanstack/react-form": "^1.17.0",
     "@tanstack/react-query": "^5.84.1",
     "@tanstack/react-router": "^1.130.12",
+    "@tanstack/zod-form-adapter": "^0.42.1",
     "better-auth": "^1.3.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -44,7 +46,6 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "tw-animate-css": "^1.3.6",
-    "zod": "^4.0.14",
-    "@tanstack/zod-form-adapter": "^0.42.1"
+    "zod": "^4.0.14"
   }
 }
