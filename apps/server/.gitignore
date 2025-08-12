@@ -50,3 +50,9 @@ lerna-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# docker compose files (development only - create as per instructions)
+compose.yml
+compose.yaml
+docker-compose.yml
+docker-compose.yaml
