@@ -3,13 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useFormContext } from "./form-context";
-
-interface Question {
-	text: string;
-	mark: number;
-	imageDriveId: string;
-	options: { text: string; isCorrect: boolean }[];
-}
+import type { Question } from './types';
 
 interface QuestionsListProps {
 	selectedQuestionIndex: number;

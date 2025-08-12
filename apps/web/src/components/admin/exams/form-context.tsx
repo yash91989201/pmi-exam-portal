@@ -1,25 +1,16 @@
 import { createContext, useContext } from 'react'
-import type { ReactFormApi } from '@tanstack/react-form'
 
-interface ExamFormData {
-	certification: string;
-	questions: Array<{
-		text: string;
-		mark: number;
-		imageDriveId: string;
-		options: Array<{
-			text: string;
-			isCorrect: boolean;
-		}>;
-	}>;
-}
-
-// Create the form context
+// Create the form context with proper typing
+// Using any for the form instance due to complex TanStack Form generics
 const FormContext = createContext<any>(null)
 
 export const FormProvider = FormContext.Provider
 
-// Custom hook to use the form context
+/**
+ * Custom hook to access the exam form context
+ * @throws {Error} When used outside of FormProvider
+ * @returns The exam form API instance
+ */
 export function useFormContext() {
 	const context = useContext(FormContext)
 	if (!context) {

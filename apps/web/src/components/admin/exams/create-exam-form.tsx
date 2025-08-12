@@ -7,6 +7,7 @@ import { ExamInformation } from "./exam-information";
 import { QuestionsList } from "./questions-list";
 import { QuestionEditor } from "./question-editor";
 import { ActionButtons } from "./action-buttons";
+import type { ExamFormData, Option, Question } from "./types";
 
 // Validation schemas
 const OptionSchema = z.object({
@@ -25,23 +26,6 @@ const ExamSchema = z.object({
 	certification: z.string().min(1, "Certification name is required"),
 	questions: z.array(QuestionSchema).min(1, "At least 1 question is required"),
 });
-
-interface Option {
-	text: string;
-	isCorrect: boolean;
-}
-
-interface Question {
-	text: string;
-	mark: number;
-	imageDriveId: string;
-	options: Option[];
-}
-
-interface ExamFormData {
-	certification: string;
-	questions: Question[];
-}
 
 export function CreateExamForm() {
 	const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(0);

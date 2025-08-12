@@ -3,18 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-
-interface Option {
-	text: string;
-	isCorrect: boolean;
-}
-
-interface Question {
-	text: string;
-	mark: number;
-	imageDriveId: string;
-	options: Option[];
-}
+import type { Option, Question } from './types';
 
 interface AnswerOptionsManagerProps {
 	currentQuestion: Question;

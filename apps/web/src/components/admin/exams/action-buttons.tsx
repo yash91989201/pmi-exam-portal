@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useFormContext } from "./form-context";
+import type { FormSubscriptionState } from './types';
 
 export function ActionButtons() {
 	const form = useFormContext();
@@ -11,7 +12,7 @@ export function ActionButtons() {
 		<Card className="border-0 bg-white/80 shadow-lg backdrop-blur-sm dark:bg-slate-800/80">
 			<div className="p-6">
 				<form.Subscribe>
-					{({ isSubmitting, canSubmit, errors }: any) => (
+					{({ isSubmitting, canSubmit, errors }: FormSubscriptionState) => (
 						<div className="flex items-center justify-between">
 							<div className="flex items-center space-x-4">
 								<Button

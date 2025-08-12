@@ -20,7 +20,7 @@ export function ExamInformation({ defaultMark, setDefaultMark, questionsLength }
 			</div>
 			<div className="p-6">
 				<form.Field name="certification">
-					{(field: any) => (
+					{(field: { state: { value: string; meta: { errors: string[] } }; handleChange: (value: string) => void }) => (
 						<div className="space-y-2">
 							<Label htmlFor="certification" className="text-base font-medium">
 								Certification Name *
