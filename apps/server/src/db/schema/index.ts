@@ -6,6 +6,7 @@ export const exam = pgTable("exam", {
 	id: cuid2("id").defaultRandom().primaryKey(),
 	certification: text("certification").notNull(),
 	mark: smallint("mark").notNull(),
+	timeLimit: smallint("time_limit").notNull().default(60),
 });
 
 export const question = pgTable("question", {
