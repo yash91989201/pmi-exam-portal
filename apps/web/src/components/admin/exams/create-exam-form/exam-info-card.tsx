@@ -11,7 +11,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 
 export const ExamInfoCard = () => {
@@ -78,6 +78,22 @@ export const ExamInfoCard = () => {
 							<FormDescription>
 								Duration of the exam in minutes
 							</FormDescription>
+							<div className="mt-2 flex flex-wrap gap-2">
+								{[15, 30, 45, 60].map((inc) => (
+									<button
+										key={inc}
+										type="button"
+										className="rounded-md border px-3 py-1 text-sm hover:bg-muted"
+										onClick={() => {
+											const current = Number(field.value) || 0;
+											const next = Math.max(1, current + inc);
+											field.onChange(next);
+										}}
+									>
+										+{inc}
+									</button>
+								))}
+							</div>
 							<FormMessage />
 						</FormItem>
 					)}
