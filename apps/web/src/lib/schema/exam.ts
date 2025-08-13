@@ -1,14 +1,12 @@
 import z from "zod";
 
 const OptionSchema = z.object({
-	id: z.cuid2(),
 	text: z.string().min(1, "Option text is required"),
 	isCorrect: z.boolean(),
 	order: z.number().int().min(0),
 });
 
 const QuestionSchema = z.object({
-	id: z.cuid2(),
 	text: z.string().min(1, "Question text is required"),
 	mark: z.number().int().positive("Mark must be a positive integer"),
 	order: z.number().int().min(0),
@@ -24,10 +22,12 @@ const QuestionSchema = z.object({
 });
 
 export const ExamFormSchema = z.object({
-	id: z.cuid2(),
 	certification: z.string().min(1, "Certification is required"),
-	// Allow non-negative here because total is derived and starts at 0 before computation
 	mark: z.number().int().nonnegative("Mark must be a non-negative integer"),
+	timeLimit: z
+		.number()
+		.int()
+		.positive("Time limit must be a positive integer"),
 	questions: z
 		.array(QuestionSchema)
 		.min(1, "At least one question is required")
@@ -35,8 +35,15 @@ export const ExamFormSchema = z.object({
 			const totalQuestionMarks = questions.reduce((sum, q) => sum + q.mark, 0);
 			return totalQuestionMarks > 0;
 		}, "Total question marks must be greater than 0"),
+	formState: z.object({
+		defaultMarks: z
+			.number()
+			.int()
+			.positive("Default mark must be a positive integer"),
+		selectedQuestionIndex: z.number().int(),
+	}),
 });
 
-export type ExamFormData = z.infer<typeof ExamFormSchema>;
-export type QuestionFormData = z.infer<typeof QuestionSchema>;
-export type OptionFormData = z.infer<typeof OptionSchema>;
+export type ExamFormSchemaType = z.infer<typeof ExamFormSchema>;
+export type QuestionFormSchemaType = z.infer<typeof QuestionSchema>;
+export type OptionFormSchemaType = z.infer<typeof OptionSchema>;

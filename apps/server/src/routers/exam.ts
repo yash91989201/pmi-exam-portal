@@ -15,9 +15,10 @@ export const examRouter = {
 					const [newExam] = await tx
 						.insert(exam)
 						.values({
-							certification: input.certification,
-							mark: input.mark,
-						})
+						certification: input.certification,
+						mark: input.mark,
+						 timeLimit: input.timeLimit,
+							})
 						.returning();
 
 					// Create questions and options
@@ -56,6 +57,7 @@ export const examRouter = {
 						id: result.id,
 						certification: result.certification,
 						mark: result.mark,
+						timeLimit: result.timeLimit,
 					},
 				};
 			} catch (error) {
