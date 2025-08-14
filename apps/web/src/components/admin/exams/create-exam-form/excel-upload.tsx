@@ -1,15 +1,23 @@
-import { Upload, FileSpreadsheet, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Upload, FileSpreadsheet, Loader2, AlertCircle, CheckCircle2, HelpCircle } from "lucide-react";
 import { useState, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { importExcelData, type ImportResult } from "@/lib/utils/excel-import";
-import type { ExamFormSchemaType } from "@/lib/schema/exam";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { orpcClient as orpc } from "@/utils/orpc";
+import type { ExamFormSchemaType, QuestionFormSchemaType } from "@/lib/schema/exam";
 
 interface ExcelUploadProps {
 	onSuccess?: (questionCount: number) => void;
 	onError?: (error: string) => void;
+}
+
+interface ImportResult {
+	success: boolean;
+	message: string;
+	data?: QuestionFormSchemaType[];
+	validationErrors?: string[];
 }
 
 export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
@@ -33,7 +41,8 @@ export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
 				setUploadProgress((prev) => Math.min(prev + 10, 90));
 			}, 200);
 
-			const result = await importExcelData(file);
+			// Call the backend API
+			const result = await orpc.exam.bulkUploadExcel.mutate({ file });
 			
 			clearInterval(progressInterval);
 			setUploadProgress(100);
@@ -49,13 +58,13 @@ export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
 				onSuccess?.(result.data.length);
 			} else {
 				setUploadResult(result);
-				onError?.(result.error || "Upload failed");
+				onError?.(result.message);
 			}
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
 			const errorResult: ImportResult = {
 				success: false,
-				error: errorMessage
+				message: errorMessage
 			};
 			setUploadResult(errorResult);
 			onError?.(errorMessage);
@@ -83,21 +92,45 @@ export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center gap-4">
-				<Button
-					type="button"
-					size="lg"
-					variant="outline"
-					onClick={triggerFileSelect}
-					disabled={isUploading}
-					className="shadow-md transition-all hover:shadow-lg"
-				>
-					{isUploading ? (
-						<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-					) : (
-						<Upload className="mr-2 h-4 w-4" />
-					)}
-					Upload Excel
-				</Button>
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								type="button"
+								size="lg"
+								variant="outline"
+								onClick={triggerFileSelect}
+								disabled={isUploading}
+								className="shadow-md transition-all hover:shadow-lg"
+							>
+								{isUploading ? (
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								) : (
+									<Upload className="mr-2 h-4 w-4" />
+								)}
+								Bulk Upload
+								<HelpCircle className="ml-2 h-4 w-4 text-muted-foreground" />
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent side="bottom" className="max-w-md">
+							<div className="space-y-2">
+								<p className="font-medium">Excel Format Requirements:</p>
+								<div className="text-sm space-y-1">
+									<p><strong>Headers:</strong> Question Text | Option A | Option B | Option C | Option D | Correct Answer | Marks</p>
+									<p><strong>Example:</strong></p>
+									<p>What is PM? | Plan projects | Manage people | Deliver value | Create docs | C | 2</p>
+									<p><strong>Rules:</strong></p>
+									<ul className="list-disc list-inside space-y-1">
+										<li>At least 2 options (A, B) required per question</li>
+										<li>Correct Answer must be A, B, C, D, E, or F</li>
+										<li>Marks must be positive integers</li>
+										<li>Supports .xlsx and .xls files</li>
+									</ul>
+								</div>
+							</div>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
 
 				<input
 					ref={fileInputRef}
@@ -129,7 +162,7 @@ export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
 						<Alert className="border-green-200 bg-green-50">
 							<CheckCircle2 className="h-4 w-4 text-green-600" />
 							<AlertDescription className="text-green-800">
-								Successfully imported {uploadResult.data?.length} questions from Excel file.
+								{uploadResult.message}
 							</AlertDescription>
 						</Alert>
 					) : (
@@ -137,7 +170,7 @@ export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
 							<AlertCircle className="h-4 w-4" />
 							<AlertDescription>
 								<div className="space-y-2">
-									<p>{uploadResult.error}</p>
+									<p>{uploadResult.message}</p>
 									{uploadResult.validationErrors && (
 										<div className="space-y-1">
 											<p className="font-medium">Validation errors:</p>
@@ -164,16 +197,6 @@ export const ExcelUpload = ({ onSuccess, onError }: ExcelUploadProps) => {
 					</Button>
 				</div>
 			)}
-
-			{/* Format Instructions */}
-			<div className="text-xs text-muted-foreground">
-				<p className="mb-1">Expected Excel format:</p>
-				<div className="space-y-1 pl-2">
-					<p>• Question Text | Option A | Option B | Option C | Option D | Correct Answer | Marks</p>
-					<p>• Correct Answer should be A, B, C, D, E, or F</p>
-					<p>• At least 2 options required per question</p>
-				</div>
-			</div>
 		</div>
 	);
 };

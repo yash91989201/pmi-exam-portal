@@ -110,7 +110,7 @@ export const ExamQuestionsSection = () => {
 									className="shadow-md transition-all hover:shadow-lg"
 								>
 									<Plus className="mr-2 h-4 w-4" />
-									Upload Excel
+									Bulk Upload
 								</Button>
 								<Button
 									type="button"

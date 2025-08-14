@@ -1,9 +1,9 @@
 import * as XLSX from 'xlsx';
-import { ExcelImportSchema, type ExcelImportType, type QuestionFormSchemaType } from '@/lib/schema/exam';
+import { ExcelImportSchema, type ExcelImportType, type QuestionFormData } from '@/lib/schema/exam';
 
 export interface ImportResult {
 	success: boolean;
-	data?: QuestionFormSchemaType[];
+	data?: QuestionFormData[];
 	error?: string;
 	validationErrors?: string[];
 }
@@ -16,7 +16,7 @@ export class ExcelImportError extends Error {
 }
 
 /**
- * Validates if the file is an Excel file
+ * Validates if the file is an Excel file by checking MIME type and file extension
  */
 export function validateExcelFile(file: File): boolean {
 	const validTypes = [
@@ -34,15 +34,20 @@ export function validateExcelFile(file: File): boolean {
 }
 
 /**
- * Parses Excel file and returns structured data
+ * Parses Excel file buffer and returns structured data
  */
-export async function parseExcelFile(file: File): Promise<ExcelImportType> {
-	if (!validateExcelFile(file)) {
+export async function parseExcelBuffer(buffer: ArrayBuffer, filename: string): Promise<ExcelImportType> {
+	// Validate file extension
+	const validExtensions = ['.xlsx', '.xls'];
+	const hasValidExtension = validExtensions.some(ext => 
+		filename.toLowerCase().endsWith(ext)
+	);
+	
+	if (!hasValidExtension) {
 		throw new ExcelImportError('Invalid file type. Please upload an Excel file (.xlsx or .xls)');
 	}
 
 	try {
-		const buffer = await file.arrayBuffer();
 		const workbook = XLSX.read(buffer, { type: 'array' });
 		
 		// Get the first worksheet
@@ -53,11 +58,12 @@ export async function parseExcelFile(file: File): Promise<ExcelImportType> {
 		
 		const worksheet = workbook.Sheets[sheetName];
 		
-		// Convert to JSON with header row
+		// Convert to JSON with header row, setting defval to undefined for empty cells
 		const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
 			header: 1,
-			defval: ''
-		}) as string[][];
+			// Set undefined for empty cells so Zod validation can catch them properly
+			defval: undefined
+		}) as any[][];
 		
 		if (jsonData.length < 2) {
 			throw new ExcelImportError('Excel file must contain at least a header row and one data row');
@@ -69,12 +75,15 @@ export async function parseExcelFile(file: File): Promise<ExcelImportType> {
 		
 		// Convert to object format
 		const parsedData = dataRows
-			.filter(row => row.some(cell => cell && cell.toString().trim())) // Filter out empty rows
+			.filter(row => row.some(cell => cell !== undefined && cell !== null && cell.toString().trim())) // Filter out empty rows
 			.map((row, index) => {
 				const rowObject: Record<string, any> = {};
 				headers.forEach((header, colIndex) => {
 					const cellValue = row[colIndex];
-					rowObject[header] = cellValue || '';
+					// Keep undefined values for empty cells, otherwise convert to string
+					rowObject[header] = cellValue !== undefined && cellValue !== null 
+						? cellValue.toString().trim() 
+						: undefined;
 				});
 				return rowObject;
 			});
@@ -108,7 +117,7 @@ export async function parseExcelFile(file: File): Promise<ExcelImportType> {
 /**
  * Converts Excel data to question form schema format
  */
-export function convertToQuestionSchema(excelData: ExcelImportType): QuestionFormSchemaType[] {
+export function convertToQuestionSchema(excelData: ExcelImportType): QuestionFormData[] {
 	return excelData.map((row, index) => {
 		// Build options array from Excel columns
 		const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -138,11 +147,11 @@ export function convertToQuestionSchema(excelData: ExcelImportType): QuestionFor
 }
 
 /**
- * Main function to import Excel data and convert to form format
+ * Main function to import Excel buffer and convert to form format
  */
-export async function importExcelData(file: File): Promise<ImportResult> {
+export async function importExcelData(buffer: ArrayBuffer, filename: string): Promise<ImportResult> {
 	try {
-		const excelData = await parseExcelFile(file);
+		const excelData = await parseExcelBuffer(buffer, filename);
 		const questions = convertToQuestionSchema(excelData);
 		
 		return {

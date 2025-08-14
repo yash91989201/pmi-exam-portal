@@ -1,7 +1,9 @@
 import { ORPCError } from "@orpc/server";
 import { exam, option, question } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
-import { CreateExamInput, CreateExamOutput } from "@/lib/schema";
+import { CreateExamInput, CreateExamOutput, BulkUploadExcelOutput } from "@/lib/schema";
+import { importExcelData } from "@/utils/excel-import";
+import z from "zod";
 
 export const examRouter = {
 	createExam: adminProcedure
@@ -66,6 +68,41 @@ export const examRouter = {
 					error instanceof Error ? error.message : "Failed to create exam",
 					{ status: 500 },
 				);
+			}
+		}),
+
+	bulkUploadExcel: adminProcedure
+		.input(z.object({
+			file: z.instanceof(File),
+		}))
+		.output(BulkUploadExcelOutput)
+		.handler(async ({ input }) => {
+			try {
+				// Convert file to buffer
+				const buffer = await input.file.arrayBuffer();
+				
+				// Process the Excel file
+				const result = await importExcelData(buffer, input.file.name);
+				
+				if (result.success) {
+					return {
+						success: true,
+						message: `Successfully processed ${result.data?.length || 0} questions from Excel file`,
+						data: result.data
+					};
+				} else {
+					return {
+						success: false,
+						message: result.error || "Failed to process Excel file",
+						validationErrors: result.validationErrors
+					};
+				}
+			} catch (error) {
+				console.error("Error processing Excel file:", error);
+				return {
+					success: false,
+					message: error instanceof Error ? error.message : "Failed to process Excel file",
+				};
 			}
 		}),
 };
