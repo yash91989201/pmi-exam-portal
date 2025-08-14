@@ -1,5 +1,6 @@
 import { CheckCircle2, HelpCircle, Minus, Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,11 +15,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
+import { ExcelUpload } from "./excel-upload";
 
 export const ExamQuestionsSection = () => {
 	const form = useFormContext<ExamFormSchemaType>();
 	const defaultMark = form.watch("formState.defaultMarks");
 	const selectedQuestionIndex = form.watch("formState.selectedQuestionIndex");
+	const [showExcelUpload, setShowExcelUpload] = useState(false);
 
 	const {
 		fields: questionFields,
@@ -42,6 +45,16 @@ export const ExamQuestionsSection = () => {
 
 		append(newQuestion);
 		form.setValue("formState.selectedQuestionIndex", questionFields.length);
+	};
+
+	const handleExcelUploadSuccess = (questionCount: number) => {
+		setShowExcelUpload(false);
+		// Show success feedback could be added here if needed
+	};
+
+	const handleExcelUploadError = (error: string) => {
+		// Error handling could be enhanced here if needed
+		console.error("Excel upload error:", error);
 	};
 
 	const removeQuestion = (index: number) => {
@@ -86,16 +99,52 @@ export const ExamQuestionsSection = () => {
 							</p>
 						</div>
 					</div>
-					<Button
-						type="button"
-						size="lg"
-						onClick={addQuestion}
-						className="shadow-md transition-all hover:shadow-lg"
-					>
-						<Plus className="mr-2 h-4 w-4" />
-						Add Question
-					</Button>
+					<div className="flex items-center gap-3">
+						{!showExcelUpload ? (
+							<>
+								<Button
+									type="button"
+									size="lg"
+									variant="outline"
+									onClick={() => setShowExcelUpload(true)}
+									className="shadow-md transition-all hover:shadow-lg"
+								>
+									<Plus className="mr-2 h-4 w-4" />
+									Upload Excel
+								</Button>
+								<Button
+									type="button"
+									size="lg"
+									onClick={addQuestion}
+									className="shadow-md transition-all hover:shadow-lg"
+								>
+									<Plus className="mr-2 h-4 w-4" />
+									Add Question
+								</Button>
+							</>
+						) : (
+							<Button
+								type="button"
+								size="lg"
+								variant="ghost"
+								onClick={() => setShowExcelUpload(false)}
+								className="shadow-md transition-all hover:shadow-lg"
+							>
+								Cancel Upload
+							</Button>
+						)}
+					</div>
 				</div>
+				
+				{/* Excel Upload Section */}
+				{showExcelUpload && (
+					<div className="mt-6 p-6 border border-dashed border-muted-foreground/30 rounded-lg bg-muted/20">
+						<ExcelUpload
+							onSuccess={handleExcelUploadSuccess}
+							onError={handleExcelUploadError}
+						/>
+					</div>
+				)}
 			</CardHeader>
 			<CardContent>
 				<div className="space-y-6">
