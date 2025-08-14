@@ -11,6 +11,14 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 
@@ -73,65 +81,110 @@ export const ExamInfoCard = () => {
 						<FormItem>
 							<FormLabel>Time Limit (minutes)</FormLabel>
 							<FormControl>
-								<Input type="number" min={1} step={1} placeholder="60" {...field} />
+								<Input
+									type="number"
+									min={1}
+									step={1}
+									placeholder="60"
+									{...field}
+								/>
 							</FormControl>
-							<FormDescription>
-								Duration of the exam in minutes
-							</FormDescription>
-							<div className="mt-2 flex flex-wrap gap-2">
-								{[15, 30, 45, 60].map((inc) => (
-									<button
-										key={inc}
-										type="button"
-										className="rounded-md border px-3 py-1 text-sm hover:bg-muted"
-										onClick={() => {
-											const current = Number(field.value) || 0;
-											const next = Math.max(1, current + inc);
-											field.onChange(next);
-										}}
-									>
-										+{inc}
-									</button>
-								))}
+							<FormDescription>Duration of the exam in minutes</FormDescription>
+							<div className="mt-2">
+								<Label className="mb-2 block font-medium text-sm">
+									Quick increments
+								</Label>
+								<div className="flex flex-wrap gap-2">
+									{[15, 30, 45, 60].map((inc) => (
+										<button
+											key={inc}
+											type="button"
+											className="rounded-md border px-3 py-1 text-sm hover:bg-muted"
+											onClick={() => {
+												const current = Number(field.value) || 0;
+												const next = Math.max(1, current + inc);
+												field.onChange(next);
+											}}
+										>
+											+{inc}
+										</button>
+									))}
+								</div>
 							</div>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
 
-				<div className="flex flex-wrap items-center gap-3 sm:gap-4">
-					<Badge
-						variant="secondary"
-						className="gap-2 border-blue-500/20 bg-blue-500/10 px-3 py-1 text-blue-600 dark:text-blue-400"
-					>
-						<ListChecks className="size-3.5" />
-						<span>Total Questions:</span>
-						<strong className="ml-1">{totalQuestions}</strong>
-					</Badge>
-					<Badge
-						variant="secondary"
-						className="gap-2 border-primary/20 bg-primary/10 px-3 py-1 text-primary"
-					>
-						<Trophy className="size-3.5" />
-						<span>Total Marks:</span>
-						<strong className="ml-1">{totalMarks}</strong>
-					</Badge>
-					<Badge
-						variant="secondary"
-						className="gap-2 border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-emerald-700 dark:text-emerald-400"
-					>
-						<ArrowUp className="size-3.5" />
-						<span>Highest Mark:</span>
-						<strong className="ml-1">{highestMark}</strong>
-					</Badge>
-					<Badge
-						variant="secondary"
-						className="gap-2 border-amber-500/20 bg-amber-500/10 px-3 py-1 text-amber-700 dark:text-amber-400"
-					>
-						<ArrowDown className="size-3.5" />
-						<span>Lowest Mark:</span>
-						<strong className="ml-1">{lowestMark}</strong>
-					</Badge>
+				<FormField
+					control={form.control}
+					name="formState.defaultMarks"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Default Marks</FormLabel>
+							<FormControl>
+								<Select
+									value={field.value.toString()}
+									onValueChange={(value) => field.onChange(Number(value))}
+								>
+									<SelectTrigger className="w-40">
+										<SelectValue placeholder="Select marks" />
+									</SelectTrigger>
+									<SelectContent>
+										{[1, 2, 3, 4, 5, 10, 15, 20, 25].map((val) => (
+											<SelectItem key={val} value={val.toString()}>
+												{val}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</FormControl>
+							<FormDescription>
+								Marks assigned to new questions by default. You can override per
+								question.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<Separator />
+				<div>
+					<Label className="mb-2 block font-medium text-sm">Exam Stats</Label>
+					<div className="flex flex-wrap items-center gap-3 sm:gap-4">
+						<Badge
+							variant="secondary"
+							className="gap-2 border-blue-500/20 bg-blue-500/10 px-3 py-1 text-blue-600 dark:text-blue-400"
+						>
+							<ListChecks className="size-4" />
+							<span>Total Questions:</span>
+							<strong className="ml-1">{totalQuestions}</strong>
+						</Badge>
+						<Badge
+							variant="secondary"
+							className="gap-2 border-primary/20 bg-primary/10 px-3 py-1 text-primary"
+						>
+							<Trophy className="size-4" />
+							<span>Total Marks:</span>
+							<strong className="ml-1">{totalMarks}</strong>
+						</Badge>
+						<Badge
+							variant="secondary"
+							className="gap-2 border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-emerald-700 dark:text-emerald-400"
+						>
+							<ArrowUp className="size-4" />
+							<span>Highest Mark:</span>
+							<strong className="ml-1">{highestMark}</strong>
+						</Badge>
+						<Badge
+							variant="secondary"
+							className="gap-2 border-amber-500/20 bg-amber-500/10 px-3 py-1 text-amber-700 dark:text-amber-400"
+						>
+							<ArrowDown className="size-4" />
+							<span>Lowest Mark:</span>
+							<strong className="ml-1">{lowestMark}</strong>
+						</Badge>
+					</div>
 				</div>
 			</CardContent>
 		</Card>

@@ -11,13 +11,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
@@ -93,45 +86,15 @@ export const ExamQuestionsSection = () => {
 							</p>
 						</div>
 					</div>
-					<div className="flex items-center gap-4">
-						<FormField
-							control={form.control}
-							name="formState.defaultMarks"
-							render={({ field }) => (
-								<FormItem className="flex items-center gap-2 space-y-0">
-									<FormLabel className="font-semibold text-base">
-										Default Marks
-									</FormLabel>
-									<FormControl>
-										<Select
-											value={field.value.toString()}
-											onValueChange={(value) => field.onChange(Number(value))}
-										>
-											<SelectTrigger className="w-32 rounded-md border px-2 py-1 font-medium text-base">
-												<SelectValue>{field.value}</SelectValue>
-											</SelectTrigger>
-											<SelectContent>
-												{[1, 2, 3, 4, 5, 10, 15, 20, 25].map((val) => (
-													<SelectItem key={val} value={val.toString()}>
-														{val}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-						<Button
-							type="button"
-							size="lg"
-							onClick={addQuestion}
-							className="shadow-md transition-all hover:shadow-lg"
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Add Question
-						</Button>
-					</div>
+					<Button
+						type="button"
+						size="lg"
+						onClick={addQuestion}
+						className="shadow-md transition-all hover:shadow-lg"
+					>
+						<Plus className="mr-2 h-4 w-4" />
+						Add Question
+					</Button>
 				</div>
 			</CardHeader>
 			<CardContent>
@@ -367,7 +330,7 @@ export const QuestionEditor = ({
 				{/* Options */}
 				<div className="space-y-4">
 					<FormLabel>Answer Options</FormLabel>
-					<div className="grid grid-cols-1 gap-4">
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						{optionFields.map((option, optionIndex) => {
 							const isCorrect = form.watch(
 								`questions.${questionIndex}.options.${optionIndex}.isCorrect`,
@@ -473,14 +436,6 @@ export const QuestionEditor = ({
 										)}
 									/>
 
-									{/* Correct Answer Indicator */}
-									{isCorrect && (
-										<div className="fade-in-0 slide-in-from-right-2 flex animate-in items-center gap-2 rounded-full bg-green-600 px-3 py-1.5 font-semibold text-white text-xs shadow-md duration-300">
-											<CheckCircle2 className="h-3.5 w-3.5" />
-											Correct Answer
-										</div>
-									)}
-
 									{/* Delete Option Button */}
 									{optionFields.length > 2 && (
 										<Button
@@ -504,7 +459,6 @@ export const QuestionEditor = ({
 							);
 						})}
 
-						{/* Add Option Button */}
 						{optionFields.length < 6 && (
 							<div className="mt-6">
 								<Button
@@ -512,16 +466,12 @@ export const QuestionEditor = ({
 									variant="outline"
 									size="lg"
 									onClick={addOption}
-									className="group w-full border-2 border-gray-300 border-dashed py-8 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
+									className="group flex w-full items-center justify-center border-2 border-gray-300 border-dashed py-9 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
 								>
-									<div className="text-center">
-										<div className="font-semibold text-base text-gray-600 transition-colors duration-200 group-hover:text-blue-700">
-											Add Option {String.fromCharCode(65 + optionFields.length)}
-										</div>
-										<div className="text-gray-500 text-sm transition-colors duration-200 group-hover:text-blue-600">
-											Click to add another answer option
-										</div>
-									</div>
+									<Plus className="mr-2 h-5 w-5 text-gray-600 group-hover:text-blue-700" />
+									<span className="font-semibold text-base text-gray-600 transition-colors duration-200 group-hover:text-blue-700">
+										Add Option {String.fromCharCode(65 + optionFields.length)}
+									</span>
 								</Button>
 							</div>
 						)}
