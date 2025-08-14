@@ -1,5 +1,6 @@
 import { CheckCircle2, HelpCircle, Minus, Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
+import { ExcelUpload } from "./excel-upload";
 
 export const ExamQuestionsSection = () => {
 	const form = useFormContext<ExamFormSchemaType>();
@@ -86,15 +88,18 @@ export const ExamQuestionsSection = () => {
 							</p>
 						</div>
 					</div>
-					<Button
-						type="button"
-						size="lg"
-						onClick={addQuestion}
-						className="shadow-md transition-all hover:shadow-lg"
-					>
-						<Plus className="mr-2 h-4 w-4" />
-						Add Question
-					</Button>
+					<div className="flex items-center gap-3">
+						<ExcelUpload />
+						<Button
+							type="button"
+							size="lg"
+							onClick={addQuestion}
+							className="shadow-md transition-all hover:shadow-lg"
+						>
+							<Plus className="mr-2 h-4 w-4" />
+							Add Question
+						</Button>
+					</div>
 				</div>
 			</CardHeader>
 			<CardContent>
@@ -140,7 +145,7 @@ export const ExamQuestionsSection = () => {
 												type="button"
 												variant={
 													selectedQuestionIndex === index
-														? "default"
+														? "secondary"
 														: "outline"
 												}
 												className="mb-3 h-auto w-full justify-start px-3 py-4"
@@ -162,8 +167,10 @@ export const ExamQuestionsSection = () => {
 															{questionPreview}
 														</div>
 													</div>
-													{isComplete && (
+													{isComplete ? (
 														<CheckCircle2 className="h-4 w-4 flex-shrink-0 text-green-600" />
+													) : (
+														<Badge className="rounded-xl">Draft</Badge>
 													)}
 												</div>
 											</Button>
@@ -303,7 +310,7 @@ export const QuestionEditor = ({
 										onChange={(e) => {
 											const value = Math.max(
 												1,
-												Math.min(25, Number.parseInt(e.target.value) || 1),
+												Math.min(25, Number.parseInt(e.target.value, 10) || 1),
 											);
 											field.onChange(value);
 										}}
