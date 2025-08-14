@@ -60,7 +60,7 @@ const ExcelQuestionRowSchema = z.object({
 	Marks: z.union([
 		z.number().int().positive("Marks must be a positive integer"),
 		z.string().transform((val, ctx) => {
-			const parsed = Number.parseInt(val.toString());
+			const parsed = Number.parseInt(val.toString(), 10);
 			if (Number.isNaN(parsed) || parsed <= 0) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,

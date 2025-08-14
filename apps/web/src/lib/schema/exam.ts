@@ -24,10 +24,7 @@ const QuestionSchema = z.object({
 export const ExamFormSchema = z.object({
 	certification: z.string().min(1, "Certification is required"),
 	mark: z.number().int().nonnegative("Mark must be a non-negative integer"),
-	timeLimit: z
-		.number()
-		.int()
-		.positive("Time limit must be a positive integer"),
+	timeLimit: z.number().int().positive("Time limit must be a positive integer"),
 	questions: z
 		.array(QuestionSchema)
 		.min(1, "At least one question is required")

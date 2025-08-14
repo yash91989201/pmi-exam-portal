@@ -85,7 +85,6 @@ export const examRouter = {
 		.handler(async ({ input }) => {
 			try {
 				const buffer = await input.file.arrayBuffer();
-
 				const result = await importExcelData(buffer, input.file.name);
 
 				if (result.success) {
@@ -105,7 +104,7 @@ export const examRouter = {
 				throw new ORPCError(
 					error instanceof Error
 						? error.message
-						: "Unable to update default admin.",
+						: "Failed to process Excel file",
 					{ status: 400 },
 				);
 			}

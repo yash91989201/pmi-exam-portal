@@ -310,7 +310,7 @@ export const QuestionEditor = ({
 										onChange={(e) => {
 											const value = Math.max(
 												1,
-												Math.min(25, Number.parseInt(e.target.value) || 1),
+												Math.min(25, Number.parseInt(e.target.value, 10) || 1),
 											);
 											field.onChange(value);
 										}}

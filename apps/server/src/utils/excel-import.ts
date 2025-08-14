@@ -72,9 +72,7 @@ export async function parseExcelBuffer(
 		}
 
 		const worksheet = workbook.Sheets[sheetName];
-
 		const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
 		const validationResult = ExcelImportSchema.parse(jsonData);
 
 		return validationResult;

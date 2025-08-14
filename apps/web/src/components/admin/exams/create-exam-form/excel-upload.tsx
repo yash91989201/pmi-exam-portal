@@ -133,7 +133,7 @@ export const ExcelUpload = () => {
 									<p>
 										<strong>Rules:</strong>
 									</p>
-									<ul className="st-inside space-y-1">
+									<ul className="list-inside space-y-1">
 										<li>At least 2 options (A, B) required per question</li>
 										<li>Correct Answer must be A, B, C, D, E, or F</li>
 										<li>Marks must be positive integers</li>
@@ -185,7 +185,7 @@ export const ExcelUpload = () => {
 									{uploadResult.validationErrors && (
 										<div className="space-y-1">
 											<p className="font-medium">Validation errors:</p>
-											<ul className="list-disc list-t-side space-y-1 text-sm">
+											<ul className="list-inside list-disc space-y-1 text-sm">
 												{uploadResult.validationErrors.map((error) => (
 													<li key={error}>{error}</li>
 												))}
