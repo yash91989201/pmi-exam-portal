@@ -258,7 +258,6 @@ export const QuestionEditor = ({
 				</Button>
 			</CardHeader>
 			<CardContent className="space-y-6">
-				{/* Question Text */}
 				<FormField
 					control={form.control}
 					name={`questions.${questionIndex}.text`}
@@ -330,7 +329,7 @@ export const QuestionEditor = ({
 				{/* Options */}
 				<div className="space-y-4">
 					<FormLabel>Answer Options</FormLabel>
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+					<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 						{optionFields.map((option, optionIndex) => {
 							const isCorrect = form.watch(
 								`questions.${questionIndex}.options.${optionIndex}.isCorrect`,
@@ -342,7 +341,7 @@ export const QuestionEditor = ({
 								<div
 									key={option.id}
 									className={cn(
-										"group relative flex cursor-pointer items-center gap-4 rounded-xl border-2 p-5 transition-all duration-200",
+										"group relative flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200",
 										isCorrect
 											? "border-green-500 bg-gradient-to-r from-green-50 to-green-100 shadow-md ring-1 ring-green-200"
 											: "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-sm",
@@ -466,7 +465,7 @@ export const QuestionEditor = ({
 									variant="outline"
 									size="lg"
 									onClick={addOption}
-									className="group flex w-full items-center justify-center border-2 border-gray-300 border-dashed py-9 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
+									className="group flex w-full items-center justify-center border-2 border-gray-300 border-dashed py-8 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
 								>
 									<Plus className="mr-2 h-5 w-5 text-gray-600 group-hover:text-blue-700" />
 									<span className="font-semibold text-base text-gray-600 transition-colors duration-200 group-hover:text-blue-700">
