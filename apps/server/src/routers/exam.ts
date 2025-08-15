@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server";
+import { count } from "drizzle-orm";
 import z from "zod";
 import { exam, option, question } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
@@ -8,6 +9,24 @@ import {
 	CreateExamOutput,
 } from "@/lib/schema";
 import { importExcelData } from "@/utils/excel-import";
+
+// Add zod schemas for input/output
+const ListExamsInput = z.object({
+	page: z.number().min(1).default(1),
+	pageSize: z.number().min(1).max(100).default(10),
+});
+const ExamRow = z.object({
+	id: z.string(),
+	certification: z.string(),
+	mark: z.number(),
+	timeLimit: z.number(),
+});
+const ListExamsOutput = z.object({
+	total: z.number(),
+	page: z.number(),
+	pageSize: z.number(),
+	exams: z.array(ExamRow),
+});
 
 export const examRouter = {
 	createExam: adminProcedure
@@ -108,5 +127,31 @@ export const examRouter = {
 					{ status: 400 },
 				);
 			}
+		}),
+
+	listExams: adminProcedure
+		.input(ListExamsInput)
+		.output(ListExamsOutput)
+		.handler(async ({ context, input }) => {
+			const { page, pageSize } = input;
+			const offset = (page - 1) * pageSize;
+
+			const [totalResult] = await context.db
+				.select({ count: count() })
+				.from(exam);
+
+			const total = Number(totalResult.count);
+
+			const examsRows = await context.db
+				.select()
+				.from(exam)
+				.offset(offset)
+				.limit(pageSize);
+			return {
+				total,
+				page,
+				pageSize,
+				exams: examsRows,
+			};
 		}),
 };
