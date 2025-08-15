@@ -52,12 +52,11 @@ export const ExamQuestionsSection = () => {
 
 		remove(index);
 
-		const questions = form.getValues("questions");
-		const updatedQuestions = questions.filter((_, i) => i !== index);
-
-		updatedQuestions.forEach((q, i) => {
-			q.order = i;
-		});
+		const currentQuestions = form.getValues("questions");
+		const updatedQuestions = currentQuestions.map((q, i) => ({
+			...q,
+			order: i,
+		}));
 
 		form.setValue("questions", updatedQuestions);
 		form.setValue(
