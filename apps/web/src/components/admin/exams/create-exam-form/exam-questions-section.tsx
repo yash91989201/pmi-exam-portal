@@ -58,7 +58,6 @@ export const ExamQuestionsSection = () => {
 			order: i,
 		}));
 
-		form.setValue("questions", updatedQuestions);
 		form.setValue(
 			"formState.selectedQuestionIndex",
 			Math.min(index, updatedQuestions.length - 1),
