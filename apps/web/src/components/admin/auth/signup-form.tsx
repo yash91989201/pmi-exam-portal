@@ -58,7 +58,7 @@ export function SignUpForm() {
 				toast.success("First Admin account created successfully!");
 
 				router.navigate({
-					to: "/admin",
+					to: "/dashboard",
 				});
 			} catch (error) {
 				console.error(error);

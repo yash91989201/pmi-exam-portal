@@ -1,7 +1,5 @@
-import { useRouter } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, ListChecks, Target, Trophy } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,12 +22,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
-import { orpcClient } from "@/utils/orpc";
-import { BulkUploadQuestions } from "./bulk-upload-questions";
+import { BulkQuestionUploadSection } from "./bulk-question-upload-section";
 
 export const ExamDetailsSection = () => {
 	const form = useFormContext<ExamFormSchemaType>();
-	const router = useRouter();
 
 	const watchedQuestions = form.watch("questions") || [];
 
@@ -153,7 +149,7 @@ export const ExamDetailsSection = () => {
 					)}
 				/>
 
-				<BulkUploadQuestions />
+				<BulkQuestionUploadSection />
 
 				<div className="pt-3">
 					<Button

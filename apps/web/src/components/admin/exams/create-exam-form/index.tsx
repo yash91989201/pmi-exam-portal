@@ -43,8 +43,8 @@ export const CreateExamForm = () => {
 			);
 
 			const examData = { ...data, mark: totalMarks };
-			// ensure timeLimit is included and integer
 			examData.timeLimit = Math.max(1, Math.floor(examData.timeLimit ?? 60));
+
 			const response = await orpcClient.exam.createExam(examData);
 
 			if (response.success) {

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
+import { BulkQuestionUploadSection } from "./bulk-question-upload-section";
 
 export const ExamInfoCard = () => {
 	const form = useFormContext<ExamFormSchemaType>();
@@ -30,7 +31,9 @@ export const ExamInfoCard = () => {
 		(total, question) => total + (question.mark || 0),
 		0,
 	);
+
 	const totalQuestions = watchedQuestions.length;
+
 	const marksArray = watchedQuestions.map((q) => q.mark ?? 0);
 	const lowestMark = marksArray.length ? Math.min(...marksArray) : 0;
 	const highestMark = marksArray.length ? Math.max(...marksArray) : 0;
@@ -148,7 +151,10 @@ export const ExamInfoCard = () => {
 					)}
 				/>
 
+				<BulkQuestionUploadSection />
+
 				<Separator />
+
 				<div>
 					<Label className="mb-2 block font-medium text-sm">Exam Stats</Label>
 					<div className="flex flex-wrap items-center gap-3 sm:gap-4">

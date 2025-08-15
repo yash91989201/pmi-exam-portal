@@ -15,7 +15,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
-import { ExcelUpload } from "./excel-upload";
 
 export const ExamQuestionsSection = () => {
 	const form = useFormContext<ExamFormSchemaType>();
@@ -89,7 +88,6 @@ export const ExamQuestionsSection = () => {
 						</div>
 					</div>
 					<div className="flex items-center gap-3">
-						<ExcelUpload />
 						<Button
 							type="button"
 							size="lg"
@@ -141,7 +139,7 @@ export const ExamQuestionsSection = () => {
 
 										return (
 											<Button
-												key={question.id}
+												key={`${question.id}-${index}`}
 												type="button"
 												variant={
 													selectedQuestionIndex === index
@@ -466,20 +464,18 @@ export const QuestionEditor = ({
 						})}
 
 						{optionFields.length < 6 && (
-							<div className="mt-6">
-								<Button
-									type="button"
-									variant="outline"
-									size="lg"
-									onClick={addOption}
-									className="group flex w-full items-center justify-center border-2 border-gray-300 border-dashed py-8 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
-								>
-									<Plus className="mr-2 h-5 w-5 text-gray-600 group-hover:text-blue-700" />
-									<span className="font-semibold text-base text-gray-600 transition-colors duration-200 group-hover:text-blue-700">
-										Add Option {String.fromCharCode(65 + optionFields.length)}
-									</span>
-								</Button>
-							</div>
+							<Button
+								type="button"
+								variant="outline"
+								size="lg"
+								onClick={addOption}
+								className="group flex w-full items-center justify-center border-2 border-gray-300 border-dashed py-9 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50"
+							>
+								<Plus className="mr-2 h-5 w-5 text-gray-600 group-hover:text-blue-700" />
+								<span className="font-semibold text-base text-gray-600 transition-colors duration-200 group-hover:text-blue-700">
+									Add Option {String.fromCharCode(65 + optionFields.length)}
+								</span>
+							</Button>
 						)}
 					</div>
 				</div>
