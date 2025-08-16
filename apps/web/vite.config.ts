@@ -9,7 +9,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
-			"@server": path.resolve(__dirname, "../server/src"),
+			"@server-schemas": path.resolve(__dirname, "../server/src/lib/schema"),
+			"@server-types": path.resolve(__dirname, "../server/src/lib/types"),
 		},
 	},
 });

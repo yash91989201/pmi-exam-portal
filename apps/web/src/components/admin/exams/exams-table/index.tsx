@@ -1,4 +1,4 @@
-import type { ExamType } from "@server/lib/types";
+import type { ExamType } from "@server-types/index";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -53,10 +53,10 @@ export const ExamsTable = ({
 		}),
 	);
 
-	const handleLimitChange = (newLimit: string) => {
+	const handleLimitChange = (limit: number) => {
 		navigate({
 			to: "/dashboard/exams",
-			search: { page: 1, limit: Number.parseInt(newLimit) },
+			search: { page: 1, limit },
 		});
 	};
 
@@ -66,7 +66,10 @@ export const ExamsTable = ({
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
 					<span className="text-sm">Rows per page</span>
-					<Select value={limit.toString()} onValueChange={handleLimitChange}>
+					<Select
+						value={limit.toString()}
+						onValueChange={(value) => handleLimitChange(+value)}
+					>
 						<SelectTrigger className="w-[70px]">
 							<SelectValue />
 						</SelectTrigger>
