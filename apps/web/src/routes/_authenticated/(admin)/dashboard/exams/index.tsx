@@ -2,7 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
 import z from "zod";
-import { ExamsTable } from "@/components/admin/exams/exams-table";
+import {
+	ExamsTable,
+	ExamsTableSkeleton,
+} from "@/components/admin/exams/exams-table";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -40,11 +43,10 @@ function RouteComponent() {
 				<CardHeader className="flex flex-row items-center justify-between">
 					<div>
 						<CardTitle className="mb-1 font-bold text-3xl tracking-tight">
-							Exams Management
+							Manage Exams
 						</CardTitle>
 						<CardDescription className="max-w-lg">
-							Create and manage PMI certification exams. Use the data table
-							below to view, sort, and manage all exams.
+							Create and manage PMI certification exams.
 						</CardDescription>
 					</div>
 					<Button asChild>
@@ -55,7 +57,7 @@ function RouteComponent() {
 					</Button>
 				</CardHeader>
 				<CardContent>
-					<Suspense fallback={"loading"}>
+					<Suspense fallback={<ExamsTableSkeleton />}>
 						<ExamsTable limit={limit} page={page} />
 					</Suspense>
 				</CardContent>

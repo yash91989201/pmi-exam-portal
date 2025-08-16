@@ -30,66 +30,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
-const columns: ColumnDef<ExamType>[] = [
-	{
-		accessorKey: "certification",
-		header: ({ column }) => (
-			<Button
-				variant="ghost"
-				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-			>
-				Name
-				<ArrowUpDown className="ml-2 h-4 w-4" />
-			</Button>
-		),
-		cell: ({ row }) => (
-			<span className="font-medium">{row.getValue("certification")}</span>
-		),
-	},
-	{
-		accessorKey: "mark",
-		header: () => <div className="text-right">Mark</div>,
-		cell: ({ row }) => <div className="text-right">{row.getValue("mark")}</div>,
-	},
-	{
-		id: "actions",
-		cell: ({ row }) => {
-			const exam = row.original;
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
-							<span className="sr-only">Open menu</span>
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(exam.id)}
-						>
-							Copy Exam ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View details</DropdownMenuItem>
-						<DropdownMenuItem>Delete</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
-		},
-	},
-];
-
-export function ExamsTable({
+export const ExamsTable = ({
 	limit = 10,
 	page = 1,
 }: {
 	limit?: number;
 	page?: number;
-}) {
+}) => {
 	const navigate = useNavigate();
 	const {
 		data: { exams, totalPages, hasNextPage, hasPreviousPage },
@@ -127,8 +78,8 @@ export function ExamsTable({
 						</SelectContent>
 					</Select>
 				</div>
-				<Pagination className="w-80">
-					<PaginationContent className="justify-end">
+				<Pagination className="mx-0 w-fit justify-end">
+					<PaginationContent>
 						<PaginationItem>
 							<Link
 								to="/dashboard/exams"
@@ -190,4 +141,108 @@ export function ExamsTable({
 			</div>
 		</>
 	);
-}
+};
+
+const columns: ColumnDef<ExamType>[] = [
+	{
+		accessorKey: "certification",
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+			>
+				Name
+				<ArrowUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
+		cell: ({ row }) => (
+			<span className="font-medium">{row.getValue("certification")}</span>
+		),
+	},
+	{
+		accessorKey: "mark",
+		header: () => <div className="text-right">Mark</div>,
+		cell: ({ row }) => <div className="text-right">{row.getValue("mark")}</div>,
+	},
+	{
+		id: "actions",
+		cell: ({ row }) => {
+			const exam = row.original;
+			return (
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" className="h-8 w-8 p-0">
+							<span className="sr-only">Open menu</span>
+							<MoreHorizontal className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuLabel>Actions</DropdownMenuLabel>
+						<DropdownMenuItem
+							onClick={() => navigator.clipboard.writeText(exam.id)}
+						>
+							Copy Exam ID
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem>View details</DropdownMenuItem>
+						<DropdownMenuItem>Delete</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			);
+		},
+	},
+];
+
+export const ExamsTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
+	return (
+		<>
+			{/* Table Header and Rows Skeleton */}
+			<div className="w-full">
+				<div className="rounded-md border">
+					{/* Table Header */}
+					<div className="border-b bg-muted/50 px-4 py-3">
+						<div className="flex items-center justify-between">
+							<div className="flex items-center space-x-4">
+								<Skeleton className="h-4 w-20" />
+								<Skeleton className="h-4 w-16" />
+								<Skeleton className="h-4 w-16" />
+							</div>
+						</div>
+					</div>
+
+					{/* Table Rows */}
+					{Array.from({ length: limit }, (_, i) => (
+						<div
+							key={i.toString()}
+							className="border-b px-4 py-3 last:border-b-0"
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center space-x-4">
+									<Skeleton className="h-4 w-32" />
+									<div className="flex-1" />
+									<Skeleton className="h-4 w-12" />
+								</div>
+								<Skeleton className="h-8 w-8 rounded" />
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* Pagination Skeleton */}
+			<div className="my-4 flex items-center justify-between">
+				<div className="flex items-center space-x-2">
+					<Skeleton className="h-4 w-20" />
+					<Skeleton className="h-9 w-[70px]" />
+				</div>
+				<div className="flex items-center space-x-1">
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+				</div>
+			</div>
+		</>
+	);
+};
