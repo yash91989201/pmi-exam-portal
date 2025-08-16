@@ -26,7 +26,8 @@
 - Only use dependencies already referenced in package.json
 - Any addition of libraries must be reflected in both frontend and backend package.json where appropriate
 - Always verify compatibility with Bun runtime before using new modules
-
+- When new dependencies are required (e.g., for new UI components), add them to the appropriate package.json (frontend or backend) and document the addition in the PR description
+- Ensure any new library is reflected in the relevant package.json files and is compatible with the Bun runtime before use
 ## Workflow Standards
 - Maintain type safety across stack (database, backend, frontend)
 - After modifying API or DB schema, run type checks and update affected types
