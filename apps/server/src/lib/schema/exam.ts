@@ -1,4 +1,22 @@
+import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
+import { exam } from "@/db/schema";
+
+export const ExamSchema = createSelectSchema(exam);
+
+export const ListExamsInput = z.object({
+	page: z.number().min(1).default(1).catch(1),
+	limit: z.number().min(1).max(20).default(10).catch(10),
+});
+
+export const ListExamsOutput = z.object({
+	exams: z.array(ExamSchema),
+	page: z.number(),
+	totalPages: z.number(),
+	totalCount: z.number(),
+	hasPreviousPage: z.boolean().default(false),
+	hasNextPage: z.boolean().default(false),
+});
 
 const OptionSchema = z.object({
 	text: z.string().min(1, "Option text is required"),
@@ -63,7 +81,7 @@ const ExcelQuestionRowSchema = z.object({
 			const parsed = Number.parseInt(val.toString(), 10);
 			if (Number.isNaN(parsed) || parsed <= 0) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: "custom",
 					message: "Marks must be a positive integer",
 				});
 				return z.NEVER;
