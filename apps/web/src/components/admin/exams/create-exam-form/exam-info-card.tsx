@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, ListChecks, Target, Trophy } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	FormControl,
@@ -154,6 +155,8 @@ export const ExamInfoCard = () => {
 				<BulkQuestionUploadSection />
 
 				<Separator />
+
+				<Button>Create Exam</Button>
 
 				<div>
 					<Label className="mb-2 block font-medium text-sm">Exam Stats</Label>
