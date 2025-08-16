@@ -128,7 +128,7 @@ export function ExamsTable({
 					</Select>
 				</div>
 				<Pagination className="w-80">
-					<PaginationContent>
+					<PaginationContent className="justify-end">
 						<PaginationItem>
 							<Link
 								to="/dashboard/exams"
