@@ -48,14 +48,34 @@ export const userExam = pgTable("user_exam", {
 		.notNull()
 		.references(() => exam.id),
 	assignedAt: timestamp("assigned_at").notNull().defaultNow(),
+	attempts: smallint("attempts").notNull().default(1),
+	maxAttempts: smallint("max_attempts").notNull().default(1),
+});
+
+export const examAttempt = pgTable("exam_attempt", {
+	id: cuid2("id").defaultRandom().primaryKey(),
+	userExamId: cuid2("user_exam_id")
+		.notNull()
+		.references(() => userExam.id, { onDelete: "cascade" }),
 	startedAt: timestamp("started_at"),
 	completedAt: timestamp("completed_at"),
 	status: text("status").notNull().default("assigned"), // assigned, in_progress, completed, abandoned
-	score: integer("score"),
-	maxScore: integer("max_score"),
+	marks: integer("marks"),
+	attemptNumber: smallint("attempt_number").notNull().default(1),
 	timeSpent: integer("time_spent"), // in minutes
-	attempts: smallint("attempts").notNull().default(1),
-	maxAttempts: smallint("max_attempts").notNull().default(1),
+});
+
+export const attemptResponse = pgTable("attempt_response", {
+	id: cuid2("id").defaultRandom().primaryKey(),
+	userExamId: cuid2("user_exam_id")
+		.notNull()
+		.references(() => userExam.id, { onDelete: "cascade" }),
+	questionId: cuid2("question_id")
+		.notNull()
+		.references(() => question.id),
+	optionId: cuid2("option_id").references(() => option.id), // nullable - question might be unanswered
+	score: smallint("score").notNull().default(0), // points earned for this response
+	isCorrect: boolean("is_correct").notNull().default(false),
 });
 
 export const adminSetting = pgTable("admin_setting", {
@@ -74,18 +94,51 @@ export const questionRelations = relations(question, ({ one, many }) => ({
 		references: [exam.id],
 	}),
 	options: many(option),
+	attemptResponses: many(attemptResponse),
 }));
 
-export const optionRelations = relations(option, ({ one }) => ({
+export const optionRelations = relations(option, ({ one, many }) => ({
 	question: one(question, {
 		fields: [option.questionId],
 		references: [question.id],
 	}),
+	attemptResponses: many(attemptResponse),
 }));
 
-export const userExamRelations = relations(userExam, ({ one }) => ({
+export const userExamRelations = relations(userExam, ({ one, many }) => ({
 	exam: one(exam, {
 		fields: [userExam.examId],
 		references: [exam.id],
 	}),
+	user: one(user, {
+		fields: [userExam.userId],
+		references: [user.id],
+	}),
+	attempts: many(examAttempt),
+	responses: many(attemptResponse),
 }));
+
+export const examAttemptRelations = relations(examAttempt, ({ one }) => ({
+	userExam: one(userExam, {
+		fields: [examAttempt.userExamId],
+		references: [userExam.id],
+	}),
+}));
+
+export const attemptResponseRelations = relations(
+	attemptResponse,
+	({ one }) => ({
+		userExam: one(userExam, {
+			fields: [attemptResponse.userExamId],
+			references: [userExam.id],
+		}),
+		question: one(question, {
+			fields: [attemptResponse.questionId],
+			references: [question.id],
+		}),
+		option: one(option, {
+			fields: [attemptResponse.optionId],
+			references: [option.id],
+		}),
+	}),
+);
