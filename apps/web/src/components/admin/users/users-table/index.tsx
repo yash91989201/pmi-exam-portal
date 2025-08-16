@@ -1,6 +1,7 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { UserWithRole } from "better-auth/plugins/admin";
 import {
 	ArrowUpDown,
 	ChevronLeft,
@@ -37,21 +38,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { orpcClient, queryUtils } from "@/utils/orpc";
-
-// Type definition for user data
-interface User {
-	id: string;
-	name?: string | null;
-	email: string;
-	emailVerified: boolean;
-	image?: string | null;
-	role?: string | null;
-	banned?: boolean | null;
-	banReason?: string | null;
-	banExpires?: Date | null;
-	createdAt: Date;
-	updatedAt: Date;
-}
 
 export const UsersTable = ({
 	limit = 10,
@@ -117,7 +103,7 @@ export const UsersTable = ({
 		}
 	};
 
-	const columns: ColumnDef<User>[] = [
+	const columns: ColumnDef<UserWithRole>[] = [
 		{
 			accessorKey: "name",
 			header: ({ column }) => (

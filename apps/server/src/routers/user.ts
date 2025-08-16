@@ -1,7 +1,8 @@
 import { ORPCError } from "@orpc/server";
+import type { UserWithRole } from "better-auth/plugins";
 import { z } from "zod";
-import { adminProcedure } from "@/lib/orpc";
 import { auth } from "@/lib/auth";
+import { adminProcedure } from "@/lib/orpc";
 
 export const userRouter = {
 	listUsers: adminProcedure
@@ -13,21 +14,7 @@ export const userRouter = {
 		)
 		.output(
 			z.object({
-				users: z.array(
-					z.object({
-						id: z.string(),
-						name: z.string().nullable(),
-						email: z.string(),
-						emailVerified: z.boolean(),
-						image: z.string().nullable(),
-						role: z.string().nullable(),
-						banned: z.boolean().nullable(),
-						banReason: z.string().nullable(),
-						banExpires: z.date().nullable(),
-						createdAt: z.date(),
-						updatedAt: z.date(),
-					}),
-				),
+				users: z.array(z.custom<UserWithRole>()),
 				total: z.number(),
 				page: z.number(),
 				totalPages: z.number(),
@@ -40,36 +27,23 @@ export const userRouter = {
 				const { page, limit } = input;
 				const offset = (page - 1) * limit;
 
-				const result = await auth.api.listUsers({
+				const { users = [], total = 0 } = await auth.api.listUsers({
 					query: {
 						limit: limit.toString(),
 						offset: offset.toString(),
 						filterField: "role",
-						filterOperator: "ne", // not equal to admin
+						filterOperator: "ne",
 						filterValue: "admin",
 					},
 				});
 
-				// Transform the users to match our expected schema
-				const users = (result.users || []).map((user) => ({
-					id: user.id,
-					name: user.name || null,
-					email: user.email,
-					emailVerified: user.emailVerified,
-					image: user.image || null,
-					role: user.role || null,
-					banned: user.banned || null,
-					banReason: user.banReason || null,
-					banExpires: user.banExpires || null,
-					createdAt: user.createdAt,
-					updatedAt: user.updatedAt,
-				}));
-
-				const total = result.total || 0;
 				const totalPages = Math.ceil(total / limit);
 
 				return {
-					users,
+					users: users.map((user) => ({
+						...user,
+						image: user.image ?? null,
+					})),
 					total,
 					page,
 					totalPages,
@@ -188,4 +162,3 @@ export const userRouter = {
 			}
 		}),
 };
-
