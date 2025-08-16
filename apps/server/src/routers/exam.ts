@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/server";
-import { count } from "drizzle-orm";
+import { asc, count } from "drizzle-orm";
 import z from "zod";
 import { exam, option, question } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
@@ -7,26 +7,10 @@ import {
 	BulkUploadExcelOutput,
 	CreateExamInput,
 	CreateExamOutput,
+	ListExamsInput,
+	ListExamsOutput,
 } from "@/lib/schema";
 import { importExcelData } from "@/utils/excel-import";
-
-// Add zod schemas for input/output
-const ListExamsInput = z.object({
-	page: z.number().min(1).default(1),
-	pageSize: z.number().min(1).max(100).default(10),
-});
-const ExamRow = z.object({
-	id: z.string(),
-	certification: z.string(),
-	mark: z.number(),
-	timeLimit: z.number(),
-});
-const ListExamsOutput = z.object({
-	total: z.number(),
-	page: z.number(),
-	pageSize: z.number(),
-	exams: z.array(ExamRow),
-});
 
 export const examRouter = {
 	createExam: adminProcedure
@@ -78,12 +62,7 @@ export const examRouter = {
 				return {
 					success: true,
 					message: "Exam created successfully with questions and options",
-					data: {
-						id: result.id,
-						certification: result.certification,
-						mark: result.mark,
-						timeLimit: result.timeLimit,
-					},
+					data: result,
 				};
 			} catch (error) {
 				console.error("Error creating exam:", error);
@@ -133,25 +112,29 @@ export const examRouter = {
 		.input(ListExamsInput)
 		.output(ListExamsOutput)
 		.handler(async ({ context, input }) => {
-			const { page, pageSize } = input;
-			const offset = (page - 1) * pageSize;
+			const { page, limit } = input;
 
-			const [totalResult] = await context.db
-				.select({ count: count() })
-				.from(exam);
+			const [exams, totalCount] = await Promise.all([
+				context.db.query.exam.findMany({
+					limit,
+					offset: (page - 1) * limit,
+					orderBy: asc(exam.id),
+				}),
+				context.db
+					.select({ count: count(exam.id) })
+					.from(exam)
+					.then((r) => Number(r[0]?.count || 0)),
+			]);
 
-			const total = Number(totalResult.count);
+			const totalPages = Math.ceil(totalCount / limit);
 
-			const examsRows = await context.db
-				.select()
-				.from(exam)
-				.offset(offset)
-				.limit(pageSize);
 			return {
-				total,
+				exams,
 				page,
-				pageSize,
-				exams: examsRows,
+				totalPages,
+				totalCount,
+				hasPreviousPage: page > 1,
+				hasNextPage: page < totalPages,
 			};
 		}),
 };

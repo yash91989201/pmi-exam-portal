@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import { Suspense } from "react";
 import z from "zod";
+import { ExamsTable } from "@/components/admin/exams/exams-table";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -10,24 +11,20 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import { queryUtils } from "@/utils/orpc";
+
+export const RouteSearchSchema = z.object({
+	page: z.number().min(1).default(1).catch(1),
+	limit: z.number().min(1).max(20).default(10).catch(10),
+});
 
 export const Route = createFileRoute(
 	"/_authenticated/(admin)/dashboard/exams/",
 )({
-	validateSearch: z.object({ page: z.number().default(1) }),
-	beforeLoad: async ({ context, search }) => {
-		context.queryClient.ensureQueryData(
-			context.queryUtils.exam.listExams.queryOptions({
-				input: { page: search.page, pageSize: 1 },
+	validateSearch: RouteSearchSchema,
+	beforeLoad: async ({ context: { queryClient, queryUtils }, search }) => {
+		queryClient.ensureQueryData(
+			queryUtils.exam.listExams.queryOptions({
+				input: search,
 			}),
 		);
 	},
@@ -35,114 +32,32 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-	const { page } = Route.useSearch();
-	const pageSize = 10;
-	const { data, isLoading, error } = useQuery(
-		queryUtils.exam.listExams.queryOptions({ input: { page, pageSize } }),
-	);
-
-	const total = data?.total || 0;
-	const lastPage = Math.ceil(total / pageSize) || 1;
+	const { limit, page } = Route.useSearch();
 
 	return (
-		<div className="space-y-3">
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="font-bold text-3xl tracking-tight">
-						Exams Management
-					</h1>
-					<p className="text-muted-foreground">
-						Create and manage PMI certification exams
-					</p>
-				</div>
-				<Button asChild>
-					<Link to="/dashboard/exams/create-exam">
-						<Plus className="mr-2 h-4 w-4" />
-						Create New Exam
-					</Link>
-				</Button>
-			</div>
-
+		<div className="flex flex-col gap-6">
 			<Card>
-				<CardHeader>
-					<CardTitle>Existing Exams</CardTitle>
-					<CardDescription>
-						Manage your certification exams and their questions
-					</CardDescription>
+				<CardHeader className="flex flex-row items-center justify-between">
+					<div>
+						<CardTitle className="mb-1 font-bold text-3xl tracking-tight">
+							Exams Management
+						</CardTitle>
+						<CardDescription className="max-w-lg">
+							Create and manage PMI certification exams. Use the data table
+							below to view, sort, and manage all exams.
+						</CardDescription>
+					</div>
+					<Button asChild>
+						<Link to="/dashboard/exams/create-exam">
+							<Plus className="mr-1 size-4" />
+							<span>Create New Exam</span>
+						</Link>
+					</Button>
 				</CardHeader>
 				<CardContent>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Name</TableHead>
-								<TableHead>Description</TableHead>
-								<TableHead>Created</TableHead>
-								<TableHead>Updated</TableHead>
-								<TableHead>Actions</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{isLoading && (
-								<TableRow>
-									<TableCell colSpan={5} className="py-8 text-center">
-										Loading exams...
-									</TableCell>
-								</TableRow>
-							)}
-							{error && (
-								<TableRow>
-									<TableCell
-										colSpan={5}
-										className="py-8 text-center text-destructive"
-									>
-										Error loading exams: {error.message}
-									</TableCell>
-								</TableRow>
-							)}
-							{data && data.exams.length === 0 && (
-								<TableRow>
-									<TableCell
-										colSpan={5}
-										className="py-8 text-center text-muted-foreground"
-									>
-										No exams created yet. Create your first exam to get started.
-									</TableCell>
-								</TableRow>
-							)}
-							{data?.exams?.map((exam) => (
-								<TableRow key={exam.id}>
-									<TableCell>{exam.certification}</TableCell>
-									<TableCell>{exam.mark}</TableCell>
-									<TableCell>
-										{/* TODO: Actions - Edit/View/Delete */}
-										<Button variant="outline" size="sm">
-											View
-										</Button>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-					<div className="flex items-center justify-between pt-4">
-						<Button variant="outline" size="sm" disabled={page <= 1} asChild>
-							<Link to="/dashboard/exams" search={{ page: page - 1 }}>
-								Previous
-							</Link>
-						</Button>
-						<span>
-							Page {page} of {lastPage}
-						</span>
-						<Button
-							variant="outline"
-							size="sm"
-							disabled={page >= lastPage}
-							asChild
-						>
-							<Link to="/dashboard/exams" search={{ page: page - 1 }}>
-								Next
-							</Link>
-						</Button>
-					</div>
+					<Suspense fallback={"loading"}>
+						<ExamsTable limit={limit} page={page} />
+					</Suspense>
 				</CardContent>
 			</Card>
 		</div>

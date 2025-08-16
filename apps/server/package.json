@@ -28,6 +28,7 @@
 		"dotenv": "^17.2.1",
 		"drizzle-cuid2": "^2.1.0",
 		"drizzle-orm": "^0.44.4",
+		"drizzle-pagination": "^1.0.12",
 		"drizzle-zod": "^0.8.3",
 		"hono": "^4.9.2",
 		"pg": "^8.16.3",
