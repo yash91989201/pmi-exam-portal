@@ -38,7 +38,7 @@ export function AdminLoginForm() {
 				toast.success("Logged in successfully!");
 
 				router.navigate({
-					to: "/admin",
+					to: "/dashboard",
 				});
 			} catch (error) {
 				console.error(error);

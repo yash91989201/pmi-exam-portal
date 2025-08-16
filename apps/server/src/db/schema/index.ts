@@ -1,34 +1,38 @@
+import { cuid2 } from "drizzle-cuid2/postgres";
 import { relations } from "drizzle-orm";
-import { pgTable, smallint, text, varchar } from "drizzle-orm/pg-core";
+import { boolean, pgTable, smallint, text, varchar } from "drizzle-orm/pg-core";
 
 export const exam = pgTable("exam", {
-	id: varchar("id", { length: 32 }).primaryKey(),
+	id: cuid2("id").defaultRandom().primaryKey(),
 	certification: text("certification").notNull(),
 	mark: smallint("mark").notNull(),
+	timeLimit: smallint("time_limit").notNull().default(60),
 });
 
 export const question = pgTable("question", {
-	id: varchar("id", { length: 32 }).primaryKey(),
+	id: cuid2("id").defaultRandom().primaryKey(),
 	text: text("text").notNull(),
 	mark: smallint("mark").notNull(),
 	order: smallint("order").notNull(),
-	imageDriveId: varchar("image_drive_id", { length: 128 }).notNull(),
-	examId: varchar("exam_id", { length: 32 })
+	imageId: varchar("image_id", { length: 255 }),
+	examId: cuid2("exam_id")
 		.notNull()
-		.references(() => exam.id, {
-			onDelete: "cascade",
-		}),
+		.references(() => exam.id),
 });
 
 export const option = pgTable("option", {
-	id: varchar("id", { length: 32 }).primaryKey(),
+	id: cuid2("id").defaultRandom().primaryKey(),
 	text: text("text").notNull(),
-	isCorrect: smallint("is_correct").notNull(),
-	questionId: varchar("question_id", { length: 32 })
+	isCorrect: boolean("is_correct").notNull(),
+	order: smallint("order").notNull(),
+	questionId: cuid2("question_id")
 		.notNull()
-		.references(() => question.id, {
-			onDelete: "cascade",
-		}),
+		.references(() => question.id),
+});
+
+export const adminSetting = pgTable("admin_setting", {
+	key: text("key").primaryKey(),
+	value: text("value").notNull(),
 });
 
 export const examRelations = relations(exam, ({ many }) => ({
@@ -49,8 +53,3 @@ export const optionRelations = relations(option, ({ one }) => ({
 		references: [question.id],
 	}),
 }));
-
-export const adminSetting = pgTable("admin_setting", {
-	key: text("key").primaryKey(),
-	value: text("value").notNull(),
-});

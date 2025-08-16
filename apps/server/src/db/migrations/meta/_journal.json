@@ -1,20 +1,27 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1753951903919,
-      "tag": "0000_clean_power_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1753953151537,
-      "tag": "0001_gigantic_mariko_yashida",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1754192216593,
+			"tag": "0000_amusing_domino",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1754192489929,
+			"tag": "0001_safe_turbo",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1755111594423,
+			"tag": "0002_modern_matthew_murdock",
+			"breakpoints": true
+		}
+	]
 }

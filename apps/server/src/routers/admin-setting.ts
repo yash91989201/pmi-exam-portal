@@ -14,7 +14,7 @@ import {
 	toggleRegistration,
 } from "@/utils/admin-settings";
 
-export const adminSetting = {
+export const adminSettingRouter = {
 	toggleRegistration: publicProcedure
 		.input(ToggleRegistrationInput)
 		.output(ToggleRegistrationOutput)
