@@ -1,1 +1,0 @@
-ALTER TABLE "exam" ADD COLUMN "time_limit" smallint DEFAULT 60 NOT NULL;
