@@ -31,7 +31,7 @@ function RouteComponent() {
 	const { limit, page } = Route.useSearch();
 
 	return (
-		<div className="container mx-auto p-6">
+		<div className="container mx-auto">
 			<div className="flex flex-col gap-6">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between">
@@ -40,7 +40,8 @@ function RouteComponent() {
 								Manage Users
 							</CardTitle>
 							<CardDescription className="max-w-lg">
-								View and manage user accounts, including banning, unbanning, and deleting users.
+								View and manage user accounts, including banning, unbanning, and
+								deleting users.
 							</CardDescription>
 						</div>
 						<Button asChild>
