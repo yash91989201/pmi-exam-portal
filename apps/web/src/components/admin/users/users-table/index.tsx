@@ -36,8 +36,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { orpcClient, queryUtils } from "@/utils/orpc";
+import { queryUtils } from "@/utils/orpc";
 
 export const UsersTable = ({
 	limit = 10,
@@ -48,24 +49,41 @@ export const UsersTable = ({
 }) => {
 	const navigate = useNavigate();
 
-	const { data: usersData, refetch } = useSuspenseQuery({
-		queryKey: ["users", { limit, page }],
-		queryFn: async () => {
-			return await orpcClient.user.listUsers({ page, limit });
+	const { data: usersData, refetch: refetchUserList } = useSuspenseQuery(
+		queryUtils.user.listUsers.queryOptions({
+			input: {
+				limit,
+				page,
+			},
+		}),
+	);
+
+	const { mutateAsync: deleteUser, isPending: isDeletingUser } = useMutation({
+		mutationFn: async ({ userId }: { userId: string }) => {
+			await authClient.admin.removeUser({ userId });
+		},
+		onSettled: () => {
+			refetchUserList();
 		},
 	});
 
-	const { mutateAsync: deleteUser, isPending: isDeletingUser } = useMutation(
-		queryUtils.user.deleteUser.mutationOptions(),
-	);
+	const { mutateAsync: banUser, isPending: isBanningUser } = useMutation({
+		mutationFn: async ({ userId }: { userId: string }) => {
+			await authClient.admin.banUser({ userId });
+		},
+		onSettled: () => {
+			refetchUserList();
+		},
+	});
 
-	const { mutateAsync: banUser, isPending: isBanningUser } = useMutation(
-		queryUtils.user.banUser.mutationOptions(),
-	);
-
-	const { mutateAsync: unbanUser, isPending: isUnbanningUser } = useMutation(
-		queryUtils.user.unbanUser.mutationOptions(),
-	);
+	const { mutateAsync: unbanUser, isPending: isUnbanningUser } = useMutation({
+		mutationFn: async ({ userId }: { userId: string }) => {
+			await authClient.admin.unbanUser({ userId });
+		},
+		onSettled: () => {
+			refetchUserList();
+		},
+	});
 
 	const users = usersData.users;
 
@@ -74,33 +92,6 @@ export const UsersTable = ({
 			to: "/dashboard/users",
 			search: { page: 1, limit: Number.parseInt(newLimit, 10) },
 		});
-	};
-
-	const handleDeleteUser = async (userId: string) => {
-		try {
-			await deleteUser({ userId });
-			await refetch();
-		} catch (error) {
-			console.error("Error deleting user:", error);
-		}
-	};
-
-	const handleBanUser = async (userId: string) => {
-		try {
-			await banUser({ userId });
-			await refetch();
-		} catch (error) {
-			console.error("Error banning user:", error);
-		}
-	};
-
-	const handleUnbanUser = async (userId: string) => {
-		try {
-			await unbanUser({ userId });
-			await refetch();
-		} catch (error) {
-			console.error("Error unbanning user:", error);
-		}
 	};
 
 	const columns: ColumnDef<UserWithRole>[] = [
@@ -189,7 +180,7 @@ export const UsersTable = ({
 							<DropdownMenuSeparator />
 							{user.banned ? (
 								<DropdownMenuItem
-									onClick={() => handleUnbanUser(user.id)}
+									onClick={() => unbanUser({ userId: user.id })}
 									className="text-green-600"
 								>
 									<ShieldOff className="mr-2 h-4 w-4" />
@@ -197,7 +188,7 @@ export const UsersTable = ({
 								</DropdownMenuItem>
 							) : (
 								<DropdownMenuItem
-									onClick={() => handleBanUser(user.id)}
+									onClick={() => banUser({ userId: user.id })}
 									className="text-yellow-600"
 								>
 									<Shield className="mr-2 h-4 w-4" />
@@ -205,7 +196,7 @@ export const UsersTable = ({
 								</DropdownMenuItem>
 							)}
 							<DropdownMenuItem
-								onClick={() => handleDeleteUser(user.id)}
+								onClick={() => deleteUser({ userId: user.id })}
 								className="text-red-600"
 							>
 								<Trash2 className="mr-2 h-4 w-4" />

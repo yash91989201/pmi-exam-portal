@@ -1,28 +1,14 @@
 import { ORPCError } from "@orpc/server";
-import type { UserWithRole } from "better-auth/plugins";
-import { z } from "zod";
+import z from "zod";
 import { auth } from "@/lib/auth";
 import { adminProcedure } from "@/lib/orpc";
+import { ListUsersInput, ListUsersOutput } from "@/lib/schema";
 
 export const userRouter = {
 	listUsers: adminProcedure
-		.input(
-			z.object({
-				page: z.number().min(1).default(1),
-				limit: z.number().min(1).max(100).default(10),
-			}),
-		)
-		.output(
-			z.object({
-				users: z.array(z.custom<UserWithRole>()),
-				total: z.number(),
-				page: z.number(),
-				totalPages: z.number(),
-				hasNextPage: z.boolean(),
-				hasPreviousPage: z.boolean(),
-			}),
-		)
-		.handler(async ({ input }) => {
+		.input(ListUsersInput)
+		.output(ListUsersOutput)
+		.handler(async ({ input, context }) => {
 			try {
 				const { page, limit } = input;
 				const offset = (page - 1) * limit;
@@ -35,6 +21,7 @@ export const userRouter = {
 						filterOperator: "ne",
 						filterValue: "admin",
 					},
+					headers: context.headers,
 				});
 
 				const totalPages = Math.ceil(total / limit);
