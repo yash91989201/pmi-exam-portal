@@ -1,7 +1,7 @@
 import { publicProcedure } from "@/lib/orpc";
+import { adminRouter } from "./admin";
 import { adminSettingRouter } from "./admin-setting";
 import { examRouter } from "./exam";
-import { userRouter } from "./user";
 
 export const appRouter = {
 	healthCheck: publicProcedure.handler(() => {
@@ -9,7 +9,7 @@ export const appRouter = {
 	}),
 	adminSetting: adminSettingRouter,
 	exam: examRouter,
-	user: userRouter,
+	admin: adminRouter,
 };
 
 export type AppRouter = typeof appRouter;

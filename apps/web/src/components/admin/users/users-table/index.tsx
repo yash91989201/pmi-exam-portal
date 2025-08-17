@@ -50,7 +50,7 @@ export const UsersTable = ({
 	const navigate = useNavigate();
 
 	const { data: usersData, refetch: refetchUserList } = useSuspenseQuery(
-		queryUtils.user.listUsers.queryOptions({
+		queryUtils.admin.listUsers.queryOptions({
 			input: {
 				limit,
 				page,

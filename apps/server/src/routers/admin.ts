@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { adminProcedure } from "@/lib/orpc";
 import { ListUsersInput, ListUsersOutput } from "@/lib/schema";
 
-export const userRouter = {
+export const adminRouter = {
 	listUsers: adminProcedure
 		.input(ListUsersInput)
 		.output(ListUsersOutput)
