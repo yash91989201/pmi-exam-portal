@@ -48,7 +48,7 @@ export const userExam = pgTable("user_exam", {
 		.notNull()
 		.references(() => exam.id),
 	assignedAt: timestamp("assigned_at").notNull().defaultNow(),
-	attempts: smallint("attempts").notNull().default(1),
+	attempts: smallint("attempts").notNull().default(0),
 	maxAttempts: smallint("max_attempts").notNull().default(1),
 });
 

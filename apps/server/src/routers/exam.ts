@@ -1,12 +1,14 @@
 import { ORPCError } from "@orpc/server";
-import { asc, count } from "drizzle-orm";
+import { and, asc, count, eq, type SQL } from "drizzle-orm";
 import z from "zod";
-import { exam, option, question } from "@/db/schema";
+import { exam, examAttempt, option, question, userExam } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
 import {
 	BulkUploadExcelOutput,
 	CreateExamInput,
 	CreateExamOutput,
+	GetExamsAssignedStatusInput,
+	GetExamsAssignedStatusOutput,
 	ListExamsInput,
 	ListExamsOutput,
 } from "@/lib/schema";
@@ -112,29 +114,101 @@ export const examRouter = {
 		.input(ListExamsInput)
 		.output(ListExamsOutput)
 		.handler(async ({ context, input }) => {
-			const { page, limit } = input;
+			const { page, limit, filter } = input;
 
-			const [exams, totalCount] = await Promise.all([
-				context.db.query.exam.findMany({
-					limit,
-					offset: (page - 1) * limit,
-					orderBy: asc(exam.id),
-				}),
-				context.db
-					.select({ count: count(exam.id) })
-					.from(exam)
-					.then((r) => Number(r[0]?.count || 0)),
+			// Build dynamic query conditions
+			const whereConditions: SQL[] = [];
+			let needsJoin = false;
+
+			// Apply attemptCount filter if provided
+			if (filter?.attemptCount !== undefined) {
+				whereConditions.push(
+					eq(examAttempt.attemptNumber, filter.attemptCount),
+				);
+
+				needsJoin = true;
+			}
+
+			let examsBaseQuery = context.db.select().from(exam).$dynamic();
+
+			let examsCountBaseQuery = context.db
+				.select({ count: count(exam.id) })
+				.from(exam)
+				.$dynamic();
+
+			if (needsJoin) {
+				examsBaseQuery.innerJoin(
+					examAttempt,
+					eq(exam.id, examAttempt.userExamId),
+				);
+
+				examsCountBaseQuery.innerJoin(
+					examAttempt,
+					eq(exam.id, examAttempt.userExamId),
+				);
+			}
+
+			// Apply where conditions if any
+			if (whereConditions.length > 0) {
+				const combinedWhere =
+					whereConditions.length === 1
+						? whereConditions[0]
+						: and(...whereConditions);
+
+				examsBaseQuery = examsBaseQuery.where(combinedWhere);
+				examsCountBaseQuery = examsCountBaseQuery.where(combinedWhere);
+			}
+
+			// Execute queries
+			const [examsResult, totalCountResult] = await Promise.all([
+				examsBaseQuery
+					.limit(limit)
+					.offset((page - 1) * limit)
+					.orderBy(asc(exam.id))
+					.execute(),
+				examsCountBaseQuery.execute().then((r) => Number(r[0]?.count || 0)),
 			]);
 
-			const totalPages = Math.ceil(totalCount / limit);
+			const totalPages = Math.ceil(totalCountResult / limit);
 
 			return {
-				exams,
+				exams: examsResult,
 				page,
 				totalPages,
-				totalCount,
+				totalCount: totalCountResult,
 				hasPreviousPage: page > 1,
 				hasNextPage: page < totalPages,
+			};
+		}),
+	getExamsAssignedStatus: adminProcedure
+		.input(GetExamsAssignedStatusInput)
+		.output(GetExamsAssignedStatusOutput)
+		.handler(async ({ context, input }) => {
+			const examsAssignedStatus = await context.db
+				.select({
+					examId: exam.id,
+					examCertification: exam.certification,
+					assigned: userExam.userId,
+				})
+				.from(exam)
+				.leftJoin(
+					userExam,
+					and(
+						eq(userExam.userId, input.userId),
+						eq(userExam.examId, exam.id),
+						eq(userExam.attempts, 0),
+					),
+				)
+				.orderBy(asc(exam.id));
+
+			const transformedResult = examsAssignedStatus.map((item) => ({
+				examId: item.examId,
+				examCertification: item.examCertification,
+				assigned: item.assigned !== null,
+			}));
+
+			return {
+				examsAssignedStatus: transformedResult,
 			};
 		}),
 };

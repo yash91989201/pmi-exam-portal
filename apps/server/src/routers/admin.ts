@@ -1,5 +1,7 @@
 import { ORPCError } from "@orpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import z from "zod";
+import { userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { auth } from "@/lib/auth";
 import { adminProcedure } from "@/lib/orpc";
@@ -7,8 +9,31 @@ import {
 	GetUserInput,
 	ListUsersInput,
 	ListUsersOutput,
+	UpdateExamsAssignedStatusInput,
+	UpdateExamsAssignedStatusOutput,
 	UserSchema,
 } from "@/lib/schema";
+
+const GetUserExamsInput = z.object({
+	userId: z.cuid2("Invalid user ID format"),
+});
+
+const GetUserExamsOutput = z.array(
+	z.object({
+		id: z.string(),
+		userId: z.string(),
+		examId: z.string(),
+		assignedAt: z.date(),
+		attempts: z.number(),
+		maxAttempts: z.number(),
+		exam: z.object({
+			id: z.string(),
+			certification: z.string(),
+			mark: z.number(),
+			timeLimit: z.number(),
+		}),
+	}),
+);
 
 export const adminRouter = {
 	listUsers: adminProcedure
@@ -60,5 +85,124 @@ export const adminRouter = {
 			});
 
 			return existingUser;
+		}),
+	getUserExams: adminProcedure
+		.input(GetUserExamsInput)
+		.output(GetUserExamsOutput)
+		.handler(async ({ context, input }) => {
+			try {
+				const { userId } = input;
+
+				// Verify user exists
+				const existingUser = await context.db.query.user.findFirst({
+					where: eq(user.id, userId),
+				});
+
+				if (!existingUser) {
+					throw new ORPCError("User not found", { status: 404 });
+				}
+
+				// Fetch user exam assignments with exam details
+				const userExamAssignments = await context.db.query.userExam.findMany({
+					where: eq(userExam.userId, userId),
+					with: {
+						exam: true,
+					},
+				});
+
+				return userExamAssignments;
+			} catch (error) {
+				console.error("Error fetching user exams:", error);
+
+				if (error instanceof ORPCError) {
+					throw error;
+				}
+
+				throw new ORPCError(
+					error instanceof Error ? error.message : "Failed to fetch user exams",
+					{ status: 500 },
+				);
+			}
+		}),
+	updateExamsAssignedStatus: adminProcedure
+		.input(UpdateExamsAssignedStatusInput)
+		.output(UpdateExamsAssignedStatusOutput)
+		.handler(async ({ context, input }) => {
+			try {
+				const { userId, examsAssignedStatus: userExamsAssignedStatus } = input;
+
+				// Verify user exists
+				const existingUser = await context.db.query.user.findFirst({
+					where: eq(user.id, userId),
+				});
+
+				if (!existingUser) {
+					throw new ORPCError("User not found", { status: 404 });
+				}
+
+				const results = await context.db.transaction(async (tx) => {
+					const processResults = [];
+
+					for (const examAssignment of userExamsAssignedStatus) {
+						const { examId, assigned } = examAssignment;
+
+						const existingUserExam = await tx.query.userExam.findFirst({
+							where: and(
+								eq(userExam.userId, userId),
+								eq(userExam.examId, examId),
+							),
+						});
+
+						if (assigned) {
+							if (!existingUserExam) {
+								await tx.insert(userExam).values({
+									userId,
+									examId,
+									assignedAt: new Date(),
+									attempts: 0,
+									maxAttempts: 1,
+								});
+							}
+						} else {
+							if (existingUserExam) {
+								await tx
+									.delete(userExam)
+									.where(
+										and(
+											eq(userExam.userId, userId),
+											eq(userExam.examId, examId),
+										),
+									);
+							}
+						}
+
+						processResults.push({
+							examId,
+							assigned,
+						});
+					}
+
+					return processResults;
+				});
+
+				return {
+					success: true,
+					message: "User exam assignments updated successfully",
+					data: results,
+				};
+			} catch (error) {
+				console.error("Error managing user exams:", error);
+
+				if (error instanceof ORPCError) {
+					throw error;
+				}
+
+				throw new ORPCError(
+					error instanceof Error
+						? error.message
+						: "Failed to manage user exams",
+					{ status: 500 },
+				);
+			}
 		}),
 };

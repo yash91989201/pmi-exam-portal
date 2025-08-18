@@ -7,6 +7,50 @@ export const ExamSchema = createSelectSchema(exam);
 export const ListExamsInput = z.object({
 	page: z.number().min(1).default(1).catch(1),
 	limit: z.number().min(1).max(20).default(10).catch(10),
+	filter: z
+		.object({
+			attemptCount: z.number().int().optional(),
+		})
+		.optional(),
+});
+
+export const UpdateExamsAssignedStatusInput = z.object({
+	userId: z.cuid2("Invalid user ID format"),
+	examsAssignedStatus: z
+		.array(
+			z.object({
+				examId: z.cuid2("Invalid exam ID format"),
+				assigned: z.boolean(),
+			}),
+		)
+		.min(1, "At least one exam must be provided"),
+});
+
+export const UpdateExamsAssignedStatusOutput = z.object({
+	success: z.boolean(),
+	message: z.string(),
+	data: z
+		.array(
+			z.object({
+				examId: z.cuid2(),
+				assigned: z.boolean(),
+			}),
+		)
+		.optional(),
+});
+
+export const GetExamsAssignedStatusInput = z.object({
+	userId: z.cuid2("Invalid user ID format"),
+});
+
+export const GetExamsAssignedStatusOutput = z.object({
+	examsAssignedStatus: z.array(
+		z.object({
+			examId: z.cuid2("Invalid exam ID format"),
+			examCertification: z.string(),
+			assigned: z.boolean(),
+		}),
+	),
 });
 
 export const ListExamsOutput = z.object({
