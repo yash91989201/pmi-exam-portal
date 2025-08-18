@@ -1,7 +1,14 @@
 import { ORPCError } from "@orpc/server";
+import { eq } from "drizzle-orm";
+import { user } from "@/db/schema/auth";
 import { auth } from "@/lib/auth";
 import { adminProcedure } from "@/lib/orpc";
-import { ListUsersInput, ListUsersOutput } from "@/lib/schema";
+import {
+	GetUserInput,
+	ListUsersInput,
+	ListUsersOutput,
+	UserSchema,
+} from "@/lib/schema";
 
 export const adminRouter = {
 	listUsers: adminProcedure
@@ -43,5 +50,15 @@ export const adminRouter = {
 					{ status: 500 },
 				);
 			}
+		}),
+	getUser: adminProcedure
+		.input(GetUserInput)
+		.output(UserSchema.optional())
+		.handler(async ({ input, context }) => {
+			const existingUser = await context.db.query.user.findFirst({
+				where: eq(user.id, input.userId),
+			});
+
+			return existingUser;
 		}),
 };

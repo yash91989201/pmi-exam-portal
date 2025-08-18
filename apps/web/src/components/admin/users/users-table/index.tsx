@@ -332,6 +332,21 @@ export const getColumn = ({
 			),
 		},
 		{
+			id: "view",
+			cell: ({ row }) => (
+				<Link
+					to="/dashboard/users/$userId"
+					params={{ userId: row.original.id }}
+					className={buttonVariants({
+						size: "icon",
+						variant: "secondary",
+					})}
+				>
+					<Eye className="size-4.5" />
+				</Link>
+			),
+		},
+		{
 			id: "actions",
 			cell: ({ row }) => {
 				const user = row.original;

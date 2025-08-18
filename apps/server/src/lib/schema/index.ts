@@ -45,3 +45,7 @@ export const ListUsersOutput = z.object({
 	hasNextPage: z.boolean(),
 	hasPreviousPage: z.boolean(),
 });
+
+export const GetUserInput = z.object({
+	userId: z.string(),
+});
