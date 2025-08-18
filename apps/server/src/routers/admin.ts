@@ -1,11 +1,12 @@
 import { ORPCError } from "@orpc/server";
 import { and, eq } from "drizzle-orm";
-import z from "zod";
 import { userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { auth } from "@/lib/auth";
 import { adminProcedure } from "@/lib/orpc";
 import {
+	GetUserExamsDataInput,
+	GetUserExamsDataOutput,
 	GetUserInput,
 	ListUsersInput,
 	ListUsersOutput,
@@ -13,27 +14,6 @@ import {
 	UpdateExamsAssignedStatusOutput,
 	UserSchema,
 } from "@/lib/schema";
-
-const GetUserExamsInput = z.object({
-	userId: z.string(),
-});
-
-const GetUserExamsOutput = z.array(
-	z.object({
-		id: z.string(),
-		userId: z.string(),
-		examId: z.string(),
-		assignedAt: z.date(),
-		attempts: z.number(),
-		maxAttempts: z.number(),
-		exam: z.object({
-			id: z.string(),
-			certification: z.string(),
-			mark: z.number(),
-			timeLimit: z.number(),
-		}),
-	}),
-);
 
 export const adminRouter = {
 	listUsers: adminProcedure
@@ -85,44 +65,6 @@ export const adminRouter = {
 			});
 
 			return existingUser;
-		}),
-	getUserExams: adminProcedure
-		.input(GetUserExamsInput)
-		.output(GetUserExamsOutput)
-		.handler(async ({ context, input }) => {
-			try {
-				const { userId } = input;
-
-				// Verify user exists
-				const existingUser = await context.db.query.user.findFirst({
-					where: eq(user.id, userId),
-				});
-
-				if (!existingUser) {
-					throw new ORPCError("User not found", { status: 404 });
-				}
-
-				// Fetch user exam assignments with exam details
-				const userExamAssignments = await context.db.query.userExam.findMany({
-					where: eq(userExam.userId, userId),
-					with: {
-						exam: true,
-					},
-				});
-
-				return userExamAssignments;
-			} catch (error) {
-				console.error("Error fetching user exams:", error);
-
-				if (error instanceof ORPCError) {
-					throw error;
-				}
-
-				throw new ORPCError(
-					error instanceof Error ? error.message : "Failed to fetch user exams",
-					{ status: 500 },
-				);
-			}
 		}),
 	updateExamsAssignedStatus: adminProcedure
 		.input(UpdateExamsAssignedStatusInput)
@@ -204,5 +146,18 @@ export const adminRouter = {
 					{ status: 500 },
 				);
 			}
+		}),
+	getUserExamsData: adminProcedure
+		.input(GetUserExamsDataInput)
+		.output(GetUserExamsDataOutput)
+		.handler(async ({ context, input }) => {
+			const userExamsData = await context.db.query.userExam.findMany({
+				where: eq(userExam.userId, input.userId),
+				with: {
+					exam: true,
+				},
+			});
+
+			return { userExamsData };
 		}),
 };

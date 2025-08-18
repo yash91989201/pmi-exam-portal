@@ -1,6 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { UpdateExamsAssignmentForm } from "@/components/admin/user/update-exams-assignment-form";
+import {
+	UpdateExamsAssignmentForm,
+	UpdateExamsAssignmentFormSkeleton,
+} from "@/components/admin/user/update-exams-assignment-form";
 import { queryUtils } from "@/utils/orpc";
 
 export const Route = createFileRoute(
@@ -14,9 +17,10 @@ export const Route = createFileRoute(
 			queryUtils.exam.getExamsAssignedStatus.queryOptions({
 				input: { userId },
 			}),
-		)
+		);
 	},
 	component: RouteComponent,
+	pendingComponent: () => <UpdateExamsAssignmentFormSkeleton />,
 });
 
 function RouteComponent() {
@@ -25,13 +29,11 @@ function RouteComponent() {
 		data: { examsAssignedStatus },
 	} = useSuspenseQuery(
 		queryUtils.exam.getExamsAssignedStatus.queryOptions({ input: { userId } }),
-	)
+	);
 	return (
-		<div>
-			<UpdateExamsAssignmentForm
-				userId={userId}
-				examsAssignedStatus={examsAssignedStatus}
-			/>
-		</div>
-	)
+		<UpdateExamsAssignmentForm
+			userId={userId}
+			examsAssignedStatus={examsAssignedStatus}
+		/>
+	);
 }

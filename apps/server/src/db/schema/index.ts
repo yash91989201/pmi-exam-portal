@@ -59,7 +59,7 @@ export const examAttempt = pgTable("exam_attempt", {
 		.references(() => userExam.id, { onDelete: "cascade" }),
 	startedAt: timestamp("started_at"),
 	completedAt: timestamp("completed_at"),
-	status: text("status").notNull().default("assigned"), // assigned, in_progress, completed, abandoned
+	status: text("status").notNull().default("assigned"), // assigned, in_progress, completed, terminated, aborted
 	marks: integer("marks"),
 	attemptNumber: smallint("attempt_number").notNull().default(1),
 	timeSpent: integer("time_spent"), // in minutes

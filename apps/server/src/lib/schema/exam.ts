@@ -1,8 +1,9 @@
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
-import { exam } from "../../db/schema";
+import { exam, userExam } from "../../db/schema";
 
 export const ExamSchema = createSelectSchema(exam);
+export const UserExamSchema = createSelectSchema(userExam);
 
 export const ListExamsInput = z.object({
 	page: z.number().min(1).default(1).catch(1),
@@ -107,6 +108,18 @@ export const CreateExamOutput = z.object({
 			timeLimit: z.number(),
 		})
 		.optional(),
+});
+
+export const GetUserExamsDataInput = z.object({
+	userId: z.string(),
+});
+
+export const GetUserExamsDataOutput = z.object({
+	userExamsData: z.array(
+		UserExamSchema.extend({
+			exam: ExamSchema,
+		}),
+	),
 });
 
 // Excel import schema for validating uploaded data

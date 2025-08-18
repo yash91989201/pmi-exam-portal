@@ -16,6 +16,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { queryClient, queryUtils } from "@/utils/orpc";
 
@@ -87,7 +88,8 @@ export const UpdateExamsAssignmentForm = ({
 			<div className="space-y-3">
 				<h3 className="font-medium text-lg">Exam Assignments</h3>
 				<p className="text-muted-foreground text-sm">
-					Click on exam cards to assign or unassign exams for this user.
+					Click on exam cards to assign or unassign exams for this user. Only
+					exams with no attempts can be un-assigned.
 				</p>
 
 				{examsAssignedStatus.length > 0 && (
@@ -255,6 +257,50 @@ export const UpdateExamsAssignmentForm = ({
 					</div>
 				</form>
 			</Form>
+		</div>
+	);
+};
+
+export const UpdateExamsAssignmentFormSkeleton = () => {
+	return (
+		<div className="space-y-6">
+			<div className="space-y-3">
+				<Skeleton className="h-7 w-64" />
+				<Skeleton className="h-4 w-3/4" />
+
+				<div className="flex gap-3">
+					<Skeleton className="h-6 w-24 rounded-full" />
+					<Skeleton className="h-6 w-24 rounded-full" />
+				</div>
+			</div>
+			<div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				{[...Array(6)].map((_, i) => (
+					<div
+						key={i.toString()}
+						className="group block rounded-lg border p-5 transition-all duration-300"
+					>
+						<div className="flex flex-col space-y-3">
+							<div className="flex items-center justify-between">
+								<Skeleton className="size-10 rounded-full" />
+								<Skeleton className="size-8 rounded-full" />
+							</div>
+
+							<div className="space-y-2">
+								<Skeleton className="h-5 w-full" />
+								<Skeleton className="h-4 w-3/4" />
+							</div>
+
+							<div className="pt-2">
+								<Skeleton className="h-6 w-28 rounded-full" />
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
+			<div className="flex justify-end space-x-3 pt-4">
+				<Skeleton className="h-10 w-24 rounded-md" />
+				<Skeleton className="h-10 w-32 rounded-md" />
+			</div>
 		</div>
 	);
 };

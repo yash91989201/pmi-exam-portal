@@ -27,7 +27,6 @@ import { Route as AuthenticatedadminDashboardUsersUserIdRouteRouteImport } from 
 import { Route as AuthenticatedadminDashboardUsersUserIdIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/users/$userId/index'
 import { Route as AuthenticatedadminDashboardUsersUserIdManageUserRouteImport } from './routes/_authenticated/(admin)/dashboard/users/$userId/manage-user'
 import { Route as AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRouteImport } from './routes/_authenticated/(admin)/dashboard/users/$userId/manage-exams-assignment'
-import { Route as AuthenticatedadminDashboardUsersUserIdExamsInfoRouteImport } from './routes/_authenticated/(admin)/dashboard/users/$userId/exams-info'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -130,12 +129,6 @@ const AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute =
       getParentRoute: () => AuthenticatedadminDashboardUsersUserIdRouteRoute,
     } as any,
   )
-const AuthenticatedadminDashboardUsersUserIdExamsInfoRoute =
-  AuthenticatedadminDashboardUsersUserIdExamsInfoRouteImport.update({
-    id: '/exams-info',
-    path: '/exams-info',
-    getParentRoute: () => AuthenticatedadminDashboardUsersUserIdRouteRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticateduserRouteRouteWithChildren
@@ -151,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/dashboard/exams': typeof AuthenticatedadminDashboardExamsIndexRoute
   '/dashboard/users': typeof AuthenticatedadminDashboardUsersIndexRoute
-  '/dashboard/users/$userId/exams-info': typeof AuthenticatedadminDashboardUsersUserIdExamsInfoRoute
   '/dashboard/users/$userId/manage-exams-assignment': typeof AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute
   '/dashboard/users/$userId/manage-user': typeof AuthenticatedadminDashboardUsersUserIdManageUserRoute
   '/dashboard/users/$userId/': typeof AuthenticatedadminDashboardUsersUserIdIndexRoute
@@ -168,7 +160,6 @@ export interface FileRoutesByTo {
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/dashboard/exams': typeof AuthenticatedadminDashboardExamsIndexRoute
   '/dashboard/users': typeof AuthenticatedadminDashboardUsersIndexRoute
-  '/dashboard/users/$userId/exams-info': typeof AuthenticatedadminDashboardUsersUserIdExamsInfoRoute
   '/dashboard/users/$userId/manage-exams-assignment': typeof AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute
   '/dashboard/users/$userId/manage-user': typeof AuthenticatedadminDashboardUsersUserIdManageUserRoute
   '/dashboard/users/$userId': typeof AuthenticatedadminDashboardUsersUserIdIndexRoute
@@ -190,7 +181,6 @@ export interface FileRoutesById {
   '/_authenticated/(admin)/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/_authenticated/(admin)/dashboard/exams/': typeof AuthenticatedadminDashboardExamsIndexRoute
   '/_authenticated/(admin)/dashboard/users/': typeof AuthenticatedadminDashboardUsersIndexRoute
-  '/_authenticated/(admin)/dashboard/users/$userId/exams-info': typeof AuthenticatedadminDashboardUsersUserIdExamsInfoRoute
   '/_authenticated/(admin)/dashboard/users/$userId/manage-exams-assignment': typeof AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute
   '/_authenticated/(admin)/dashboard/users/$userId/manage-user': typeof AuthenticatedadminDashboardUsersUserIdManageUserRoute
   '/_authenticated/(admin)/dashboard/users/$userId/': typeof AuthenticatedadminDashboardUsersUserIdIndexRoute
@@ -211,7 +201,6 @@ export interface FileRouteTypes {
     | '/dashboard/exams/create-exam'
     | '/dashboard/exams'
     | '/dashboard/users'
-    | '/dashboard/users/$userId/exams-info'
     | '/dashboard/users/$userId/manage-exams-assignment'
     | '/dashboard/users/$userId/manage-user'
     | '/dashboard/users/$userId/'
@@ -228,7 +217,6 @@ export interface FileRouteTypes {
     | '/dashboard/exams/create-exam'
     | '/dashboard/exams'
     | '/dashboard/users'
-    | '/dashboard/users/$userId/exams-info'
     | '/dashboard/users/$userId/manage-exams-assignment'
     | '/dashboard/users/$userId/manage-user'
     | '/dashboard/users/$userId'
@@ -249,7 +237,6 @@ export interface FileRouteTypes {
     | '/_authenticated/(admin)/dashboard/exams/create-exam'
     | '/_authenticated/(admin)/dashboard/exams/'
     | '/_authenticated/(admin)/dashboard/users/'
-    | '/_authenticated/(admin)/dashboard/users/$userId/exams-info'
     | '/_authenticated/(admin)/dashboard/users/$userId/manage-exams-assignment'
     | '/_authenticated/(admin)/dashboard/users/$userId/manage-user'
     | '/_authenticated/(admin)/dashboard/users/$userId/'
@@ -390,13 +377,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRouteImport
       parentRoute: typeof AuthenticatedadminDashboardUsersUserIdRouteRoute
     }
-    '/_authenticated/(admin)/dashboard/users/$userId/exams-info': {
-      id: '/_authenticated/(admin)/dashboard/users/$userId/exams-info'
-      path: '/exams-info'
-      fullPath: '/dashboard/users/$userId/exams-info'
-      preLoaderRoute: typeof AuthenticatedadminDashboardUsersUserIdExamsInfoRouteImport
-      parentRoute: typeof AuthenticatedadminDashboardUsersUserIdRouteRoute
-    }
   }
 }
 
@@ -419,7 +399,6 @@ const AuthenticateduserRouteRouteWithChildren =
   )
 
 interface AuthenticatedadminDashboardUsersUserIdRouteRouteChildren {
-  AuthenticatedadminDashboardUsersUserIdExamsInfoRoute: typeof AuthenticatedadminDashboardUsersUserIdExamsInfoRoute
   AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute: typeof AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute
   AuthenticatedadminDashboardUsersUserIdManageUserRoute: typeof AuthenticatedadminDashboardUsersUserIdManageUserRoute
   AuthenticatedadminDashboardUsersUserIdIndexRoute: typeof AuthenticatedadminDashboardUsersUserIdIndexRoute
@@ -427,8 +406,6 @@ interface AuthenticatedadminDashboardUsersUserIdRouteRouteChildren {
 
 const AuthenticatedadminDashboardUsersUserIdRouteRouteChildren: AuthenticatedadminDashboardUsersUserIdRouteRouteChildren =
   {
-    AuthenticatedadminDashboardUsersUserIdExamsInfoRoute:
-      AuthenticatedadminDashboardUsersUserIdExamsInfoRoute,
     AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute:
       AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute,
     AuthenticatedadminDashboardUsersUserIdManageUserRoute:
