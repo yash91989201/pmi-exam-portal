@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { BookOpen, Check, X } from "lucide-react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -29,6 +30,11 @@ export const UpdateExamsAssignmentForm = ({
 		assigned: boolean;
 	}[];
 }) => {
+	const assignedExamsCount = examsAssignedStatus.reduce(
+		(count, exam) => count + (exam.assigned ? 1 : 0),
+		0,
+	);
+
 	const form = useForm<UpdateExamsAssignementStatusInputType>({
 		resolver: standardSchemaResolver(UpdateExamsAssignedStatusInput),
 		defaultValues: {
@@ -78,11 +84,28 @@ export const UpdateExamsAssignmentForm = ({
 
 	return (
 		<div className="space-y-6">
-			<div>
+			<div className="space-y-3">
 				<h3 className="font-medium text-lg">Exam Assignments</h3>
 				<p className="text-muted-foreground text-sm">
 					Click on exam cards to assign or unassign exams for this user.
 				</p>
+
+				{examsAssignedStatus.length > 0 && (
+					<div className="flex gap-3">
+						<Badge
+							variant="outline"
+							className="border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300"
+						>
+							Total exams: {examsAssignedStatus.length}
+						</Badge>
+						<Badge
+							variant="outline"
+							className="border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-900/50 dark:text-green-300"
+						>
+							Assigned exams: {assignedExamsCount}
+						</Badge>
+					</div>
+				)}
 			</div>
 
 			<Separator />
@@ -145,7 +168,6 @@ export const UpdateExamsAssignmentForm = ({
 															</div>
 														</div>
 
-														{/* Exam details */}
 														<div className="space-y-2">
 															<h4
 																className={cn(
@@ -217,24 +239,7 @@ export const UpdateExamsAssignmentForm = ({
 						</div>
 					)}
 
-					{/* Summary section */}
-					{examsAssignedStatus.length > 0 && (
-						<div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-900/50">
-							<div className="flex items-center justify-between text-sm">
-								<span className="text-gray-600 dark:text-gray-400">
-									Total exams: {examsAssignedStatus.length}
-								</span>
-								<span className="text-gray-600 dark:text-gray-400">
-									Assigned:{" "}
-									{form
-										.watch("examsAssignedStatus")
-										?.filter((exam) => exam.assigned).length || 0}
-								</span>
-							</div>
-						</div>
-					)}
-
-					<div className="flex justify-end space-x-3 border-gray-200 border-t pt-4 dark:border-gray-800">
+					<div className="flex justify-end space-x-3 pt-4 dark:border-gray-800">
 						<Button
 							type="button"
 							variant="outline"

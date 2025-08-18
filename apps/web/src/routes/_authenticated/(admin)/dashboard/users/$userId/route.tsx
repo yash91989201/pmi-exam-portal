@@ -5,7 +5,8 @@ import {
 	Outlet,
 	useMatchRoute,
 } from "@tanstack/react-router";
-import { BookOpen, Settings, User } from "lucide-react";
+import { BookOpen, BookOpenCheck, Settings, User } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
@@ -34,6 +35,13 @@ function RouteComponent() {
 
 	const navItems = [
 		{
+			path: "/dashboard/users/$userId/",
+			label: "User Exams",
+			icon: BookOpenCheck,
+			description:
+				"View user's exam info like stats, attempts, scores and response",
+		},
+		{
 			path: "/dashboard/users/$userId/exams-info",
 			label: "Exams Info",
 			icon: BookOpen,
@@ -48,15 +56,15 @@ function RouteComponent() {
 		},
 		{
 			path: "/dashboard/users/$userId/manage-user",
-			label: "User Settings",
+			label: "Manage User",
 			icon: User,
-			description: "Edit user profile and permissions",
+			description: "Edit user profile, update password etc.",
 		},
 	];
 
 	return (
 		<div className="space-y-8">
-			<div className="border-b pb-6">
+			<div>
 				<h1 className="mb-2 font-bold text-2xl text-foreground">
 					User Management
 				</h1>
@@ -65,7 +73,7 @@ function RouteComponent() {
 				</p>
 			</div>
 
-			<div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+			<div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
 				{navItems.map((item) => {
 					const Icon = item.icon;
 					const isActive = isActiveRoute(item.path);
@@ -111,6 +119,8 @@ function RouteComponent() {
 					);
 				})}
 			</div>
+
+			<Separator />
 
 			<div className="rounded-lg border bg-background p-6">
 				<Outlet />
