@@ -1,5 +1,5 @@
 {
-  "id": "6970e042-21e2-4c9b-a05d-ded436dfb391",
+  "id": "b0338c1d-9d63-4501-bb99-d41d5bf883c3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -698,7 +698,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(24)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -720,7 +720,7 @@
           "type": "smallint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1
+          "default": 0
         },
         "max_attempts": {
           "name": "max_attempts",

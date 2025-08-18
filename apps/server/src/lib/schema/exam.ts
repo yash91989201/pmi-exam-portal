@@ -1,6 +1,6 @@
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
-import { exam } from "@/db/schema";
+import { exam } from "../../db/schema";
 
 export const ExamSchema = createSelectSchema(exam);
 
@@ -15,7 +15,7 @@ export const ListExamsInput = z.object({
 });
 
 export const UpdateExamsAssignedStatusInput = z.object({
-	userId: z.cuid2("Invalid user ID format"),
+	userId: z.string(),
 	examsAssignedStatus: z
 		.array(
 			z.object({
@@ -40,7 +40,7 @@ export const UpdateExamsAssignedStatusOutput = z.object({
 });
 
 export const GetExamsAssignedStatusInput = z.object({
-	userId: z.cuid2("Invalid user ID format"),
+	userId: z.string(),
 });
 
 export const GetExamsAssignedStatusOutput = z.object({

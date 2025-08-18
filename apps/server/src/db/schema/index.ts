@@ -41,7 +41,7 @@ export const option = pgTable("option", {
 
 export const userExam = pgTable("user_exam", {
 	id: cuid2("id").defaultRandom().primaryKey(),
-	userId: cuid2("user_id")
+	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
 	examId: cuid2("exam_id")

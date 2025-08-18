@@ -15,7 +15,7 @@ import {
 } from "@/lib/schema";
 
 const GetUserExamsInput = z.object({
-	userId: z.cuid2("Invalid user ID format"),
+	userId: z.string(),
 });
 
 const GetUserExamsOutput = z.array(

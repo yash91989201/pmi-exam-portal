@@ -102,10 +102,10 @@ CREATE TABLE "question" (
 --> statement-breakpoint
 CREATE TABLE "user_exam" (
 	"id" varchar(24) PRIMARY KEY NOT NULL,
-	"user_id" varchar(24) NOT NULL,
+	"user_id" text NOT NULL,
 	"exam_id" varchar(24) NOT NULL,
 	"assigned_at" timestamp DEFAULT now() NOT NULL,
-	"attempts" smallint DEFAULT 1 NOT NULL,
+	"attempts" smallint DEFAULT 0 NOT NULL,
 	"max_attempts" smallint DEFAULT 1 NOT NULL
 );
 --> statement-breakpoint
