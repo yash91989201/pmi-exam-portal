@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
 import { ExamFormSchema, type ExamFormSchemaType } from "@/lib/schema/exam";
 import { queryClient, queryUtils } from "@/utils/orpc";
-import { ExamInfoCard } from "./exam-info-card";
+import { ExamDetailsCard } from "./exam-details-card";
 import { ExamQuestionsSection } from "./exam-questions-section";
 
 export const CreateExamForm = () => {
@@ -76,7 +76,7 @@ export const CreateExamForm = () => {
 	return (
 		<Form {...form}>
 			<form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-				<ExamInfoCard />
+				<ExamDetailsCard />
 				<ExamQuestionsSection />
 			</form>
 		</Form>

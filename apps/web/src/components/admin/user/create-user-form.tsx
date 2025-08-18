@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
+import { queryClient, queryUtils } from "@/utils/orpc";
 
 export const CreateUserFormSchema = z.object({
 	email: z.email("Please enter a valid email address"),
@@ -63,6 +64,12 @@ export const CreateUserForm = () => {
 
 			form.reset();
 			setOpenDialog(false);
+
+			queryClient.refetchQueries(
+				queryUtils.admin.listUsers.queryOptions({
+					input: {},
+				}),
+			);
 		} catch (error) {
 			// Use form.setError for other errors
 			form.setError("root", {

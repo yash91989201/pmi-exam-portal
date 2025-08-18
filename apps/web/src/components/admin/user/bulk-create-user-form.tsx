@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
+import { queryClient, queryUtils } from "@/utils/orpc";
 
 export const BulkCreateUserFormSchema = z.object({
 	emailsText: z.string().min(1, "Please enter at least one email address"),
@@ -90,6 +91,12 @@ export const BulkCreateUserForm = () => {
 			if (successes.length > 0) {
 				toast.success(
 					`Successfully created ${successes.length} user${successes.length > 1 ? "s" : ""}`,
+				);
+
+				queryClient.refetchQueries(
+					queryUtils.admin.listUsers.queryOptions({
+						input: {},
+					}),
 				);
 
 				if (errors.length === 0) {

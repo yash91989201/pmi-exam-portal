@@ -34,16 +34,17 @@ function RouteComponent() {
 
 	const navItems = [
 		{
-			path: "/dashboard/users/$userId/exams",
-			label: "View Exams",
+			path: "/dashboard/users/$userId/exams-info",
+			label: "Exams Info",
 			icon: BookOpen,
-			description: "View user's exam history and results",
+			description:
+				"View user's exam info like stats, attempts, scores and response",
 		},
 		{
-			path: "/dashboard/users/$userId/manage-exams",
-			label: "Manage Exams",
+			path: "/dashboard/users/$userId/manage-exams-assignment",
+			label: "Manage Exams Assignment",
 			icon: Settings,
-			description: "Assign and manage user exams",
+			description: "Manage exams assignment to user.",
 		},
 		{
 			path: "/dashboard/users/$userId/manage-user",
