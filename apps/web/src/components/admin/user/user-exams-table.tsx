@@ -1,5 +1,5 @@
 import type { GetUserExamsDataOutputType } from "@server-types/index";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,14 +18,30 @@ import { queryUtils } from "@/utils/orpc";
 export const UserExamsTable = ({ userId }: { userId: string }) => {
 	const {
 		data: { userExamsData },
+		refetch: refetchUserExamsData,
 	} = useSuspenseQuery(
 		queryUtils.admin.getUserExamsData.queryOptions({ input: { userId } }),
 	);
 
-	return <DataTable columns={columns} data={userExamsData} />;
+	const { mutateAsync: increaseUserExamAttempts } = useMutation(
+		queryUtils.admin.increaseUserExamAttempts.mutationOptions({
+			onSettled: () => {
+				refetchUserExamsData();
+			},
+		}),
+	);
+
+	return (
+		<DataTable
+			columns={getColumns(increaseUserExamAttempts)}
+			data={userExamsData}
+		/>
+	);
 };
 
-const columns: ColumnDef<GetUserExamsDataOutputType["userExamsData"][0]>[] = [
+const getColumns = (
+	increaseUserExamAttempts: (input: { userExamId: string }) => Promise<any>,
+): ColumnDef<GetUserExamsDataOutputType["userExamsData"][0]>[] => [
 	{
 		accessorKey: "examCertification",
 		header: ({ column }) => (
@@ -87,6 +103,14 @@ const columns: ColumnDef<GetUserExamsDataOutputType["userExamsData"][0]>[] = [
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>View details</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem
+							onClick={() =>
+								increaseUserExamAttempts({ userExamId: userExam.id })
+							}
+						>
+							Increase Attempts
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

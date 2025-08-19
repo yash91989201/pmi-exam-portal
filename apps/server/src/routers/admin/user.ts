@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { exam, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { auth } from "@/lib/auth";
@@ -10,6 +10,8 @@ import {
 	GetUserExamsDataInput,
 	GetUserExamsDataOutput,
 	GetUserInput,
+	IncreaseExamAttemptsInput,
+	IncreaseExamAttemptsOutput,
 	ListUsersInput,
 	ListUsersOutput,
 	UpdateExamsAssignedStatusInput,
@@ -192,5 +194,38 @@ export const adminUserRouter = {
 			});
 
 			return { userExamsData };
+		}),
+	increaseUserExamAttempts: adminProcedure
+		.input(IncreaseExamAttemptsInput)
+		.output(IncreaseExamAttemptsOutput)
+		.handler(async ({ context, input }) => {
+			try {
+				const updateQueryRes = await context.db
+					.update(userExam)
+					.set({
+						maxAttempts: sql`${userExam.maxAttempts} + 1`,
+					})
+					.where(eq(userExam.id, input.userExamId))
+					.returning();
+
+				return {
+					success: true,
+					message: "Exam attempts increased successfully",
+					data: {
+						maxAttempts: updateQueryRes[0].maxAttempts,
+						userExamId: updateQueryRes[0].id,
+					},
+				};
+			} catch (error) {
+				console.error("Error increasing exam attempts:", error);
+
+				return {
+					success: false,
+					message:
+						error instanceof Error
+							? error.message
+							: "Failed to increase exam attempts",
+				};
+			}
 		}),
 };

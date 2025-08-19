@@ -1,9 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import { BookOpenCheck, Settings, User } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
-import { Skeleton } from "../../ui/skeleton";
 
 export const UserManagementNavbar = ({ userId }: { userId: string }) => {
 	const matchRoute = useMatchRoute();

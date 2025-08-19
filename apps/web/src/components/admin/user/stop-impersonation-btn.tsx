@@ -1,5 +1,5 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { Loader2, Square } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 
 export const StopImpersonationBtn = () => {
-	const navigate = useNavigate();
+	const router = useRouter();
 
 	const { data: sessionData } = useSuspenseQuery({
 		queryKey: ["sessionData"],
@@ -30,7 +30,9 @@ export const StopImpersonationBtn = () => {
 				if (sessionData) {
 					toast.success(`Stopped ${sessionData.user.name}'s session.`);
 
-					navigate({
+					router.invalidate();
+
+					router.navigate({
 						to: "/dashboard/users/$userId/manage-user",
 						params: {
 							userId: sessionData.user.id,

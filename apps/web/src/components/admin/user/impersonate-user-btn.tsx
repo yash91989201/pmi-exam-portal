@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { Loader2, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export const ImpersonateUserBtn = ({ userId }: { userId: string }) => {
-	const navigate = useNavigate();
+	const router = useRouter();
 
 	const { mutateAsync: impersonateUser, isPending } = useMutation({
 		mutationKey: ["impersonateUser"],
@@ -18,7 +18,9 @@ export const ImpersonateUserBtn = ({ userId }: { userId: string }) => {
 			if (data) {
 				toast.success(`Started ${data.user.name}'s session.`);
 
-				navigate({
+				router.invalidate();
+
+				router.navigate({
 					to: "/exams",
 				});
 			} else {
