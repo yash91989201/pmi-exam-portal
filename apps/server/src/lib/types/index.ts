@@ -7,6 +7,7 @@ import type {
 	UpdateExamsAssignedStatusInput,
 	UserExamSchema,
 } from "@/lib/schema/exam";
+import type { ListUserExamsOutput } from "@/lib/schema";
 
 export type ExamType = z.infer<typeof ExamSchema>;
 
@@ -17,3 +18,5 @@ export type UpdateExamsAssignementStatusInputType = z.infer<
 export type UserExamType = z.infer<typeof UserExamSchema>;
 
 export type GetUserExamsDataOutputType = z.infer<typeof GetUserExamsDataOutput>;
+
+export type ListUserExamsOutputType = z.infer<typeof ListUserExamsOutput>;
