@@ -45,7 +45,7 @@ export const ExamsTable = ({
 	const {
 		data: { exams, totalPages, hasNextPage, hasPreviousPage },
 	} = useSuspenseQuery(
-		queryUtils.exam.listExams.queryOptions({
+		queryUtils.admin.listExams.queryOptions({
 			input: {
 				limit,
 				page,

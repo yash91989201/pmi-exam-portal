@@ -37,10 +37,10 @@ export const CreateExamForm = () => {
 	});
 
 	const { mutateAsync: createExamMutation } = useMutation(
-		queryUtils.exam.createExam.mutationOptions({
+		queryUtils.admin.createExam.mutationOptions({
 			onSettled: async () => {
 				queryClient.invalidateQueries(
-					queryUtils.exam.listExams.queryOptions({
+					queryUtils.admin.listExams.queryOptions({
 						input: {},
 					}),
 				);

@@ -14,7 +14,7 @@ export const Route = createFileRoute(
 		params: { userId },
 	}) => {
 		queryClient.prefetchQuery(
-			queryUtils.exam.getExamsAssignedStatus.queryOptions({
+			queryUtils.admin.getExamsAssignedStatus.queryOptions({
 				input: { userId },
 			}),
 		);
@@ -28,7 +28,7 @@ function RouteComponent() {
 	const {
 		data: { examsAssignedStatus },
 	} = useSuspenseQuery(
-		queryUtils.exam.getExamsAssignedStatus.queryOptions({ input: { userId } }),
+		queryUtils.admin.getExamsAssignedStatus.queryOptions({ input: { userId } }),
 	);
 	return (
 		<UpdateExamsAssignmentForm

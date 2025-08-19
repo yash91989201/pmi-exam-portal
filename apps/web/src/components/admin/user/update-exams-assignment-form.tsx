@@ -54,7 +54,7 @@ export const UpdateExamsAssignmentForm = ({
 					toast.success(data.message);
 
 					queryClient.invalidateQueries(
-						queryUtils.exam.getExamsAssignedStatus.queryOptions({
+						queryUtils.admin.getExamsAssignedStatus.queryOptions({
 							input: { userId },
 						}),
 					);
