@@ -9,7 +9,7 @@ import {
 	CreateExamOutput,
 	ListExamsInput,
 	ListExamsOutput,
-} from "@/lib/schema";
+} from "@/lib/schema/exam";
 import { importExcelData } from "@/utils/excel-import";
 
 export const adminExamRouter = {
@@ -18,9 +18,7 @@ export const adminExamRouter = {
 		.output(CreateExamOutput)
 		.handler(async ({ context, input }) => {
 			try {
-				// Use a database transaction to ensure data consistency
 				const result = await context.db.transaction(async (tx) => {
-					// Create the exam first
 					const [newExam] = await tx
 						.insert(exam)
 						.values({

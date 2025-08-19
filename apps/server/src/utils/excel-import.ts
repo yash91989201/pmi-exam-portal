@@ -1,10 +1,7 @@
 import * as XLSX from "xlsx";
 import { ZodError } from "zod";
-import {
-	ExcelImportSchema,
-	type ExcelImportType,
-	type QuestionFormData,
-} from "@/lib/schema/exam";
+import { ExcelImportSchema } from "@/lib/schema/exam";
+import type { ExcelImportType, QuestionFormData } from "@/lib/types/exam";
 
 export interface ImportResult {
 	success: boolean;

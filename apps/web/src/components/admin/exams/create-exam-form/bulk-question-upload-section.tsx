@@ -63,7 +63,7 @@ export const BulkQuestionUploadSection = () => {
 				setUploadProgress((prev) => Math.min(prev + 10, 90));
 			}, 200);
 
-			const result = await orpcClient.exam.bulkUploadExcel({ file });
+			const result = await orpcClient.admin.bulkUploadExcel({ file });
 
 			clearInterval(progressInterval);
 			setUploadProgress(100);
