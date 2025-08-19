@@ -1,20 +1,18 @@
 import { ORPCError } from "@orpc/server";
 import { and, asc, count, eq, type SQL } from "drizzle-orm";
 import z from "zod";
-import { exam, examAttempt, option, question, userExam } from "@/db/schema";
+import { exam, examAttempt, option, question } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
 import {
 	BulkUploadExcelOutput,
 	CreateExamInput,
 	CreateExamOutput,
-	GetExamsAssignedStatusInput,
-	GetExamsAssignedStatusOutput,
 	ListExamsInput,
 	ListExamsOutput,
 } from "@/lib/schema";
 import { importExcelData } from "@/utils/excel-import";
 
-export const examRouter = {
+export const adminExamRouter = {
 	createExam: adminProcedure
 		.input(CreateExamInput)
 		.output(CreateExamOutput)
@@ -178,37 +176,6 @@ export const examRouter = {
 				totalCount: totalCountResult,
 				hasPreviousPage: page > 1,
 				hasNextPage: page < totalPages,
-			};
-		}),
-	getExamsAssignedStatus: adminProcedure
-		.input(GetExamsAssignedStatusInput)
-		.output(GetExamsAssignedStatusOutput)
-		.handler(async ({ context, input }) => {
-			const examsAssignedStatus = await context.db
-				.select({
-					examId: exam.id,
-					examCertification: exam.certification,
-					assigned: userExam.userId,
-				})
-				.from(exam)
-				.leftJoin(
-					userExam,
-					and(
-						eq(userExam.userId, input.userId),
-						eq(userExam.examId, exam.id),
-						eq(userExam.attempts, 0),
-					),
-				)
-				.orderBy(asc(exam.id));
-
-			const transformedResult = examsAssignedStatus.map((item) => ({
-				examId: item.examId,
-				examCertification: item.examCertification,
-				assigned: item.assigned !== null,
-			}));
-
-			return {
-				examsAssignedStatus: transformedResult,
 			};
 		}),
 };

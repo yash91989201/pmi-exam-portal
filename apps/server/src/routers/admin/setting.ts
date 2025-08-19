@@ -1,4 +1,4 @@
-import { ORPCError } from "@orpc/client";
+import { ORPCError } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import { user } from "@/db/schema/auth";
 import { publicProcedure } from "@/lib/orpc";

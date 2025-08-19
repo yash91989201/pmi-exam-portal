@@ -1,10 +1,12 @@
 import { ORPCError } from "@orpc/server";
-import { and, eq } from "drizzle-orm";
-import { userExam } from "@/db/schema";
+import { and, asc, eq } from "drizzle-orm";
+import { exam, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { auth } from "@/lib/auth";
 import { adminProcedure } from "@/lib/orpc";
 import {
+	GetExamsAssignedStatusInput,
+	GetExamsAssignedStatusOutput,
 	GetUserExamsDataInput,
 	GetUserExamsDataOutput,
 	GetUserInput,
@@ -15,7 +17,7 @@ import {
 	UserSchema,
 } from "@/lib/schema";
 
-export const adminRouter = {
+export const adminUserRouter = {
 	listUsers: adminProcedure
 		.input(ListUsersInput)
 		.output(ListUsersOutput)
@@ -65,6 +67,37 @@ export const adminRouter = {
 			});
 
 			return existingUser;
+		}),
+	getExamsAssignedStatus: adminProcedure
+		.input(GetExamsAssignedStatusInput)
+		.output(GetExamsAssignedStatusOutput)
+		.handler(async ({ context, input }) => {
+			const examsAssignedStatus = await context.db
+				.select({
+					examId: exam.id,
+					examCertification: exam.certification,
+					assigned: userExam.userId,
+				})
+				.from(exam)
+				.leftJoin(
+					userExam,
+					and(
+						eq(userExam.userId, input.userId),
+						eq(userExam.examId, exam.id),
+						eq(userExam.attempts, 0),
+					),
+				)
+				.orderBy(asc(exam.id));
+
+			const transformedResult = examsAssignedStatus.map((item) => ({
+				examId: item.examId,
+				examCertification: item.examCertification,
+				assigned: item.assigned !== null,
+			}));
+
+			return {
+				examsAssignedStatus: transformedResult,
+			};
 		}),
 	updateExamsAssignedStatus: adminProcedure
 		.input(UpdateExamsAssignedStatusInput)
