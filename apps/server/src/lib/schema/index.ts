@@ -1,5 +1,6 @@
 import type { UserWithRole } from "better-auth/plugins";
 import z from "zod";
+import { ExamSchema, UserExamSchema } from "./exam";
 
 export * from "./auth";
 export * from "./exam";
@@ -48,4 +49,12 @@ export const ListUsersOutput = z.object({
 
 export const GetUserInput = z.object({
 	userId: z.string(),
+});
+
+export const ListUserExamsOutput = z.object({
+	userExams: z.array(
+		UserExamSchema.extend({
+			exam: ExamSchema,
+		}),
+	),
 });
