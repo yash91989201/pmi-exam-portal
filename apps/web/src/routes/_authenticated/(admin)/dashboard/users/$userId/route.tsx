@@ -16,7 +16,7 @@ function RouteComponent() {
 	const userId = Route.useParams().userId;
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			<Suspense fallback={<UserManagementNavbarSkeleton />}>
 				<UserManagementNavbar userId={userId} />
 			</Suspense>
