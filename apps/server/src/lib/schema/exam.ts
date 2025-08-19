@@ -1,9 +1,43 @@
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
-import { exam, userExam } from "../../db/schema";
+import { exam, option, question, userExam } from "../../db/schema";
 
+export const OptionSchema = createSelectSchema(option);
+export const QuestionSchema = createSelectSchema(question);
 export const ExamSchema = createSelectSchema(exam);
 export const UserExamSchema = createSelectSchema(userExam);
+
+export const GetExamForAttemptInput = z.object({
+	examId: z.cuid2(),
+});
+
+export const GetExamForAttemptOutput = ExamSchema.extend({
+	questions: z.array(
+		QuestionSchema.extend({
+			options: z.array(OptionSchema.omit({ isCorrect: true })),
+		}),
+	),
+});
+
+export const SubmitExamInput = z.object({
+	examId: z.cuid2(),
+	answers: z.array(
+		z.object({
+			questionId: z.cuid2(),
+			optionId: z.cuid2().optional(),
+		}),
+	),
+});
+
+export const TerminateExamInput = z.object({
+	examId: z.cuid2(),
+	reason: z.string(),
+});
+
+export const SubmitExamOutput = z.object({
+	success: z.boolean(),
+	message: z.string(),
+});
 
 export const ListExamsInput = z.object({
 	page: z.number().min(1).default(1).catch(1),
@@ -63,19 +97,19 @@ export const ListExamsOutput = z.object({
 	hasNextPage: z.boolean().default(false),
 });
 
-const OptionSchema = z.object({
+const CreateOptionSchema = z.object({
 	text: z.string().min(1, "Option text is required"),
 	isCorrect: z.boolean().default(false),
 	order: z.number().int().min(0),
 });
 
-const QuestionSchema = z.object({
+const CreateQuestionSchema = z.object({
 	text: z.string().min(1, "Question text is required"),
 	mark: z.number().int().positive("Mark must be a positive integer"),
 	order: z.number().int().min(0),
 	imageId: z.string().optional(),
 	options: z
-		.array(OptionSchema)
+		.array(CreateOptionSchema)
 		.min(2, "At least 2 options are required")
 		.max(6, "Maximum 6 options allowed")
 		.refine(
@@ -89,7 +123,7 @@ export const CreateExamInput = z.object({
 	mark: z.number().int().positive("Mark must be a positive integer"),
 	timeLimit: z.number().int().positive("Time limit must be a positive integer"),
 	questions: z
-		.array(QuestionSchema)
+		.array(CreateQuestionSchema)
 		.min(1, "At least one question is required")
 		.refine((questions) => {
 			const totalQuestionMarks = questions.reduce((sum, q) => sum + q.mark, 0);
@@ -188,8 +222,19 @@ export const BulkUploadExcelOutput = z.object({
 	validationErrors: z.array(z.string()).optional(),
 });
 
-export type ExamFormData = z.infer<typeof CreateExamInput>;
-export type QuestionFormData = z.infer<typeof QuestionSchema>;
-export type OptionFormData = z.infer<typeof OptionSchema>;
-export type ExcelQuestionRowType = z.infer<typeof ExcelQuestionRowSchema>;
-export type ExcelImportType = z.infer<typeof ExcelImportSchema>;
+export { CreateQuestionSchema, CreateOptionSchema, ExcelQuestionRowSchema };
+
+export const IncreaseExamAttemptsInput = z.object({
+	userExamId: z.cuid2(),
+});
+
+export const IncreaseExamAttemptsOutput = z.object({
+	success: z.boolean(),
+	message: z.string(),
+	data: z
+		.object({
+			userExamId: z.cuid2(),
+			maxAttempts: z.number().int().positive(),
+		})
+		.optional(),
+});

@@ -63,6 +63,7 @@ export const examAttempt = pgTable("exam_attempt", {
 	marks: integer("marks"),
 	attemptNumber: smallint("attempt_number").notNull().default(1),
 	timeSpent: integer("time_spent"), // in minutes
+	terminationReason: text("termination_reason"),
 });
 
 export const attemptResponse = pgTable("attempt_response", {
