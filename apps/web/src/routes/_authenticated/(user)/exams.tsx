@@ -1,3 +1,4 @@
+import type { ListUserExamsOutputType } from "@server-types/index";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { queryUtils } from "@/utils/orpc";
-import type { ListUserExamsOutputType } from "@server-types/index";
 
 export const Route = createFileRoute("/_authenticated/(user)/exams")({
 	component: RouteComponent,
