@@ -28,9 +28,11 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import { useCheatDetection } from "@/hooks/use-cheat-detection";
 import { useExamTimer } from "@/hooks/use-exam-timer";
 import { cn } from "@/lib/utils";
@@ -107,13 +109,18 @@ export function AttemptExamForm({
 		}),
 	);
 
-	const { warningCount, showWarningDialog, setShowWarningDialog } =
-		useCheatDetection({
-			examId,
-			examSubmitted,
-			onTerminate: terminateExam,
-			isImpersonating,
-		});
+	const {
+		isMonitoring,
+		warningCount,
+		showWarningDialog,
+		setIsMonitoring,
+		setShowWarningDialog,
+	} = useCheatDetection({
+		examId,
+		examSubmitted,
+		onTerminate: terminateExam,
+		isImpersonating,
+	});
 
 	const handleOptionChange = useCallback(
 		(optionId: string) => {
@@ -165,6 +172,14 @@ export function AttemptExamForm({
 		[currentQuestion, examData.questions.length],
 	);
 
+	const progressColor = useMemo(() => {
+		if (progressPercentage < 25) return "bg-red-500";
+		if (progressPercentage < 50) return "bg-orange-500";
+		if (progressPercentage < 65) return "bg-amber-500";
+		if (progressPercentage < 85) return "bg-yellow-500";
+		return "bg-green-500";
+	}, [progressPercentage]);
+
 	return (
 		<div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
 			<header className="sticky top-0 z-50 border-slate-200 border-b bg-white/90 shadow-lg backdrop-blur-sm dark:border-slate-700 dark:bg-slate-950/90">
@@ -172,10 +187,29 @@ export function AttemptExamForm({
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-4">
 							<div className="flex items-center space-x-2">
-								<div className="h-3 w-3 animate-pulse rounded-full bg-green-500" />
-								<span className="font-medium text-slate-600 text-sm dark:text-slate-400">
-									Monitoring Active
-								</span>
+								{isImpersonating ? (
+									<div className="flex items-center space-x-2">
+										{/** biome-ignore lint/correctness/useUniqueElementIds: <required here> */}
+										<Switch
+											id="monitoring-status"
+											className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
+											checked={isMonitoring}
+											onCheckedChange={setIsMonitoring}
+										/>
+										<Label htmlFor="monitoring-status">
+											{isMonitoring
+												? "Monitoring Active"
+												: "Monitoring Disabled"}
+										</Label>
+									</div>
+								) : (
+									<>
+										<div className="size-3 animate-pulse rounded-full bg-green-500" />
+										<span className="font-medium text-slate-600 text-sm dark:text-slate-400">
+											Monitoring Active
+										</span>
+									</>
+								)}
 							</div>
 							<div className="hidden text-slate-400 md:block">•</div>
 							<h1 className="font-bold text-slate-800 text-xl dark:text-slate-200">
@@ -187,7 +221,7 @@ export function AttemptExamForm({
 								<div className="flex items-center space-x-2 rounded-full bg-red-100 px-3 py-1 dark:bg-red-900/30">
 									<AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
 									<span className="font-medium text-red-700 text-sm dark:text-red-300">
-										{warningCount}/3 Warnings
+										{warningCount}/2 Warnings
 									</span>
 								</div>
 							)}
@@ -211,7 +245,11 @@ export function AttemptExamForm({
 							</span>
 						</div>
 						<div className="relative">
-							<Progress value={progressPercentage} className="h-3" />
+							<Progress
+								value={progressPercentage}
+								indicatorClassName={progressColor}
+								className="h-3"
+							/>
 						</div>
 					</div>
 				</div>

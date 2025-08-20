@@ -9,7 +9,7 @@ export function useCheatDetection({
 	examId,
 	examSubmitted,
 	onTerminate,
-	isImpersonating = true,
+	isImpersonating = false,
 }: {
 	examId: string;
 	examSubmitted: React.RefObject<boolean>;
@@ -18,13 +18,15 @@ export function useCheatDetection({
 }) {
 	const [warningCount, setWarningCount] = useState(0);
 	const [showWarningDialog, setShowWarningDialog] = useState(false);
+	const [isMonitoring, setIsMonitoring] = useState(!isImpersonating);
 
 	const lastActivityTime = useRef(Date.now());
 	const warningShown = useRef(false);
 
 	useEffect(() => {
-		// 🚨 Disable detection if impersonating or not monitoring
-		if (isImpersonating || examSubmitted.current) return;
+		console.log(isMonitoring);
+		// 🚨 Disable detection if not monitoring.
+		if (!isMonitoring || examSubmitted.current) return;
 
 		let suspiciousActivityCount = 0;
 
@@ -143,11 +145,13 @@ export function useCheatDetection({
 			clearInterval(devToolsInterval);
 			clearInterval(inactivityInterval);
 		};
-	}, [examId, onTerminate, examSubmitted, isImpersonating]);
+	}, [isMonitoring, examId, onTerminate, examSubmitted]);
 
 	return {
+		isMonitoring,
 		warningCount,
 		showWarningDialog,
+		setIsMonitoring,
 		setShowWarningDialog,
 	};
 }
