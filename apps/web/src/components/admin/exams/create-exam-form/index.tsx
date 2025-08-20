@@ -1,10 +1,12 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { createId } from "@paralleldrive/cuid2";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
-import { ExamFormSchema, type ExamFormSchemaType } from "@/lib/schema/exam";
+import type { CreateExamFormSchemaType } from "@/lib/schema/exam";
+import { CreateExamFormSchema } from "@/lib/schema/exam";
 import { queryClient, queryUtils } from "@/utils/orpc";
 import { ExamDetailsCard } from "./exam-details-card";
 import { ExamQuestionsSection } from "./exam-questions-section";
@@ -12,8 +14,8 @@ import { ExamQuestionsSection } from "./exam-questions-section";
 export const CreateExamForm = () => {
 	const router = useRouter();
 
-	const form = useForm<ExamFormSchemaType>({
-		resolver: standardSchemaResolver(ExamFormSchema),
+	const form = useForm<CreateExamFormSchemaType>({
+		resolver: standardSchemaResolver(CreateExamFormSchema),
 		defaultValues: {
 			certification: "",
 			mark: 0,
@@ -48,18 +50,36 @@ export const CreateExamForm = () => {
 		}),
 	);
 
-	const onSubmit: SubmitHandler<ExamFormSchemaType> = async ({
+	const onSubmit: SubmitHandler<CreateExamFormSchemaType> = async ({
 		formState: _,
 		...formData
 	}) => {
 		try {
-			const mutationRes = await createExamMutation({
+			const examId = createId();
+			const mutationInput = {
+				id: examId,
 				...formData,
 				mark: formData.questions.reduce(
 					(total, question) => total + question.mark,
 					0,
 				),
-			});
+				questions: formData.questions.map((question) => {
+					const questionId = createId();
+
+					return {
+						id: questionId,
+						...question,
+						options: question.options.map((option) => ({
+							id: createId(),
+							...option,
+							questionId,
+						})),
+						examId,
+					};
+				}),
+			};
+
+			const mutationRes = await createExamMutation(mutationInput);
 
 			if (mutationRes.success) {
 				toast.success(mutationRes.message || "Exam created successfully!");

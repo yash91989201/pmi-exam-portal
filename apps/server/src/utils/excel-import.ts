@@ -29,7 +29,7 @@ export function validateExcelFile(file: File): boolean {
 		"application/vnd.ms-excel", // .xls
 	];
 
-	const validExtensions = [".xlsx", ".xls"];
+	const validExtensions = [".xlsx", ".xls", ".ods"];
 	const hasValidType = validTypes.includes(file.type);
 	const hasValidExtension = validExtensions.some((ext) =>
 		file.name.toLowerCase().endsWith(ext),
@@ -123,6 +123,9 @@ export function convertToQuestionSchema(
 			);
 
 		return {
+			id: "",
+			imageId: "",
+			examId: "",
 			text: row["Question Text"].trim(),
 			mark: row.Marks,
 			order: index,

@@ -1,4 +1,4 @@
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import { exam, option, question, userExam } from "../../db/schema";
 
@@ -6,6 +6,29 @@ export const OptionSchema = createSelectSchema(option);
 export const QuestionSchema = createSelectSchema(question);
 export const ExamSchema = createSelectSchema(exam);
 export const UserExamSchema = createSelectSchema(userExam);
+
+export const OptionInsertSchema = createInsertSchema(option, {
+	text: z.string().min(1, "Option text is required"),
+	isCorrect: z.boolean().default(false),
+	order: z.number().int().min(0),
+});
+
+export const QuestionInsertSchema = createInsertSchema(question, {
+	text: z.string().min(1, "Question text is required"),
+	mark: z.number().int().positive("Mark must be a positive integer").min(1),
+	order: z.number().int().min(0),
+});
+
+export const ExamInsertSchema = createInsertSchema(exam, {
+	certification: z.string().min(1, "Certification is required"),
+	mark: z.number().int().positive("Mark must be a positive integer").min(1),
+	timeLimit: z
+		.number()
+		.int()
+		.positive("Time limit must be a positive integer")
+		.min(15)
+		.max(60),
+});
 
 export const GetExamForAttemptInput = z.object({
 	examId: z.cuid2(),
@@ -97,33 +120,21 @@ export const ListExamsOutput = z.object({
 	hasNextPage: z.boolean().default(false),
 });
 
-const CreateOptionSchema = z.object({
-	text: z.string().min(1, "Option text is required"),
-	isCorrect: z.boolean().default(false),
-	order: z.number().int().min(0),
-});
-
-const CreateQuestionSchema = z.object({
-	text: z.string().min(1, "Question text is required"),
-	mark: z.number().int().positive("Mark must be a positive integer"),
-	order: z.number().int().min(0),
-	imageId: z.string().optional(),
-	options: z
-		.array(CreateOptionSchema)
-		.min(2, "At least 2 options are required")
-		.max(6, "Maximum 6 options allowed")
-		.refine(
-			(options) => options.filter((option) => option.isCorrect).length === 1,
-			"Exactly one option must be marked as correct",
-		),
-});
-
-export const CreateExamInput = z.object({
-	certification: z.string().min(1, "Certification is required"),
-	mark: z.number().int().positive("Mark must be a positive integer"),
-	timeLimit: z.number().int().positive("Time limit must be a positive integer"),
+export const CreateExamInput = ExamInsertSchema.extend({
 	questions: z
-		.array(CreateQuestionSchema)
+		.array(
+			QuestionInsertSchema.extend({
+				options: z
+					.array(OptionInsertSchema)
+					.min(2, "At least 2 options are required")
+					.max(6, "Maximum 6 options allowed")
+					.refine(
+						(options) =>
+							options.filter((option) => option.isCorrect).length === 1,
+						"At lest one option must be marked as correct",
+					),
+			}),
+		)
 		.min(1, "At least one question is required")
 		.refine((questions) => {
 			const totalQuestionMarks = questions.reduce((sum, q) => sum + q.mark, 0);
@@ -156,8 +167,7 @@ export const GetUserExamsDataOutput = z.object({
 	),
 });
 
-// Excel import schema for validating uploaded data
-const ExcelQuestionRowSchema = z.object({
+export const ExcelQuestionRowSchema = z.object({
 	"Question Text": z.string().min(1, "Question text is required"),
 	"Option A": z.string().min(1, "Option A is required"),
 	"Option B": z.string().min(1, "Option B is required"),
@@ -218,11 +228,25 @@ export const ExcelImportSchema = z
 export const BulkUploadExcelOutput = z.object({
 	success: z.boolean(),
 	message: z.string(),
-	data: z.array(QuestionSchema).optional(),
+	data: z
+		.array(
+			z.object({
+				text: z.string(),
+				mark: z.number(),
+				order: z.number(),
+				imageId: z.string().nullable().optional(),
+				options: z.array(
+					z.object({
+						text: z.string(),
+						isCorrect: z.boolean(),
+						order: z.number(),
+					}),
+				),
+			}),
+		)
+		.optional(),
 	validationErrors: z.array(z.string()).optional(),
 });
-
-export { CreateQuestionSchema, CreateOptionSchema, ExcelQuestionRowSchema };
 
 export const IncreaseExamAttemptsInput = z.object({
 	userExamId: z.cuid2(),

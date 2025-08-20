@@ -97,6 +97,7 @@ export const adminExamRouter = {
 					validationErrors: result.validationErrors,
 				};
 			} catch (error) {
+				console.log(error);
 				throw new ORPCError(
 					error instanceof Error
 						? error.message
