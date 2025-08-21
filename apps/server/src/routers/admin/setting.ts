@@ -85,3 +85,5 @@ export const adminSettingRouter = {
 			}
 		}),
 };
+
+export type AdminSettingRouter = typeof adminSettingRouter;

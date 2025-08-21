@@ -178,3 +178,5 @@ export const adminExamRouter = {
 			};
 		}),
 };
+
+export type AdminExamRouter = typeof adminExamRouter;

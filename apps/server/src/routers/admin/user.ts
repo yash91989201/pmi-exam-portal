@@ -229,3 +229,5 @@ export const adminUserRouter = {
 			}
 		}),
 };
+
+export type AdminUserRouter = typeof adminUserRouter;
