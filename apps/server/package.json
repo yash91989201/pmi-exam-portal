@@ -19,8 +19,8 @@
 		"update": "bun update --latest"
 	},
 	"dependencies": {
-		"@orpc/client": "^1.8.1",
-		"@orpc/server": "^1.8.1",
+		"@orpc/client": "^1.8.2",
+		"@orpc/server": "^1.8.2",
 		"@paralleldrive/cuid2": "2.2.2",
 		"@t3-oss/env-core": "^0.13.8",
 		"@types/xlsx": "^0.0.36",

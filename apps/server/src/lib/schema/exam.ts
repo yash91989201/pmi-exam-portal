@@ -1,11 +1,18 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
-import { exam, option, question, userExam } from "../../db/schema";
+import {
+	AttemptStatusEnum,
+	exam,
+	option,
+	question,
+	userExam,
+} from "../../db/schema";
 
 export const OptionSchema = createSelectSchema(option);
 export const QuestionSchema = createSelectSchema(question);
 export const ExamSchema = createSelectSchema(exam);
 export const UserExamSchema = createSelectSchema(userExam);
+export const AttemptStatusSchema = createSelectSchema(AttemptStatusEnum);
 
 export const OptionInsertSchema = createInsertSchema(option, {
 	text: z.string().min(1, "Option text is required"),
@@ -30,16 +37,48 @@ export const ExamInsertSchema = createInsertSchema(exam, {
 		.max(60),
 });
 
+export const CreateExamAttemptInput = z.object({
+	userExamId: z.cuid2(),
+});
+
+export const CreateExamAttemptOutput = z.object({
+	success: z.boolean(),
+	message: z.string(),
+	data: z
+		.object({
+			examAttemptId: z.cuid2("Invalid attempt ID format"),
+		})
+		.optional(),
+});
+
 export const GetExamForAttemptInput = z.object({
 	examId: z.cuid2(),
+	examAttemptId: z.cuid2(),
 });
 
 export const GetExamForAttemptOutput = ExamSchema.extend({
 	questions: z.array(
 		QuestionSchema.extend({
-			options: z.array(OptionSchema.omit({ isCorrect: true })),
+			questionId: z.cuid2(),
+			options: z.array(
+				OptionSchema.omit({ isCorrect: true }).extend({
+					optionId: z.undefined(),
+				}),
+			),
 		}),
 	),
+});
+
+export const GetExamAttemptStatusInput = z.object({
+	examAttemptId: z.cuid2("Invalid exam attempt ID format"),
+});
+
+export const GetExamAttemptStatusOutput = z.object({
+	data: z
+		.object({
+			status: AttemptStatusSchema,
+		})
+		.optional(),
 });
 
 export const SubmitExamInput = z.object({

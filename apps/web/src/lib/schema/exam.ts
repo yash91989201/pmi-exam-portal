@@ -46,6 +46,16 @@ export const CreateExamFormSchema = z.object({
 	}),
 });
 
+export const AttemptExamFormSchema = z.object({
+	examId: z.string(),
+	answers: z.array(
+		z.object({
+			questionId: z.string(),
+			optionId: z.string().optional(),
+		}),
+	),
+});
+
 export type CreateExamFormSchemaType = z.infer<typeof CreateExamFormSchema>;
 export type QuestionFormSchemaType = z.infer<typeof QuestionSchema>;
 export type OptionFormSchemaType = z.infer<typeof OptionSchema>;

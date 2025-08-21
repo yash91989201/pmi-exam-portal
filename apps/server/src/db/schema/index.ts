@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm";
 import {
 	boolean,
 	integer,
+	pgEnum,
 	pgTable,
 	smallint,
 	text,
@@ -52,6 +53,15 @@ export const userExam = pgTable("user_exam", {
 	maxAttempts: smallint("max_attempts").notNull().default(1),
 });
 
+export const AttemptStatusEnum = pgEnum("status", [
+	"assigned",
+	"in_progress",
+	"completed",
+	"terminated",
+	"aborted",
+	"started",
+]);
+
 export const examAttempt = pgTable("exam_attempt", {
 	id: cuid2("id").defaultRandom().primaryKey(),
 	userExamId: cuid2("user_exam_id")
@@ -59,7 +69,7 @@ export const examAttempt = pgTable("exam_attempt", {
 		.references(() => userExam.id, { onDelete: "cascade" }),
 	startedAt: timestamp("started_at"),
 	completedAt: timestamp("completed_at"),
-	status: text("status").notNull().default("assigned"), // assigned, in_progress, completed, terminated, aborted
+	status: AttemptStatusEnum().notNull().default("assigned"),
 	marks: integer("marks"),
 	attemptNumber: smallint("attempt_number").notNull().default(1),
 	timeSpent: integer("time_spent"), // in minutes

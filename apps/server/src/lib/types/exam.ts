@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type {
+	AttemptStatusSchema,
 	CreateExamInput,
 	ExamInsertSchema,
 	ExamSchema,
@@ -26,6 +27,7 @@ export type UserExamType = z.infer<typeof UserExamSchema>;
 export type OptionInsertType = z.infer<typeof OptionInsertSchema>;
 export type QuestionInsertType = z.infer<typeof QuestionInsertSchema>;
 export type ExamInsertType = z.infer<typeof ExamInsertSchema>;
+export type AttemptStatusType = z.infer<typeof AttemptStatusSchema>;
 
 export type GetExamForAttemptInputType = z.infer<typeof GetExamForAttemptInput>;
 export type GetExamForAttemptOutputType = z.infer<

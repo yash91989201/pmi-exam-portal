@@ -6,7 +6,6 @@ import { AlertTriangle, Check, Clock } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import {
 	AlertDialog,
@@ -35,26 +34,18 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { useCheatDetection } from "@/hooks/use-cheat-detection";
 import { useExamTimer } from "@/hooks/use-exam-timer";
+import { AttemptExamFormSchema } from "@/lib/schema/exam";
+import type { AttemptExamFormSchemaType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
-const examAttemptSchema = z.object({
-	examId: z.string(),
-	answers: z.array(
-		z.object({
-			questionId: z.string(),
-			optionId: z.string().optional(),
-		}),
-	),
-});
-
-type ExamAttemptFormValues = z.infer<typeof examAttemptSchema>;
-
 export function AttemptExamForm({
 	examId,
+	examAttemptId,
 	isImpersonating = false,
 }: {
 	examId: string;
+	examAttemptId: string;
 	isImpersonating?: boolean;
 }) {
 	const router = useRouter();
@@ -64,20 +55,18 @@ export function AttemptExamForm({
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [isNavigating, setIsNavigating] = useState(false);
 
-	const { data: examData } = useSuspenseQuery<GetExamForAttemptOutputType>(
-		queryUtils.user.getExamForAttempt.queryOptions({
-			input: { examId },
-		}),
-	);
+	const { data: examDataForAttempt } =
+		useSuspenseQuery<GetExamForAttemptOutputType>(
+			queryUtils.user.getExamForAttempt.queryOptions({
+				input: { examId, examAttemptId },
+			}),
+		);
 
-	const form = useForm<ExamAttemptFormValues>({
-		resolver: standardSchemaResolver(examAttemptSchema),
+	const form = useForm<AttemptExamFormSchemaType>({
+		resolver: standardSchemaResolver(AttemptExamFormSchema),
 		defaultValues: {
 			examId,
-			answers: examData.questions.map((q) => ({
-				questionId: q.id,
-				optionId: undefined,
-			})),
+			answers: examDataForAttempt.questions,
 		},
 	});
 
@@ -133,7 +122,7 @@ export function AttemptExamForm({
 
 			form.setValue("answers", updatedAnswers);
 
-			if (currentQuestion < examData.questions.length - 1) {
+			if (currentQuestion < examDataForAttempt.questions.length - 1) {
 				setIsNavigating(true);
 				setTimeout(() => {
 					setCurrentQuestion((prev) => prev + 1);
@@ -141,26 +130,26 @@ export function AttemptExamForm({
 				}, 150);
 			}
 		},
-		[form, currentQuestion, examData.questions.length],
+		[form, currentQuestion, examDataForAttempt.questions.length],
 	);
 
 	const onSubmit = useCallback(
-		(values: ExamAttemptFormValues) => {
+		(values: AttemptExamFormSchemaType) => {
 			!examSubmitted.current && submitExam(values);
 		},
 		[submitExam],
 	);
 
 	const { timeLeft, formattedTime, timerColor } = useExamTimer(
-		examData.timeLimit,
+		examDataForAttempt.timeLimit,
 		() => {
 			form.handleSubmit(onSubmit)();
 		},
 	);
 
 	const question = useMemo(
-		() => examData.questions[currentQuestion],
-		[currentQuestion, examData.questions],
+		() => examDataForAttempt.questions[currentQuestion],
+		[currentQuestion, examDataForAttempt.questions],
 	);
 
 	const answeredQuestions = form
@@ -168,8 +157,8 @@ export function AttemptExamForm({
 		.filter((a) => a.optionId).length;
 
 	const progressPercentage = useMemo(
-		() => ((currentQuestion + 1) / examData.questions.length) * 100,
-		[currentQuestion, examData.questions.length],
+		() => ((currentQuestion + 1) / examDataForAttempt.questions.length) * 100,
+		[currentQuestion, examDataForAttempt.questions.length],
 	);
 
 	const progressColor = useMemo(() => {
@@ -213,7 +202,7 @@ export function AttemptExamForm({
 							</div>
 							<div className="hidden text-slate-400 md:block">•</div>
 							<h1 className="font-bold text-slate-800 text-xl dark:text-slate-200">
-								{examData.certification}
+								{examDataForAttempt.certification}
 							</h1>
 						</div>
 						<div className="flex items-center space-x-6">
@@ -237,11 +226,13 @@ export function AttemptExamForm({
 					<div className="mt-4 space-y-2">
 						<div className="flex items-center justify-between text-sm">
 							<span className="text-slate-600 dark:text-slate-400">
-								Question {currentQuestion + 1} of {examData.questions.length}
+								Question {currentQuestion + 1} of{" "}
+								{examDataForAttempt.questions.length}
 							</span>
 							<span className="text-slate-600 dark:text-slate-400">
 								{answeredQuestions} answered •{" "}
-								{examData.questions.length - answeredQuestions} remaining
+								{examDataForAttempt.questions.length - answeredQuestions}{" "}
+								remaining
 							</span>
 						</div>
 						<div className="relative">
@@ -266,12 +257,13 @@ export function AttemptExamForm({
 										Questions
 									</h3>
 									<p className="mt-1 text-slate-600 text-sm dark:text-slate-400">
-										{answeredQuestions} of {examData.questions.length} completed
+										{answeredQuestions} of {examDataForAttempt.questions.length}{" "}
+										completed
 									</p>
 								</div>
 								<ScrollArea className="h-[calc(100vh-300px)]">
 									<div className="space-y-2 p-4">
-										{examData.questions.map((q, index) => {
+										{examDataForAttempt.questions.map((q, index) => {
 											const isAnswered = form.watch(
 												`answers.${index}.optionId`,
 											);
@@ -427,7 +419,7 @@ export function AttemptExamForm({
 								Quick Navigation
 							</h3>
 							<div className="grid grid-cols-5 gap-2">
-								{examData.questions.map((_, index) => {
+								{examDataForAttempt.questions.map((_, index) => {
 									const isAnswered = form.watch(`answers.${index}.optionId`);
 									const isCurrent = currentQuestion === index;
 									return (
@@ -478,7 +470,7 @@ export function AttemptExamForm({
 						>
 							Previous
 						</Button>
-						{currentQuestion < examData.questions.length - 1 ? (
+						{currentQuestion < examDataForAttempt.questions.length - 1 ? (
 							<Button
 								type="button"
 								onClick={() => setCurrentQuestion((prev) => prev + 1)}
@@ -509,7 +501,7 @@ export function AttemptExamForm({
 											</span>{" "}
 											out of{" "}
 											<span className="font-semibold">
-												{examData.questions.length}
+												{examDataForAttempt.questions.length}
 											</span>{" "}
 											questions.
 											<br />
