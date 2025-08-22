@@ -1,5 +1,5 @@
 # Build stage
-FROM oven/bun:1.2.20 as builder
+FROM oven/bun:1.2.20 AS builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY apps/web/package.json ./apps/web/
 COPY apps/server/package.json ./apps/server/
 
 # Install dependencies
-RUN bun install --production
+RUN bun install
 
 # Copy all source code needed for web build (web app needs server for type definitions and schemas)
 COPY apps/web ./apps/web
@@ -20,7 +20,7 @@ WORKDIR /app
 RUN bun run build
 
 # Production stage
-FROM oven/bun:1.2.20-slim as production
+FROM oven/bun:1.2.20-slim AS production
 
 WORKDIR /app
 
