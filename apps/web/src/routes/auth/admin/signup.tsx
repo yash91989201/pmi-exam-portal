@@ -12,8 +12,7 @@ import {
 
 export const Route = createFileRoute("/auth/admin/signup")({
 	loader: async ({ context }) => {
-		const queryRes =
-			await context.orpcClient.adminSetting.registrationEnabled();
+		const queryRes = await context.orpcClient.admin.registrationEnabled();
 
 		if (!queryRes.success || !queryRes.data?.enabled) {
 			return {

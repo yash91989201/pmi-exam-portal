@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, ListChecks, Target, Trophy } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	FormControl,
@@ -23,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 import { BulkQuestionUploadSection } from "./bulk-question-upload-section";
 
-export const ExamInfoCard = () => {
+export const ExamDetailsCard = () => {
 	const form = useFormContext<ExamFormSchemaType>();
 	const watchedQuestions = form.watch("questions") || [];
 
@@ -85,11 +86,14 @@ export const ExamInfoCard = () => {
 							<FormLabel>Time Limit (minutes)</FormLabel>
 							<FormControl>
 								<Input
+									{...field}
 									type="number"
 									min={1}
 									step={1}
 									placeholder="60"
-									{...field}
+									onChange={(event) =>
+										field.onChange(Number(event.target.value))
+									}
 								/>
 							</FormControl>
 							<FormDescription>Duration of the exam in minutes</FormDescription>
@@ -154,6 +158,8 @@ export const ExamInfoCard = () => {
 				<BulkQuestionUploadSection />
 
 				<Separator />
+
+				<Button>Create Exam</Button>
 
 				<div>
 					<Label className="mb-2 block font-medium text-sm">Exam Stats</Label>

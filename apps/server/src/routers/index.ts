@@ -1,15 +1,21 @@
-import { publicProcedure } from "@/lib/orpc";
-import { adminSettingRouter } from "./admin-setting";
+import type { AdminRouterType } from "./admin";
+import { adminRouter } from "./admin";
+import type { ExamRouterType } from "./exam";
 import { examRouter } from "./exam";
-import { userRouter } from "./user";
+import type { HealthCheckRouterType } from "./health-check";
+import { healthCheckRouter } from "./health-check";
+import { type UserRouterType, userRouter } from "./user";
 
-export const appRouter = {
-	healthCheck: publicProcedure.handler(() => {
-		return "OK";
-	}),
-	adminSetting: adminSettingRouter,
-	exam: examRouter,
-	user: userRouter,
+export type AppRouter = {
+	healthCheck: HealthCheckRouterType;
+	exam: ExamRouterType;
+	admin: AdminRouterType;
+	user: UserRouterType;
 };
 
-export type AppRouter = typeof appRouter;
+export const appRouter: AppRouter = {
+	healthCheck: healthCheckRouter,
+	exam: examRouter,
+	admin: adminRouter,
+	user: userRouter,
+};

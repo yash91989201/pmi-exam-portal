@@ -21,10 +21,15 @@ const QuestionSchema = z.object({
 		),
 });
 
-export const ExamFormSchema = z.object({
+export const CreateExamFormSchema = z.object({
 	certification: z.string().min(1, "Certification is required"),
 	mark: z.number().int().nonnegative("Mark must be a non-negative integer"),
-	timeLimit: z.number().int().positive("Time limit must be a positive integer"),
+	timeLimit: z
+		.number()
+		.int()
+		.positive("Time limit must be a positive integer")
+		.min(15)
+		.max(60),
 	questions: z
 		.array(QuestionSchema)
 		.min(1, "At least one question is required")
@@ -41,6 +46,16 @@ export const ExamFormSchema = z.object({
 	}),
 });
 
-export type ExamFormSchemaType = z.infer<typeof ExamFormSchema>;
+export const AttemptExamFormSchema = z.object({
+	examId: z.string(),
+	answers: z.array(
+		z.object({
+			questionId: z.string(),
+			optionId: z.string().optional(),
+		}),
+	),
+});
+
+export type CreateExamFormSchemaType = z.infer<typeof CreateExamFormSchema>;
 export type QuestionFormSchemaType = z.infer<typeof QuestionSchema>;
 export type OptionFormSchemaType = z.infer<typeof OptionSchema>;

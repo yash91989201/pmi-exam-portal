@@ -1,6 +1,7 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { UserWithRole } from "better-auth/plugins/admin";
 import {
 	ArrowUpDown,
 	ChevronLeft,
@@ -35,23 +36,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { orpcClient, queryUtils } from "@/utils/orpc";
-
-// Type definition for user data
-interface User {
-	id: string;
-	name?: string | null;
-	email: string;
-	emailVerified: boolean;
-	image?: string | null;
-	role?: string | null;
-	banned?: boolean | null;
-	banReason?: string | null;
-	banExpires?: Date | null;
-	createdAt: Date;
-	updatedAt: Date;
-}
+import { queryUtils } from "@/utils/orpc";
 
 export const UsersTable = ({
 	limit = 10,
@@ -62,26 +49,59 @@ export const UsersTable = ({
 }) => {
 	const navigate = useNavigate();
 
-	const { data: usersData, refetch } = useSuspenseQuery({
-		queryKey: ["users", { limit, page }],
-		queryFn: async () => {
-			return await orpcClient.user.listUsers({ page, limit });
+	const { data: usersData, refetch: refetchUserList } = useSuspenseQuery(
+		queryUtils.admin.listUsers.queryOptions({
+			input: {
+				limit,
+				page,
+			},
+		}),
+	);
+
+	const { mutateAsync: deleteUser } = useMutation({
+		mutationFn: async ({ userId }: { userId: string }) => {
+			await authClient.admin.removeUser({ userId });
+		},
+		onSettled: () => {
+			refetchUserList();
 		},
 	});
 
-	const { mutateAsync: deleteUser, isPending: isDeletingUser } = useMutation(
-		queryUtils.user.deleteUser.mutationOptions(),
-	);
+	const { mutateAsync: banUser } = useMutation({
+		mutationFn: async ({ userId }: { userId: string }) => {
+			await authClient.admin.banUser({ userId });
+		},
+		onSettled: () => {
+			refetchUserList();
+		},
+	});
 
-	const { mutateAsync: banUser, isPending: isBanningUser } = useMutation(
-		queryUtils.user.banUser.mutationOptions(),
-	);
-
-	const { mutateAsync: unbanUser, isPending: isUnbanningUser } = useMutation(
-		queryUtils.user.unbanUser.mutationOptions(),
-	);
+	const { mutateAsync: unbanUser } = useMutation({
+		mutationFn: async ({ userId }: { userId: string }) => {
+			await authClient.admin.unbanUser({ userId });
+		},
+		onSettled: () => {
+			refetchUserList();
+		},
+	});
 
 	const users = usersData.users;
+	// Pagination Info
+	const totalPages = usersData.totalPages;
+	const hasNextPage = usersData.hasNextPage;
+	const hasPreviousPage = usersData.hasPreviousPage;
+
+	const handleBanUser = (userId: string) => {
+		banUser({ userId });
+	};
+
+	const handleUnbanUser = (userId: string) => {
+		unbanUser({ userId });
+	};
+
+	const handleDeleteUser = (userId: string) => {
+		deleteUser({ userId });
+	};
 
 	const handleLimitChange = (newLimit: string) => {
 		navigate({
@@ -90,156 +110,16 @@ export const UsersTable = ({
 		});
 	};
 
-	const handleDeleteUser = async (userId: string) => {
-		try {
-			await deleteUser({ userId });
-			await refetch();
-		} catch (error) {
-			console.error("Error deleting user:", error);
-		}
-	};
-
-	const handleBanUser = async (userId: string) => {
-		try {
-			await banUser({ userId });
-			await refetch();
-		} catch (error) {
-			console.error("Error banning user:", error);
-		}
-	};
-
-	const handleUnbanUser = async (userId: string) => {
-		try {
-			await unbanUser({ userId });
-			await refetch();
-		} catch (error) {
-			console.error("Error unbanning user:", error);
-		}
-	};
-
-	const columns: ColumnDef<User>[] = [
-		{
-			accessorKey: "name",
-			header: ({ column }) => (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					Name
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			),
-			cell: ({ row }) => (
-				<div className="flex flex-col">
-					<span className="font-medium">{row.getValue("name") || "N/A"}</span>
-					<span className="text-muted-foreground text-sm">
-						{row.original.email}
-					</span>
-				</div>
-			),
-		},
-		{
-			accessorKey: "emailVerified",
-			header: "Status",
-			cell: ({ row }) => (
-				<div className="flex flex-col gap-1">
-					<Badge variant={row.original.emailVerified ? "default" : "secondary"}>
-						{row.original.emailVerified ? "Verified" : "Unverified"}
-					</Badge>
-					{row.original.banned && <Badge variant="destructive">Banned</Badge>}
-				</div>
-			),
-		},
-		{
-			accessorKey: "role",
-			header: "Role",
-			cell: ({ row }) => (
-				<Badge variant="outline">{row.original.role || "user"}</Badge>
-			),
-		},
-		{
-			accessorKey: "createdAt",
-			header: ({ column }) => (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					Created
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			),
-			cell: ({ row }) => (
-				<span className="text-sm">
-					{row.original.createdAt
-						? new Date(row.original.createdAt).toLocaleDateString()
-						: "N/A"}
-				</span>
-			),
-		},
-		{
-			id: "actions",
-			cell: ({ row }) => {
-				const user = row.original;
-				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="ghost"
-								className="h-8 w-8 p-0"
-								disabled={isDeletingUser || isBanningUser || isUnbanningUser}
-							>
-								<span className="sr-only">Open menu</span>
-								<MoreHorizontal className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem
-								onClick={() => navigator.clipboard.writeText(user.id)}
-							>
-								<Eye className="mr-2 h-4 w-4" />
-								Copy User ID
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							{user.banned ? (
-								<DropdownMenuItem
-									onClick={() => handleUnbanUser(user.id)}
-									className="text-green-600"
-								>
-									<ShieldOff className="mr-2 h-4 w-4" />
-									Unban User
-								</DropdownMenuItem>
-							) : (
-								<DropdownMenuItem
-									onClick={() => handleBanUser(user.id)}
-									className="text-yellow-600"
-								>
-									<Shield className="mr-2 h-4 w-4" />
-									Ban User
-								</DropdownMenuItem>
-							)}
-							<DropdownMenuItem
-								onClick={() => handleDeleteUser(user.id)}
-								className="text-red-600"
-							>
-								<Trash2 className="mr-2 h-4 w-4" />
-								Delete User
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				);
-			},
-		},
-	];
-
-	// Calculate pagination info
-	const totalPages = usersData.totalPages;
-	const hasNextPage = usersData.hasNextPage;
-	const hasPreviousPage = usersData.hasPreviousPage;
-
 	return (
 		<>
-			<DataTable columns={columns} data={users} />
+			<DataTable
+				columns={getColumn({
+					handleBanUser,
+					handleUnbanUser,
+					handleDeleteUser,
+				})}
+				data={users}
+			/>
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
 					<span className="text-sm">Rows per page</span>
@@ -381,4 +261,142 @@ export const UsersTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
 			</div>
 		</>
 	);
+};
+
+export const getColumn = ({
+	handleBanUser,
+	handleDeleteUser,
+	handleUnbanUser,
+}: {
+	handleBanUser: (userId: string) => void;
+	handleUnbanUser: (userId: string) => void;
+	handleDeleteUser: (userId: string) => void;
+}): ColumnDef<UserWithRole>[] => {
+	const columns: ColumnDef<UserWithRole>[] = [
+		{
+			accessorKey: "name",
+			header: ({ column }) => (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				>
+					<span>Name</span>
+					<ArrowUpDown className="ml-2 size-4.5" />
+				</Button>
+			),
+			cell: ({ row }) => (
+				<div className="flex flex-col">
+					<span className="font-medium">{row.getValue("name") || "N/A"}</span>
+					<span className="text-muted-foreground text-sm">
+						{row.original.email}
+					</span>
+				</div>
+			),
+		},
+		{
+			accessorKey: "emailVerified",
+			header: "Status",
+			cell: ({ row }) => (
+				<div className="flex flex-col gap-1">
+					<Badge variant={row.original.emailVerified ? "default" : "secondary"}>
+						{row.original.emailVerified ? "Verified" : "Unverified"}
+					</Badge>
+					{row.original.banned && <Badge variant="destructive">Banned</Badge>}
+				</div>
+			),
+		},
+		{
+			accessorKey: "role",
+			header: "Role",
+			cell: ({ row }) => (
+				<Badge variant="outline">{row.original.role || "user"}</Badge>
+			),
+		},
+		{
+			accessorKey: "createdAt",
+			header: ({ column }) => (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				>
+					Created
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			),
+			cell: ({ row }) => (
+				<span className="text-sm">
+					{row.original.createdAt
+						? new Date(row.original.createdAt).toLocaleDateString()
+						: "N/A"}
+				</span>
+			),
+		},
+		{
+			id: "view",
+			cell: ({ row }) => (
+				<Link
+					to="/dashboard/users/$userId"
+					params={{ userId: row.original.id }}
+					className={buttonVariants({
+						size: "icon",
+						variant: "secondary",
+					})}
+				>
+					<Eye className="size-4.5" />
+				</Link>
+			),
+		},
+		{
+			id: "actions",
+			cell: ({ row }) => {
+				const user = row.original;
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="h-8 w-8 p-0">
+								<span className="sr-only">Open menu</span>
+								<MoreHorizontal className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+							<DropdownMenuItem
+								onClick={() => navigator.clipboard.writeText(user.id)}
+							>
+								<Eye className="mr-2 h-4 w-4" />
+								Copy User ID
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							{user.banned ? (
+								<DropdownMenuItem
+									onClick={() => handleUnbanUser(user.id)}
+									className="text-green-600"
+								>
+									<ShieldOff className="mr-2 h-4 w-4" />
+									Unban User
+								</DropdownMenuItem>
+							) : (
+								<DropdownMenuItem
+									onClick={() => handleBanUser(user.id)}
+									className="text-yellow-600"
+								>
+									<Shield className="mr-2 h-4 w-4" />
+									Ban User
+								</DropdownMenuItem>
+							)}
+							<DropdownMenuItem
+								onClick={() => handleDeleteUser(user.id)}
+								className="text-red-600"
+							>
+								<Trash2 className="mr-2 h-4 w-4" />
+								Delete User
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				);
+			},
+		},
+	];
+
+	return columns;
 };

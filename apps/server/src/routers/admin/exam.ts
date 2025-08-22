@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server";
-import { asc, count } from "drizzle-orm";
+import { and, asc, count, eq, type SQL } from "drizzle-orm";
 import z from "zod";
-import { exam, option, question } from "@/db/schema";
+import { exam, examAttempt, option, question } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
 import {
 	BulkUploadExcelOutput,
@@ -9,18 +9,16 @@ import {
 	CreateExamOutput,
 	ListExamsInput,
 	ListExamsOutput,
-} from "@/lib/schema";
+} from "@/lib/schema/exam";
 import { importExcelData } from "@/utils/excel-import";
 
-export const examRouter = {
+export const adminExamRouter = {
 	createExam: adminProcedure
 		.input(CreateExamInput)
 		.output(CreateExamOutput)
 		.handler(async ({ context, input }) => {
 			try {
-				// Use a database transaction to ensure data consistency
 				const result = await context.db.transaction(async (tx) => {
-					// Create the exam first
 					const [newExam] = await tx
 						.insert(exam)
 						.values({
@@ -99,6 +97,7 @@ export const examRouter = {
 					validationErrors: result.validationErrors,
 				};
 			} catch (error) {
+				console.log(error);
 				throw new ORPCError(
 					error instanceof Error
 						? error.message
@@ -112,29 +111,72 @@ export const examRouter = {
 		.input(ListExamsInput)
 		.output(ListExamsOutput)
 		.handler(async ({ context, input }) => {
-			const { page, limit } = input;
+			const { page, limit, filter } = input;
 
-			const [exams, totalCount] = await Promise.all([
-				context.db.query.exam.findMany({
-					limit,
-					offset: (page - 1) * limit,
-					orderBy: asc(exam.id),
-				}),
-				context.db
-					.select({ count: count(exam.id) })
-					.from(exam)
-					.then((r) => Number(r[0]?.count || 0)),
+			// Build dynamic query conditions
+			const whereConditions: SQL[] = [];
+			let needsJoin = false;
+
+			// Apply attemptCount filter if provided
+			if (filter?.attemptCount !== undefined) {
+				whereConditions.push(
+					eq(examAttempt.attemptNumber, filter.attemptCount),
+				);
+
+				needsJoin = true;
+			}
+
+			let examsBaseQuery = context.db.select().from(exam).$dynamic();
+
+			let examsCountBaseQuery = context.db
+				.select({ count: count(exam.id) })
+				.from(exam)
+				.$dynamic();
+
+			if (needsJoin) {
+				examsBaseQuery.innerJoin(
+					examAttempt,
+					eq(exam.id, examAttempt.userExamId),
+				);
+
+				examsCountBaseQuery.innerJoin(
+					examAttempt,
+					eq(exam.id, examAttempt.userExamId),
+				);
+			}
+
+			// Apply where conditions if any
+			if (whereConditions.length > 0) {
+				const combinedWhere =
+					whereConditions.length === 1
+						? whereConditions[0]
+						: and(...whereConditions);
+
+				examsBaseQuery = examsBaseQuery.where(combinedWhere);
+				examsCountBaseQuery = examsCountBaseQuery.where(combinedWhere);
+			}
+
+			// Execute queries
+			const [examsResult, totalCountResult] = await Promise.all([
+				examsBaseQuery
+					.limit(limit)
+					.offset((page - 1) * limit)
+					.orderBy(asc(exam.id))
+					.execute(),
+				examsCountBaseQuery.execute().then((r) => Number(r[0]?.count || 0)),
 			]);
 
-			const totalPages = Math.ceil(totalCount / limit);
+			const totalPages = Math.ceil(totalCountResult / limit);
 
 			return {
-				exams,
+				exams: examsResult,
 				page,
 				totalPages,
-				totalCount,
+				totalCount: totalCountResult,
 				hasPreviousPage: page > 1,
 				hasNextPage: page < totalPages,
 			};
 		}),
 };
+
+export type AdminExamRouter = typeof adminExamRouter;

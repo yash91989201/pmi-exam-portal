@@ -1,4 +1,6 @@
+import type { UserWithRole } from "better-auth/plugins";
 import z from "zod";
+import { ExamSchema, UserExamSchema } from "./exam";
 
 export * from "./auth";
 export * from "./exam";
@@ -29,4 +31,30 @@ export const UpdateDefaultAdminIdInput = z.object({
 export const UpdateDefaultAdminIdOutput = z.object({
 	success: z.boolean(),
 	message: z.string(),
+});
+
+export const ListUsersInput = z.object({
+	page: z.number().min(1).default(1),
+	limit: z.number().min(1).max(100).default(10),
+});
+
+export const ListUsersOutput = z.object({
+	users: z.array(z.custom<UserWithRole>()),
+	total: z.number(),
+	page: z.number(),
+	totalPages: z.number(),
+	hasNextPage: z.boolean(),
+	hasPreviousPage: z.boolean(),
+});
+
+export const GetUserInput = z.object({
+	userId: z.string(),
+});
+
+export const ListUserExamsOutput = z.object({
+	userExams: z.array(
+		UserExamSchema.extend({
+			exam: ExamSchema,
+		}),
+	),
 });

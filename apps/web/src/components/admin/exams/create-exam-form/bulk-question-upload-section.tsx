@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { FileSpreadsheet, Loader2, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -8,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import type { ExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
-import { orpcClient } from "@/utils/orpc";
+import { queryUtils } from "@/utils/orpc";
 
 export const BulkQuestionUploadSection = () => {
 	const form = useFormContext<ExamFormSchemaType>();
@@ -17,6 +18,10 @@ export const BulkQuestionUploadSection = () => {
 	const [uploadProgress, setUploadProgress] = useState(0);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+	const { mutateAsync: bulkUploadExcel } = useMutation(
+		queryUtils.admin.bulkUploadExcel.mutationOptions(),
+	);
 
 	const handleFileSelect = async (
 		event: React.ChangeEvent<HTMLInputElement>,
@@ -63,7 +68,7 @@ export const BulkQuestionUploadSection = () => {
 				setUploadProgress((prev) => Math.min(prev + 10, 90));
 			}, 200);
 
-			const result = await orpcClient.exam.bulkUploadExcel({ file });
+			const result = await bulkUploadExcel({ file });
 
 			clearInterval(progressInterval);
 			setUploadProgress(100);

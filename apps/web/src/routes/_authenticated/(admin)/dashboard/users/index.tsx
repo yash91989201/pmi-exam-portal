@@ -1,12 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { UserPlus } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import z from "zod";
+import { BulkCreateUserForm } from "@/components/admin/user/bulk-create-user-form";
+import { CreateUserForm } from "@/components/admin/user/create-user-form";
 import {
 	UsersTable,
 	UsersTableSkeleton,
 } from "@/components/admin/users/users-table";
-import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -31,7 +31,7 @@ function RouteComponent() {
 	const { limit, page } = Route.useSearch();
 
 	return (
-		<div className="container mx-auto p-6">
+		<div className="container mx-auto">
 			<div className="flex flex-col gap-6">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between">
@@ -40,15 +40,14 @@ function RouteComponent() {
 								Manage Users
 							</CardTitle>
 							<CardDescription className="max-w-lg">
-								View and manage user accounts, including banning, unbanning, and deleting users.
+								View and manage user accounts, including banning, unbanning, and
+								deleting users.
 							</CardDescription>
 						</div>
-						<Button asChild>
-							<Link to="/dashboard/users/create-user">
-								<UserPlus className="mr-1 size-4" />
-								<span>Create New User</span>
-							</Link>
-						</Button>
+						<div className="flex items-end gap-3">
+							<CreateUserForm />
+							<BulkCreateUserForm />
+						</div>
 					</CardHeader>
 					<CardContent>
 						<Suspense fallback={<UsersTableSkeleton limit={limit} />}>

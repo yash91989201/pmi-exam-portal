@@ -26,7 +26,7 @@ export const Route = createFileRoute(
 	validateSearch: RouteSearchSchema,
 	beforeLoad: async ({ context: { queryClient, queryUtils }, search }) => {
 		queryClient.ensureQueryData(
-			queryUtils.exam.listExams.queryOptions({
+			queryUtils.admin.listExams.queryOptions({
 				input: search,
 			}),
 		);

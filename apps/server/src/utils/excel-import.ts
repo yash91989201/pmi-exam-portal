@@ -1,10 +1,7 @@
 import * as XLSX from "xlsx";
 import { ZodError } from "zod";
-import {
-	ExcelImportSchema,
-	type ExcelImportType,
-	type QuestionFormData,
-} from "@/lib/schema/exam";
+import { ExcelImportSchema } from "@/lib/schema/exam";
+import type { ExcelImportType, QuestionFormData } from "@/lib/types/exam";
 
 export interface ImportResult {
 	success: boolean;
@@ -32,7 +29,7 @@ export function validateExcelFile(file: File): boolean {
 		"application/vnd.ms-excel", // .xls
 	];
 
-	const validExtensions = [".xlsx", ".xls"];
+	const validExtensions = [".xlsx", ".xls", ".ods"];
 	const hasValidType = validTypes.includes(file.type);
 	const hasValidExtension = validExtensions.some((ext) =>
 		file.name.toLowerCase().endsWith(ext),
@@ -126,6 +123,9 @@ export function convertToQuestionSchema(
 			);
 
 		return {
+			id: "",
+			imageId: "",
+			examId: "",
 			text: row["Question Text"].trim(),
 			mark: row.Marks,
 			order: index,

@@ -19,6 +19,21 @@ services:
       retries: 5
     restart: unless-stopped
 
+  valkey:
+    image: valkey/valkey:7
+    container_name: pmi-exam-portal-valkey
+    ports:
+      - "36379:6379"
+    volumes:
+      - pmi-exam-portal_valkey_data:/data
+    command: valkey-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
 volumes:
   pmi-exam-portal_postgres_data:
-
+  pmi-exam-portal_valkey_data:
