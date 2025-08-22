@@ -17,7 +17,6 @@ export const AdminNavbar = () => {
 						<Link
 							key={href}
 							to={href}
-							activeOptions={{ exact: true }}
 							className={buttonVariants({
 								variant: "link",
 								className: "px-3 py-1 font-normal",
