@@ -4,10 +4,11 @@ FROM oven/bun:alpine
 WORKDIR /app
 
 # Installing only required packages for migration
-RUN bun install drizzle-kit@latest @t3-oss/env-nextjs@latest zod@latest drizzle-orm@latest mysql2@latest
+RUN bun install drizzle-kit@latest @t3-oss/env-nextjs@latest zod@latest drizzle-orm@latest pg@latest
 
 # Copy only necessary files for migration
 COPY ./src/db/migrations ./src/db/migrations
+COPY ./src/env ./src/env
 COPY ./drizzle.config.ts .
 
 # Set the entrypoint
