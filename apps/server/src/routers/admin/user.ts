@@ -83,11 +83,7 @@ export const adminUserRouter = {
 				.from(exam)
 				.leftJoin(
 					userExam,
-					and(
-						eq(userExam.userId, input.userId),
-						eq(userExam.examId, exam.id),
-						eq(userExam.attempts, 0),
-					),
+					and(eq(userExam.userId, input.userId), eq(userExam.examId, exam.id)),
 				)
 				.orderBy(asc(exam.id));
 
