@@ -39,15 +39,15 @@ import type { AttemptExamFormSchemaType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
-export function AttemptExamForm({
+export const AttemptExamForm = ({
 	examId,
 	examAttemptId,
-	isImpersonating = false,
+	isImpersonating,
 }: {
 	examId: string;
 	examAttemptId: string;
-	isImpersonating?: boolean;
-}) {
+	isImpersonating: boolean;
+}) => {
 	const router = useRouter();
 
 	const examSubmitted = useRef(false);
@@ -562,4 +562,4 @@ export function AttemptExamForm({
 			</AlertDialog>
 		</div>
 	);
-}
+};

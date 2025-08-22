@@ -24,7 +24,6 @@ export function useCheatDetection({
 	const warningShown = useRef(false);
 
 	useEffect(() => {
-		console.log(isMonitoring);
 		// 🚨 Disable detection if not monitoring.
 		if (!isMonitoring || examSubmitted.current) return;
 
@@ -122,19 +121,36 @@ export function useCheatDetection({
 			}
 		};
 
+		const handlePageUnload = () => {
+			navigator.sendBeacon(
+				"/rpc/user/terminateExam",
+				JSON.stringify({
+					examId,
+					reason: "Page refreshed, hideen or closed",
+				}),
+			);
+		};
+
 		window.addEventListener("blur", handleBlur);
+		window.addEventListener("unload", handlePageUnload);
+		window.addEventListener("pagehide", handlePageUnload);
+
 		document.addEventListener("keydown", handleKeyDown);
 		document.addEventListener("click", updateActivityTime);
 		document.addEventListener("mouseleave", handleMouseLeave);
 		document.addEventListener("mousemove", updateActivityTime);
 		document.addEventListener("contextmenu", handleContextMenu);
 		document.addEventListener("visibilitychange", handleVisibilityChange);
+		window.addEventListener("beforeunload", handlePageUnload);
 
 		const devToolsInterval = setInterval(detectDevTools, 2000);
 		const inactivityInterval = setInterval(checkInactivity, 30000);
 
 		return () => {
 			window.removeEventListener("blur", handleBlur);
+			window.removeEventListener("unload", handlePageUnload);
+			window.removeEventListener("pagehide", handlePageUnload);
+
 			document.removeEventListener("keydown", handleKeyDown);
 			document.removeEventListener("click", updateActivityTime);
 			document.removeEventListener("mouseleave", handleMouseLeave);

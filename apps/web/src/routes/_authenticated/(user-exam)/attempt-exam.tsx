@@ -54,6 +54,12 @@ export const Route = createFileRoute(
 		};
 	},
 	component: RouteComponent,
+	onLeave: async ({ context: { orpcClient }, search }) => {
+		await orpcClient.user.terminateExam({
+			examId: search.examId,
+			reason: "User navigated within the app.",
+		});
+	},
 });
 
 function RouteComponent() {
