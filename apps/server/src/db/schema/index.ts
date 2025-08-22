@@ -94,6 +94,29 @@ export const adminSetting = pgTable("admin_setting", {
 	value: text("value").notNull(),
 });
 
+export const orders = pgTable("orders", {
+	id: cuid2("id").defaultRandom().primaryKey(),
+	orderText: varchar("orderText", { length: 255 }).notNull(),
+	orderPriority: smallint("orderPriority").default(0).notNull(),
+});
+
+export const userOrders = pgTable("userOrders", {
+	id: cuid2("id").defaultRandom().primaryKey(),
+	userId: varchar("userId", { length: 32 })
+		.notNull()
+		.references(() => user.id, {
+			onDelete: "cascade",
+		}),
+	orderId: varchar("orderId", { length: 32 })
+		.notNull()
+		.references(() => orders.id, {
+			onDelete: "cascade",
+		}),
+	orderText: varchar("orderText", { length: 255 }).notNull(),
+	orderPriority: smallint("orderPriority").default(0).notNull(),
+	isCompleted: boolean("isCompleted").default(false).notNull(),
+});
+
 export const examRelations = relations(exam, ({ many }) => ({
 	questions: many(question),
 	userExams: many(userExam),
@@ -153,3 +176,18 @@ export const attemptResponseRelations = relations(
 		}),
 	}),
 );
+
+export const orderRelations = relations(orders, ({ many }) => ({
+	userOrder: many(userOrders),
+}));
+
+export const userOrderRelation = relations(userOrders, ({ one }) => ({
+	user: one(user, {
+		fields: [userOrders.userId],
+		references: [user.id],
+	}),
+	order: one(orders, {
+		fields: [userOrders.orderId],
+		references: [orders.id],
+	}),
+}));
