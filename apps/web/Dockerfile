@@ -32,8 +32,8 @@ RUN bun add -g serve
 COPY --from=builder /app/apps/web/dist ./dist
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3001
 
 # Start the application
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["serve", "-s", "dist", "-l", "3001"]
 
