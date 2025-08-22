@@ -56,7 +56,7 @@ export const StopImpersonationBtn = () => {
 			onClick={() => stopImpersonating()}
 		>
 			{isPending ? (
-				<Loader2 className="size-4.5 animate-sping" />
+				<Loader2 className="size-4.5 animate-spin" />
 			) : (
 				<Square className="size-4.5" />
 			)}
