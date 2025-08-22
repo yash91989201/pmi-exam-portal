@@ -126,7 +126,7 @@ export function useCheatDetection({
 				"/rpc/user/terminateExam",
 				JSON.stringify({
 					examId,
-					reason: "Page refreshed, hideen or closed",
+					reason: "Page refreshed, hidden or closed",
 				}),
 			);
 		};
