@@ -3,21 +3,19 @@ FROM oven/bun:1.2.20 as builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json ./
+# Copy package files for dependency resolution
+COPY package.json bun.lock ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/server/package.json ./apps/server/
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN bun install --production
 
-# Copy source code
+# Copy all source code needed for web build (web app needs server for type definitions and schemas)
 COPY apps/web ./apps/web
-COPY apps/server/src/lib/schema ./apps/server/src/lib/schema
-COPY apps/server/src/lib/types ./apps/server/src/lib/types
-COPY apps/server/tsconfig.json ./apps/server/tsconfig.json
+COPY apps/server ./apps/server
 
-# Build the application
+# Build the web application
 WORKDIR /app/apps/web
 RUN bun run build
 
@@ -29,7 +27,7 @@ WORKDIR /app
 # Install serve globally for serving static files
 RUN bun add -g serve
 
-# Copy built application from builder stage
+# Copy only the built dist folder from builder stage
 COPY --from=builder /app/apps/web/dist ./dist
 
 # Expose port
