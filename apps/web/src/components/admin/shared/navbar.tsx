@@ -18,12 +18,9 @@ export const AdminNavbar = () => {
 							key={href}
 							to={href}
 							activeOptions={{ exact: true }}
-							activeProps={{
-								className: "underline",
-							}}
 							className={buttonVariants({
 								variant: "link",
-								className: "px-3 py-1 font-normal text-sm",
+								className: "px-3 py-1 font-normal",
 							})}
 						>
 							{label}
