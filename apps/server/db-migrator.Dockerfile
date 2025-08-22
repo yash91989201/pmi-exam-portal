@@ -8,7 +8,6 @@ RUN bun install drizzle-kit@latest @t3-oss/env-nextjs@latest zod@latest drizzle-
 
 # Copy only necessary files for migration
 COPY ./src/db/migrations ./src/db/migrations
-COPY ./src/env ./src/env
 COPY ./drizzle.config.ts .
 
 # Set the entrypoint
