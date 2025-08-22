@@ -16,7 +16,7 @@ COPY apps/web ./apps/web
 COPY apps/server ./apps/server
 
 # Build the web application
-WORKDIR /app/apps/web
+WORKDIR /app
 RUN bun run build
 
 # Production stage
