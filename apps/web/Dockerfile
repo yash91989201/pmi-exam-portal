@@ -15,6 +15,7 @@ RUN bun install --frozen-lockfile
 COPY apps/web ./apps/web
 COPY apps/server/src/lib/schema ./apps/server/src/lib/schema
 COPY apps/server/src/lib/types ./apps/server/src/lib/types
+COPY apps/server/tsconfig.json ./apps/server/tsconfig.json
 
 # Build the application
 WORKDIR /app/apps/web
