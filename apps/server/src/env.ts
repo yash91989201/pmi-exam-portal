@@ -8,6 +8,7 @@ export const env = createEnv({
 		BETTER_AUTH_URL: z.url(),
 		CORS_ORIGIN: z.url(),
 		RESEND_API_KEY: z.string(),
+		VALKEY_URL: z.url(),
 	},
 
 	runtimeEnv: {
@@ -17,6 +18,7 @@ export const env = createEnv({
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 		CORS_ORIGIN: process.env.CORS_ORIGIN,
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		VALKEY_URL: process.env.VALKEY_URL,
 	},
 
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,
