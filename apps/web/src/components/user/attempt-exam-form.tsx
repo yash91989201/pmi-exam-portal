@@ -178,7 +178,7 @@ export const AttemptExamForm = ({
 							<div className="flex items-center space-x-2">
 								{isImpersonating ? (
 									<div className="flex items-center space-x-2">
-										{/** biome-ignore lint/correctness/useUniqueElementIds: <required here> */}
+										{/** biome-ignore lint/correctness/useUniqueElementIds: This component is only rendered once, so the hardcoded ID 'monitoring-status' will not cause duplicate IDs. */}
 										<Switch
 											id="monitoring-status"
 											className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
