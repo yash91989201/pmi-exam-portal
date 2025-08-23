@@ -1,6 +1,5 @@
 # Build stage
 FROM oven/bun:1.2.20 AS builder
-
 WORKDIR /app
 
 # Copy package files for dependency resolution
@@ -10,8 +9,8 @@ COPY apps/server/package.json ./apps/server/
 
 # Install dependencies
 RUN bun install --frozen-lockfile
-
 # Copy all source code needed for web build (web app needs server for type definitions and schemas)
+
 COPY apps/web ./apps/web
 COPY apps/server ./apps/server
 
@@ -23,17 +22,17 @@ ENV VITE_ALLOWED_HOSTS=$VITE_ALLOWED_HOSTS
 
 # Build the web application
 WORKDIR /app/apps/web
-
 RUN bun run build
 
 # Production stage
 FROM oven/bun:1.2.20-slim AS production
 
-WORKDIR /app
+WORKDIR /app/apps/web
 
-# Copy only the built dist folder from builder stage
+# Copy built files maintaining the expected structure
 COPY --from=builder /app/apps/web/dist ./dist
 COPY --from=builder /app/apps/web/package.json ./package.json
+COPY --from=builder /app/apps/web/vite.config.js ./vite.config.js
 
 RUN bun add vite@latest
 
