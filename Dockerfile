@@ -31,6 +31,7 @@ WORKDIR /app/apps/web
 
 # Copy built files maintaining the expected structure
 COPY --from=builder /app/apps/web/dist ./dist
+COPY --from=builder /app/apps/web/package.json ./package.json
 COPY --from=builder /app/apps/web/vite.config.ts ./vite.config.ts
 
 RUN bun add vite@latest
