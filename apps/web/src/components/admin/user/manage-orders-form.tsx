@@ -46,6 +46,7 @@ import {
 	FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { queryClient, queryUtils } from "@/utils/orpc";
 
 interface SortableItemProps {
@@ -96,6 +97,7 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 					name={`orders.${index}.orderText`}
 					render={({ field }) => (
 						<FormItem>
+							<FormLabel>Order Description</FormLabel>
 							<FormControl>
 								<Input {...field} placeholder="E.g., Complete project report" />
 							</FormControl>
@@ -107,7 +109,7 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 						control={form.control}
 						name={`orders.${index}.isCompleted`}
 						render={({ field }) => (
-							<FormItem className="flex h-10 items-center gap-2 space-y-0 rounded-md border-input px-3">
+							<FormItem className="flex h-10 items-center gap-2 space-y-0 rounded-md border border-input px-3">
 								<FormControl>
 									<Checkbox
 										checked={field.value}
@@ -258,6 +260,44 @@ export const ManageOrdersForm = ({ userId }: { userId: string }) => {
 					</CardFooter>
 				</form>
 			</Form>
+		</Card>
+	);
+};
+
+export const ManageOrdersFormSkeleton = () => {
+	return (
+		<Card>
+			<CardHeader>
+				<Skeleton className="h-7 w-48" />
+				<Skeleton className="h-4 w-full max-w-sm" />
+			</CardHeader>
+			<CardContent>
+				<div className="space-y-4">
+					{[...Array(3)].map((_, i) => (
+						<div
+							key={i.toString()}
+							className="flex items-center gap-4 rounded-lg border bg-background p-4 shadow-sm"
+						>
+							<Skeleton className="h-6 w-6" />
+							<div className="grid flex-grow grid-cols-1 gap-4 md:grid-cols-2">
+								<div className="space-y-2">
+									<Skeleton className="h-4 w-24" />
+									<Skeleton className="h-10 w-full" />
+								</div>
+								<div className="flex items-end">
+									<Skeleton className="h-10 w-32" />
+								</div>
+							</div>
+							<Skeleton className="h-10 w-10" />
+						</div>
+					))}
+				</div>
+				<Skeleton className="mt-4 h-10 w-full" />
+			</CardContent>
+			<CardFooter className="flex justify-end gap-2">
+				<Skeleton className="h-10 w-20" />
+				<Skeleton className="h-10 w-28" />
+			</CardFooter>
 		</Card>
 	);
 };
