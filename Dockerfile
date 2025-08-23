@@ -41,4 +41,4 @@ RUN bun add vite@latest
 EXPOSE 5173
 
 # Start the application
-CMD ["bun", "start"]
+ENTRYPOINT ["bunx", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]
