@@ -46,36 +46,45 @@ export function AvailableExams() {
 		<div>
 			<h2 className="mb-4 font-bold text-2xl">Available Exams</h2>
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-				{userExams.map((userExam) => (
-					<Card key={userExam.id}>
-						<CardHeader>
-							<CardTitle>{userExam.exam.certification}</CardTitle>
-							<CardDescription>
-								{userExam.maxAttempts - userExam.attempts} attempt(s) remaining.
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<p>Time Limit: {userExam.exam.timeLimit} minutes</p>
-						</CardContent>
-						<CardFooter>
-							<Button
-								onClick={() =>
-									handleAttemptExam({
-										examId: userExam.examId,
-										userExamId: userExam.id,
-									})
-								}
-							>
-								{isPending ? (
-									<Loader2 className="size-4.5 animate-spin" />
-								) : (
-									<ExternalLink className="size-4.5" />
-								)}
-								<span>Attempt Exam</span>
-							</Button>
-						</CardFooter>
-					</Card>
-				))}
+				{userExams.length === 0 ? (
+					<div className="flex flex-col items-center justify-center py-12 opacity-70">
+						{/* You can replace the emoji below with an illustration/icon as desired */}
+						<span className="text-5xl mb-2">📝</span>
+						<p className="text-lg font-medium">No exams available yet.</p>
+						<p className="text-muted-foreground">Check back later or contact your administrator.</p>
+					</div>
+				) : (
+					userExams.map((userExam) => (
+						<Card key={userExam.id}>
+							<CardHeader>
+								<CardTitle>{userExam.exam.certification}</CardTitle>
+								<CardDescription>
+									{userExam.maxAttempts - userExam.attempts} attempt(s) remaining.
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<p>Time Limit: {userExam.exam.timeLimit} minutes</p>
+							</CardContent>
+							<CardFooter>
+								<Button
+									onClick={() =>
+										handleAttemptExam({
+											examId: userExam.examId,
+											userExamId: userExam.id,
+										})
+									}
+								>
+									{isPending ? (
+										<Loader2 className="size-4.5 animate-spin" />
+									) : (
+										<ExternalLink className="size-4.5" />
+									)}
+									<span>Attempt Exam</span>
+								</Button>
+							</CardFooter>
+						</Card>
+					))
+				)}
 			</div>
 		</div>
 	);
