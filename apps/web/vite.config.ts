@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { env } from "@/env";
+import { env } from "./src/env";
 
 export default defineConfig({
 	plugins: [tailwindcss(), tanstackRouter({}), react()],
