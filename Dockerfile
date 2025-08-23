@@ -34,7 +34,6 @@ WORKDIR /
 # Copy only the built dist folder from builder stage
 COPY --from=builder /apps/web/dist ./dist
 COPY --from=builder /apps/web/package.json ./package.json
-COPY --from=builder /apps/web/vite.config.ts ./vite.config.ts
 
 RUN bun add vite@latest
 
