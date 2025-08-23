@@ -15,7 +15,7 @@ export const env = createEnv({
 			.pipe(z.array(z.url())),
 		VITE_SERVER_URL: z.url(),
 	},
-	runtimeEnv: import.meta.env,
+	runtimeEnv: process.env,
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 	emptyStringAsUndefined: true,
 });
