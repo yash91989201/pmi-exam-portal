@@ -1,13 +1,30 @@
-import { Link } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useRouter } from "@tanstack/react-router";
+import { Loader2, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+
+const links = [
+	{ href: "/dashboard", label: "Dashboard" },
+	{ href: "/dashboard/exams", label: "Exams" },
+	{ href: "/dashboard/users", label: "Users" },
+];
 
 export const AdminNavbar = () => {
-	const links = [
-		{ href: "/dashboard", label: "Dashboard" },
-		{ href: "/dashboard/exams", label: "Exams" },
-		{ href: "/dashboard/users", label: "Users" },
-	];
+	const router = useRouter();
 
+	const { mutateAsync: signOut, isPending } = useMutation({
+		mutationKey: ["signOut"],
+		mutationFn: async () => {
+			const res = await authClient.signOut();
+			if (res.data?.success) {
+				router.navigate({ to: "/auth/admin/login" });
+				return;
+			}
+			toast.error("Unable to logout try again");
+		},
+	});
 	return (
 		<nav className="border-border border-b bg-background py-6">
 			<div className="container mx-auto flex items-center justify-between gap-6">
@@ -27,8 +44,13 @@ export const AdminNavbar = () => {
 					))}
 				</div>
 				<div className="flex items-center gap-4">
-					<Button variant="secondary" size="sm">
-						Logout
+					<Button onClick={() => signOut()}>
+						{isPending ? (
+							<Loader2 className="size-4.5 animate-spin" />
+						) : (
+							<LogOut className="size-4.5" />
+						)}
+						<span>Logout</span>
 					</Button>
 				</div>
 			</div>
