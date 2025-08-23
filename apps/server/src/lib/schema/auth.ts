@@ -1,5 +1,5 @@
 import { createSelectSchema } from "drizzle-zod";
-import { account, session, user, verification } from "@/db/schema/auth";
+import { account, session, user, verification } from "../../db/schema/auth";
 
 export const UserSchema = createSelectSchema(user);
 export const SessionSchema = createSelectSchema(session);

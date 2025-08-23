@@ -1,7 +1,11 @@
 export type * from "./auth";
 
 import type z from "zod";
-import type { ListUserExamsOutput } from "@/lib/schema";
+import type {
+	ListUserExamsOutput,
+	OrderSchema,
+	UserOrderSchema,
+} from "@/lib/schema";
 import type {
 	ExamSchema,
 	GetUserExamsDataOutput,
@@ -21,3 +25,5 @@ export type GetUserExamsDataOutputType = z.infer<typeof GetUserExamsDataOutput>;
 
 export type ListUserExamsOutputType = z.infer<typeof ListUserExamsOutput>;
 
+export type OrderType = z.infer<typeof OrderSchema>;
+export type UserOrderType = z.infer<typeof UserOrderSchema>;

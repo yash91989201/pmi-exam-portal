@@ -15,6 +15,13 @@
       "when": 1755590405803,
       "tag": "0001_melodic_hardball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755947291555,
+      "tag": "0002_charming_the_hunter",
+      "breakpoints": true
     }
   ]
 }
