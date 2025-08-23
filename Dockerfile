@@ -4,7 +4,7 @@ FROM oven/bun:1.2.20 as builder
 WORKDIR /app
 
 # Copy package files for dependency resolution
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/server/package.json ./apps/server/
 
