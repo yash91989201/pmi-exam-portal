@@ -76,3 +76,30 @@ export const UpdateOrdersOutput = z.object({
 export const ListUserOrdersOutput = z.object({
 	userOrders: z.array(UserOrderSchema),
 });
+
+export const GetUserOrdersInput = z.object({
+	userId: z.string(),
+});
+
+export const GetUserOrdersOutput = z.object({
+	userOrders: z.array(UserOrderSchema),
+});
+
+export const ManageUserOrdersInput = z.object({
+	userId: z.string(),
+	orders: z.array(
+		z.object({
+			id: z.string(),
+			orderText: z.string().min(1),
+			orderPriority: z.number(),
+			isCompleted: z.boolean(),
+		}),
+	),
+});
+
+export type ManageUserOrdersInputType = z.infer<typeof ManageUserOrdersInput>;
+
+export const ManageUserOrdersOutput = z.object({
+	success: z.boolean(),
+	message: z.string(),
+});

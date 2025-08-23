@@ -4,7 +4,7 @@ import { type AdminOrderRouter, adminOrderRouter } from "./order";
 import type { AdminSettingRouter } from "./setting";
 import { adminSettingRouter } from "./setting";
 import type { AdminUserRouter } from "./user";
-import { adminUserRouter } from "./user";
+import { adminUserRouter } from "./user/index";
 
 export type AdminRouterType = AdminExamRouter &
 	AdminUserRouter &

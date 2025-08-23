@@ -36,6 +36,12 @@ export const UserManagementNavbar = ({ userId }: { userId: string }) => {
 			description: "Manage exams assignment to user.",
 		},
 		{
+			path: "/dashboard/users/$userId/manage-order",
+			label: "Manager user's order",
+			icon: Settings,
+			description: "View and manage user's orders.",
+		},
+		{
 			path: "/dashboard/users/$userId/manage-user",
 			label: "Manage User",
 			icon: User,
@@ -53,7 +59,7 @@ export const UserManagementNavbar = ({ userId }: { userId: string }) => {
 				</p>
 			</div>
 
-			<nav className="mb-8 grid grid-cols-1 gap-3 md:grid-cols-3">
+			<nav className="mb-8 grid grid-cols-1 gap-3 md:grid-cols-4">
 				{navItems.map((item) => {
 					const Icon = item.icon;
 					const isActive = isActiveRoute(item.path);
