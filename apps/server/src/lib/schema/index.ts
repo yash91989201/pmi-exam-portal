@@ -72,3 +72,7 @@ export const UpdateOrdersOutput = z.object({
 	success: z.boolean(),
 	message: z.string().optional(),
 });
+
+export const ListUserOrdersOutput = z.object({
+	userOrders: z.array(UserOrderSchema),
+});
