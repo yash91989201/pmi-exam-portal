@@ -3,7 +3,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { env } from "./src/env";
 
 export default defineConfig({
 	plugins: [tailwindcss(), tanstackRouter({}), react()],
@@ -15,6 +14,8 @@ export default defineConfig({
 		},
 	},
 	server: {
-		allowedHosts: env.VITE_ALLOWED_HOSTS,
+		allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
+			? import.meta.env.VITE_ALLOWED_HOSTS.split(",")
+			: [],
 	},
 });
