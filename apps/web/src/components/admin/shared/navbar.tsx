@@ -9,6 +9,7 @@ const links = [
 	{ href: "/dashboard", label: "Dashboard" },
 	{ href: "/dashboard/exams", label: "Exams" },
 	{ href: "/dashboard/users", label: "Users" },
+	{ href: "/dashboard/orders", label: "Orders" },
 ];
 
 export const AdminNavbar = () => {

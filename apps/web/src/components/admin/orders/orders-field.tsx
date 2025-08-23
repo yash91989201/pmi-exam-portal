@@ -1,94 +1,89 @@
 import { createId } from "@paralleldrive/cuid2";
-// ICONS
-import { Trash2 } from "lucide-react";
-import { Fragment, useEffect } from "react";
+import { PlusCircle, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-// TYPES
-// CUSTOM COMPONENTS
-import {
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { OrderFormSchemaType } from "@/lib/types";
 
 export default function OrdersField() {
-	const { control, setValue } = useFormContext<OrderFormSchemaType>();
+  const { control, setValue } = useFormContext<OrderFormSchemaType>();
 
-	const { fields, append, remove } = useFieldArray({
-		name: "orders",
-		control: control,
-	});
+  const { fields, append, remove } = useFieldArray({
+    name: "orders",
+    control: control,
+  });
 
-	useEffect(() => {
-		fields.forEach((field, index) => {
-			setValue(`orders.${index}.orderPriority`, index + 1);
-		});
-	}, [fields, setValue]);
+  useEffect(() => {
+    fields.forEach((_, index) => {
+      setValue(`orders.${index}.orderPriority`, index + 1);
+    });
+  }, [fields, setValue]);
 
-	const addOrder = () => {
-		append({
-			id: createId(),
-			orderText: "",
-			orderPriority: fields.length + 1,
-		});
-	};
+  const addOrder = () => {
+    if (fields.length < 10) {
+      append({
+        id: createId(),
+        orderText: "",
+        orderPriority: fields.length + 1,
+      });
+    }
+  };
 
-	const deleteOrder = (index: number) => {
-		remove(index);
-	};
+  const deleteOrder = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
+  };
 
-	return (
-		<div className="flex flex-col gap-3">
-			{fields.map((order, index) => (
-				<Fragment key={order.id}>
-					<div>
-						<span className="font-bold text-primary text-xl">{index + 1}</span>
-						<span>/{fields.length}</span>
-					</div>
-					<div className="flex items-center gap-3">
-						<FormField
-							name={`orders.${index}.orderText`}
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										<Input
-											{...field}
-											placeholder={`Order Status ${index + 1}`}
-											className="w-60"
-											type="text"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<div className="flex items-center gap-3">
-							<Button
-								variant="ghost"
-								onClick={() => deleteOrder(index)}
-								disabled={fields.length === 1}
-								type="button"
-							>
-								<Trash2 size={16} />
-							</Button>
-						</div>
-					</div>
-				</Fragment>
-			))}
-			<Button
-				variant="outline"
-				type="button"
-				className="w-fit"
-				onClick={() => addOrder()}
-				disabled={fields.length >= 10}
-			>
-				Add New Order Status
-			</Button>
-		</div>
-	);
+  return (
+    <div className="space-y-4">
+      {fields.map((order, index) => (
+        <Card key={order.id}>
+          <CardHeader className="flex flex-row items-center justify-between py-4">
+            <CardTitle className="text-lg">Order Status #{index + 1}</CardTitle>
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={() => deleteOrder(index)}
+              disabled={fields.length === 1}
+              type="button"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <FormField
+              name={`orders.${index}.orderText`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status Text</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder={`Enter status text for order ${index + 1}`}
+                      type="text"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+      ))}
+      <Button
+        variant="outline"
+        type="button"
+        className="w-full border-dashed"
+        onClick={addOrder}
+        disabled={fields.length >= 10}
+      >
+        <PlusCircle className="mr-2 h-4 w-4" />
+        Add New Order Status
+      </Button>
+    </div>
+  );
 }
