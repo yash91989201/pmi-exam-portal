@@ -5,14 +5,18 @@ import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { AdminLoginSchema } from "@/lib/schema";
 import type { AdminLoginSchemaType } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 export function UserLoginForm() {
 	const router = useRouter();
@@ -42,115 +46,78 @@ export function UserLoginForm() {
 	};
 
 	return (
-		<Form {...form}>
-			<form
-				className="flex flex-col gap-5"
-				onSubmit={form.handleSubmit(onSubmit)}
-			>
-				<Card className="border-none p-0 shadow-none">
+		<div className="space-y-6">
+			<Form {...form}>
+				<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
 					<FormField
 						control={form.control}
 						name="email"
-						render={({ field, fieldState }) => (
+						render={({ field }) => (
 							<FormItem>
-								<Label htmlFor="email" className="font-medium">
-									Email Address
-								</Label>
+								<FormLabel>Email</FormLabel>
 								<FormControl>
 									<div className="relative">
-										<div className="absolute top-2.5 left-3 text-muted-foreground">
-											<Mail size={18} strokeWidth={2} />
-										</div>
+										<Mail className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
 										<Input
 											placeholder="name@example.com"
-											type="email"
-											autoComplete="email"
-											autoFocus
 											{...field}
-											className={cn(
-												"pl-9 transition-all",
-												fieldState.error &&
-													"border-destructive focus-visible:ring-destructive",
-											)}
+											className="pl-10"
 										/>
 									</div>
 								</FormControl>
-								{fieldState.error && (
-									<p className="text-destructive text-sm">
-										{fieldState.error.message}
-									</p>
-								)}
+								<FormMessage />
 							</FormItem>
 						)}
 					/>
-				</Card>
-
-				<Card className="border-none p-0 shadow-none">
 					<FormField
 						control={form.control}
 						name="password"
-						render={({ field, fieldState }) => (
+						render={({ field }) => (
 							<FormItem>
-								<Label htmlFor="password" className="font-medium">
-									Password
-								</Label>
+								<div className="flex items-center justify-between">
+									<FormLabel>Password</FormLabel>
+								</div>
 								<FormControl>
 									<div className="relative">
-										<div className="absolute top-2.5 left-3 text-muted-foreground">
-											<Lock size={18} strokeWidth={2} />
-										</div>
+										<Lock className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
 										<Input
-											placeholder="••••••••"
 											type={isPasswordVisible ? "text" : "password"}
-											autoComplete="current-password"
+											placeholder="••••••••"
 											{...field}
-											className={cn(
-												"pl-9 transition-all",
-												fieldState.error &&
-													"border-destructive focus-visible:ring-destructive",
-											)}
+											className="pl-10"
 										/>
 										<Button
 											type="button"
 											variant="ghost"
 											size="icon"
 											onClick={() => setIsPasswordVisible((prev) => !prev)}
-											className="absolute top-1 right-1 h-8 w-8 text-muted-foreground transition-colors hover:text-foreground"
+											className="-translate-y-1/2 absolute top-1/2 right-1 h-8 w-8 text-muted-foreground transition-colors hover:text-foreground"
 										>
 											{isPasswordVisible ? (
-												<EyeOff size={16} />
+												<EyeOff className="h-4 w-4" />
 											) : (
-												<Eye size={16} />
+												<Eye className="h-4 w-4" />
 											)}
 										</Button>
 									</div>
 								</FormControl>
-								{fieldState.error && (
-									<p className="text-destructive text-sm">
-										{fieldState.error.message}
-									</p>
-								)}
+								<FormMessage />
 							</FormItem>
 						)}
 					/>
-				</Card>
-
-				{/* Submit */}
-				<Button
-					type="submit"
-					className="mt-2 w-full transition-all"
-					disabled={form.formState.isSubmitting}
-				>
-					{form.formState.isSubmitting ? (
-						<>
+					<Button
+						type="submit"
+						className="w-full"
+						disabled={form.formState.isSubmitting}
+					>
+						{form.formState.isSubmitting ? (
 							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-							Logging In...
-						</>
-					) : (
-						"Login"
-					)}
-				</Button>
-			</form>
-		</Form>
+						) : (
+							"Log in"
+						)}
+					</Button>
+				</form>
+			</Form>
+		</div>
 	);
 }
