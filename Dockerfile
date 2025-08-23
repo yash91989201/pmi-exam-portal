@@ -1,7 +1,7 @@
 # Build stage
 FROM oven/bun:1.2.20 AS builder
 
-WORKDIR /app
+WORKDIR /
 
 # Copy package files for dependency resolution
 COPY package.json bun.lock ./
@@ -22,18 +22,19 @@ ARG VITE_ALLOWED_HOSTS
 ENV VITE_ALLOWED_HOSTS=$VITE_ALLOWED_HOSTS
 
 # Build the web application
-WORKDIR /app/apps/web
+WORKDIR /apps/web
 
 RUN bun run build
 
 # Production stage
 FROM oven/bun:1.2.20-slim AS production
 
-WORKDIR /app
+WORKDIR /
 
 # Copy only the built dist folder from builder stage
-COPY --from=builder /app/apps/web/dist ./dist
-COPY --from=builder /app/apps/web/package.json ./package.json
+COPY --from=builder /apps/web/dist ./dist
+COPY --from=builder /apps/web/package.json ./package.json
+COPY --from=builder /apps/web/vite.config.ts ./vite.config.ts
 
 RUN bun add vite@latest
 
