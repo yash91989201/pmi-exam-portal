@@ -15,8 +15,15 @@ RUN bun install --frozen-lockfile
 COPY apps/web ./apps/web
 COPY apps/server ./apps/server
 
+ARG VITE_SERVER_URL
+ENV VITE_SERVER_URL=$VITE_SERVER_URL
+
+ARG VITE_ALLOWED_HOSTS
+ENV VITE_ALLOWED_HOSTS=$VITE_ALLOWED_HOSTS
+
 # Build the web application
 WORKDIR /app/apps/web
+
 RUN bun run build
 
 # Production stage
