@@ -1,6 +1,6 @@
-import { count, desc, eq, sql, and, isNotNull } from "drizzle-orm";
+import { and, count, desc, eq, isNotNull, sql } from "drizzle-orm";
 import z from "zod";
-import { exam, examAttempt, userExam, question, orders } from "@/db/schema";
+import { exam, examAttempt, orders, question, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { adminProcedure } from "@/lib/orpc";
 
@@ -170,6 +170,7 @@ export const adminDashboardRouter = {
 						createdAt: user.createdAt,
 					})
 					.from(user)
+					.where(eq(user.role, "user"))
 					.orderBy(desc(user.createdAt))
 					.limit(10),
 			]);

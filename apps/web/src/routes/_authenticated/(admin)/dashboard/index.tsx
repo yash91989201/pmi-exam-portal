@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import {
@@ -18,29 +17,12 @@ import {
 	UserActivityCharts,
 	UserActivityChartsSkeleton,
 } from "@/components/admin/dashboard/user-activity-charts";
-import { queryUtils } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_authenticated/(admin)/dashboard/")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { data: dashboardStats } = useSuspenseQuery(
-		queryUtils.admin.getDashboardStats.queryOptions(),
-	);
-	//
-	const { data: recentActivity } = useSuspenseQuery(
-		queryUtils.admin.getRecentActivity.queryOptions(),
-	);
-	//
-	const { data: examStats } = useSuspenseQuery(
-		queryUtils.admin.getExamStats.queryOptions(),
-	);
-
-	const { data: userActivity } = useSuspenseQuery(
-		queryUtils.admin.getUserActivity.queryOptions(),
-	);
-
 	return (
 		<div className="flex-1 space-y-6">
 			{/* Header */}
@@ -56,13 +38,13 @@ function RouteComponent() {
 			{/* Metrics Cards */}
 			<div className="space-y-6">
 				<Suspense fallback={<MetricsCardsSkeleton />}>
-					<MetricsCards data={dashboardStats} />
+					<MetricsCards />
 				</Suspense>
 
 				{/* Recent Activity */}
 				<div>
 					<Suspense fallback={<RecentActivitySkeleton />}>
-						<RecentActivity data={recentActivity} />
+						<RecentActivity />
 					</Suspense>
 				</div>
 
@@ -71,14 +53,14 @@ function RouteComponent() {
 					{/* User Activity Charts */}
 					<div className="lg:col-span-2">
 						<Suspense fallback={<UserActivityChartsSkeleton />}>
-							<UserActivityCharts data={userActivity} />
+							<UserActivityCharts />
 						</Suspense>
 					</div>
 
 					{/* Exam Statistics */}
 					<div className="lg:col-span-2">
 						<Suspense fallback={<ExamStatsChartsSkeleton />}>
-							<ExamStatsCharts data={examStats} />
+							<ExamStatsCharts />
 						</Suspense>
 					</div>
 				</div>
