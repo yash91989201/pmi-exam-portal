@@ -48,10 +48,11 @@ export function AvailableExams() {
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{userExams.length === 0 ? (
 					<div className="flex flex-col items-center justify-center py-12 opacity-70">
-						{/* You can replace the emoji below with an illustration/icon as desired */}
-						<span className="text-5xl mb-2">📝</span>
-						<p className="text-lg font-medium">No exams available yet.</p>
-						<p className="text-muted-foreground">Check back later or contact your administrator.</p>
+						<span className="mb-2 text-5xl">📝</span>
+						<p className="font-medium text-lg">No exams available yet.</p>
+						<p className="text-muted-foreground">
+							Check back later or contact your administrator.
+						</p>
 					</div>
 				) : (
 					userExams.map((userExam) => (
@@ -59,7 +60,8 @@ export function AvailableExams() {
 							<CardHeader>
 								<CardTitle>{userExam.exam.certification}</CardTitle>
 								<CardDescription>
-									{userExam.maxAttempts - userExam.attempts} attempt(s) remaining.
+									{userExam.maxAttempts - userExam.attempts} attempt(s)
+									remaining.
 								</CardDescription>
 							</CardHeader>
 							<CardContent>

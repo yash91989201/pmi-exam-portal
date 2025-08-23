@@ -20,6 +20,7 @@ function RouteComponent() {
 			<Suspense fallback={<AvailableExamsSkeleton />}>
 				<AvailableExams />
 			</Suspense>
+
 			{/* Exam Statistics Section - Suspense with loader */}
 			<Suspense fallback={<ExamStatisticsSkeleton />}>
 				<ExamStatistics />
