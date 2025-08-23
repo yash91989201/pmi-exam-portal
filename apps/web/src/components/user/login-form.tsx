@@ -73,7 +73,7 @@ export function UserLoginForm() {
 					Welcome Back
 				</CardTitle>
 				<CardDescription className="text-muted-foreground">
-					Sign in to your account to access your PMI exam preparation
+					Sign in to your account to access your PMI exams.
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
@@ -185,28 +185,8 @@ export function UserLoginForm() {
 					</form>
 				</Form>
 
-				<div className="relative">
-					<div className="absolute inset-0 flex items-center">
-						<span className="w-full border-border border-t" />
-					</div>
-					<div className="relative flex justify-center text-xs uppercase">
-						<span className="bg-card px-2 text-muted-foreground">
-							New to our platform?
-						</span>
-					</div>
-				</div>
-
-				<Button
-					variant="outline"
-					className="w-full border-border bg-background text-foreground transition-all duration-300 hover:bg-muted hover:shadow-md"
-					size="lg"
-					type="button"
-				>
-					Create Account
-				</Button>
-
 				<p className="text-center text-muted-foreground text-xs leading-relaxed">
-					By signing in, you agree to our{" "}
+					By signing in, you agree to our
 					<Button variant="link" className="h-auto p-0 text-primary text-xs">
 						Terms of Service
 					</Button>{" "}

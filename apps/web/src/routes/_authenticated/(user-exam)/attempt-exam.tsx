@@ -1,6 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { Suspense } from "react";
 import { z } from "zod";
-import { AttemptExamForm } from "@/components/user/attempt-exam-form";
+import {
+	AttemptExamForm,
+	AttemptExamFormSkeleton,
+} from "@/components/user/attempt-exam-form";
 import { authClient } from "@/lib/auth-client";
 
 const RouteSearchSchema = z.object({
@@ -71,10 +75,12 @@ function RouteComponent() {
 	}
 
 	return (
-		<AttemptExamForm
-			examId={examId}
-			examAttemptId={examAttemptId}
-			isImpersonating={isImpersonating}
-		/>
+		<Suspense fallback={<AttemptExamFormSkeleton />}>
+			<AttemptExamForm
+				examId={examId}
+				examAttemptId={examAttemptId}
+				isImpersonating={isImpersonating}
+			/>
+		</Suspense>
 	);
 }

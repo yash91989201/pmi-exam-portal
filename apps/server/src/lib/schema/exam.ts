@@ -301,3 +301,12 @@ export const IncreaseExamAttemptsOutput = z.object({
 		})
 		.optional(),
 });
+
+export const GetExamStatsOutput = z.object({
+	totalExams: z.number().int().min(0),
+	totalPassed: z.number().int().min(0),
+	totalFailed: z.number().int().min(0),
+	averageScore: z.number().min(0).max(100),
+	highestScore: z.number().min(0).max(100),
+	mostRecentAttempt: z.date().nullable(),
+});
