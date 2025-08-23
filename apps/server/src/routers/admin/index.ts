@@ -1,3 +1,5 @@
+import type { AdminDashboardRouter } from "./dashboard";
+import { adminDashboardRouter } from "./dashboard";
 import type { AdminExamRouter } from "./exam";
 import { adminExamRouter } from "./exam";
 import { type AdminOrderRouter, adminOrderRouter } from "./order";
@@ -9,11 +11,13 @@ import { adminUserRouter } from "./user/index";
 export type AdminRouterType = AdminExamRouter &
 	AdminUserRouter &
 	AdminSettingRouter &
-	AdminOrderRouter;
+	AdminOrderRouter &
+	AdminDashboardRouter;
 
 export const adminRouter: AdminRouterType = {
 	...adminExamRouter,
 	...adminUserRouter,
 	...adminSettingRouter,
 	...adminOrderRouter,
+	...adminDashboardRouter,
 };

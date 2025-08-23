@@ -12,10 +12,5 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { data } = useSuspenseQuery(queryUtils.admin.listOrders.queryOptions());
 
-	return (
-		<div className="flex flex-col gap-6">
-			<h2 className="text-base md:text-3xl">Update Order Status</h2>
-			<CreateOrderForm initialOrders={data} />
-		</div>
-	);
+	return <CreateOrderForm initialOrders={data} />;
 }
