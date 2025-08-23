@@ -25,7 +25,7 @@ WORKDIR /app/apps/web
 RUN bun run build
 
 # Production stage
-FROM oven/bun:1.2.20-distroless AS production
+FROM oven/bun:1.2.20-alpine AS production
 
 WORKDIR /app/apps/web
 
