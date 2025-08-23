@@ -32,8 +32,10 @@ WORKDIR /app
 COPY --from=builder /app/apps/web/dist ./dist
 COPY --from=builder /app/apps/web/package.json ./package.json
 
+RUN bun add vite@latest
+
 # Expose port
-EXPOSE 3001
+EXPOSE 5173
 
 # Start the application
 CMD ["bun", "start"]
