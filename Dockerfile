@@ -15,10 +15,6 @@ RUN bun install --frozen-lockfile
 COPY apps/web ./apps/web
 COPY apps/server ./apps/server
 
-# Set environment variables for build
-ARG VITE_SERVER_URL=http://localhost:3000
-ENV VITE_SERVER_URL=${VITE_SERVER_URL}
-
 # Build the web application
 WORKDIR /app/apps/web
 RUN bun run build
@@ -39,4 +35,3 @@ EXPOSE 5173
 
 # Start the application
 CMD ["bun", "start"]
-
