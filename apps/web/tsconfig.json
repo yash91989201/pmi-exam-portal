@@ -1,21 +1,31 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "types": ["vite/client"],
-    "rootDirs": ["."],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "references": [{
-    "path": "../server"
-  }]
+	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
+		"jsx": "react-jsx",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
+		"types": ["vite/client"],
+		"rootDirs": ["."],
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@server-schemas/*": ["../server/src/lib/schema/*"],
+			"@server-types/*": ["../server/src/lib/types/*"]
+		},
+		"composite": true,
+		"declaration": true,
+		"declarationMap": true,
+		"outDir": "./dist"
+	},
+	"include": ["src/**/*", "vite.config.ts"],
+	"exclude": ["node_modules", "dist"],
+	"references": [
+		{
+			"path": "../server"
+		}
+	]
 }

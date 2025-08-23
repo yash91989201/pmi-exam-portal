@@ -19,13 +19,13 @@ export const Route = createFileRoute("/_authenticated")({
 
 		if (isAdmin && location.pathname.startsWith("/user")) {
 			throw redirect({
-				to: "/admin",
+				to: "/dashboard",
 			});
 		}
 
-		if (!isAdmin && location.pathname.startsWith("/admin")) {
+		if (!isAdmin && location.pathname.startsWith("/dashboard")) {
 			throw redirect({
-				to: "/user",
+				to: "/orders",
 			});
 		}
 	},

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SignUpForm } from "@/components/admin/signup-form";
+import { SignUpForm } from "@/components/admin/auth/signup-form";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
@@ -12,8 +12,7 @@ import {
 
 export const Route = createFileRoute("/auth/admin/signup")({
 	loader: async ({ context }) => {
-		const queryRes =
-			await context.orpcClient.adminSetting.registrationEnabled();
+		const queryRes = await context.orpcClient.admin.registrationEnabled();
 
 		if (!queryRes.success || !queryRes.data?.enabled) {
 			return {

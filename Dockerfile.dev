@@ -1,0 +1,23 @@
+FROM oven/bun:1.2.20
+WORKDIR /app
+
+# Copy package files for dependency resolution
+COPY package.json bun.lock ./
+COPY apps/web/package.json ./apps/web/
+COPY apps/server/package.json ./apps/server/
+
+# Install dependencies
+RUN bun install --frozen-lockfile
+
+# Copy all source code
+COPY apps/web ./apps/web
+COPY apps/server ./apps/server
+
+# Set working directory to web app
+WORKDIR /app/apps/web
+
+# Expose the development port
+EXPOSE 5173
+
+# Start the development server
+ENTRYPOINT ["bun", "run", "dev", "--host", "0.0.0.0", "--port", "5173"]
