@@ -1,3 +1,4 @@
+import { OrderSchema } from "@server-schemas/index";
 import z from "zod";
 
 export const AdminSignupSchema = z
@@ -15,4 +16,8 @@ export const AdminSignupSchema = z
 export const AdminLoginSchema = z.object({
 	email: z.email("Invalid email address").min(1, "Email is required"),
 	password: z.string().min(1, "Password is required"),
+});
+
+export const OrderFormSchema = z.object({
+	orders: z.array(OrderSchema),
 });
