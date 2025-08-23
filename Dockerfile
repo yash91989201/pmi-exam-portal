@@ -32,9 +32,6 @@ WORKDIR /app
 COPY --from=builder /app/apps/web/dist ./dist
 COPY --from=builder /app/apps/web/package.json ./package.json
 
-# Install production dependencies
-RUN bun install --production
-
 # Expose port
 EXPOSE 3001
 
