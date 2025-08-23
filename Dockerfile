@@ -1,43 +1,76 @@
+# # Build stage
+# FROM oven/bun:1.2.20 AS builder
+# WORKDIR /app
+#
+# # Copy package files for dependency resolution
+# COPY package.json bun.lock ./
+# COPY apps/web/package.json ./apps/web/
+# COPY apps/server/package.json ./apps/server/
+#
+# # Install dependencies
+# RUN bun install --frozen-lockfile
+# # Copy all source code needed for web build (web app needs server for type definitions and schemas)
+#
+# COPY apps/web ./apps/web
+# COPY apps/server ./apps/server
+#
+# ARG VITE_SERVER_URL
+# ENV VITE_SERVER_URL=$VITE_SERVER_URL
+#
+# ARG VITE_ALLOWED_HOSTS
+# ENV VITE_ALLOWED_HOSTS=$VITE_ALLOWED_HOSTS
+#
+# # Build the web application
+# WORKDIR /app/apps/web
+# RUN bun run build
+#
+# # Production stage
+# FROM oven/bun:1.2.20-slim AS production
+#
+# WORKDIR /app/apps/web
+#
+# # Copy built files maintaining the expected structure
+# COPY --from=builder /app/apps/web/dist ./dist
+# COPY --from=builder /app/apps/web/package.json ./package.json
+# COPY --from=builder /app/apps/web/vite.config.ts ./vite.config.ts
+#
+# RUN bun add vite@latest
+#
+# # Expose port
+# EXPOSE 5173
+#
+# # Start the application
+# ENTRYPOINT ["bunx", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]
+
+
 # Build stage
 FROM oven/bun:1.2.20 AS builder
 WORKDIR /app
-
 # Copy package files for dependency resolution
 COPY package.json bun.lock ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/server/package.json ./apps/server/
-
 # Install dependencies
 RUN bun install --frozen-lockfile
-# Copy all source code needed for web build (web app needs server for type definitions and schemas)
-
+# Copy all source code needed for web build
 COPY apps/web ./apps/web
 COPY apps/server ./apps/server
-
 ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
-
 ARG VITE_ALLOWED_HOSTS
 ENV VITE_ALLOWED_HOSTS=$VITE_ALLOWED_HOSTS
-
-# Build the web application
+# Build the web application - import.meta.env gets processed here
 WORKDIR /app/apps/web
 RUN bun run build
 
 # Production stage
 FROM oven/bun:1.2.20-slim AS production
-
-WORKDIR /app/apps/web
-
-# Copy built files maintaining the expected structure
+WORKDIR /app
+# Copy built files (already has import.meta.env values baked in)
 COPY --from=builder /app/apps/web/dist ./dist
-COPY --from=builder /app/apps/web/package.json ./package.json
-COPY --from=builder /app/apps/web/vite.config.ts ./vite.config.ts
-
-RUN bun add vite@latest
-
+# Install static file server
+RUN bun add serve
 # Expose port
 EXPOSE 5173
-
-# Start the application
-ENTRYPOINT ["bunx", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]
+# Start with static server
+ENTRYPOINT ["bunx", "serve", "-s", "dist", "-l", "5173", "-H", "0.0.0.0"]
