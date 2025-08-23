@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
 	ArrowRight,
 	Award,
+	BookOpen,
 	BookOpenCheck,
 	CheckCircle,
 	Clock,
@@ -11,6 +12,7 @@ import {
 	Target,
 	TrendingUp,
 	Users,
+	Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,23 +41,23 @@ function HomeComponent() {
 			<Header />
 			<main className="flex-1">
 				{/* Hero Section with Gradient Background */}
-				<section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50 py-24">
+				<section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50 py-12 sm:py-16 lg:py-24">
 					<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100/50 via-transparent to-transparent" />
 					<div className="container relative mx-auto px-4">
-						<div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-							<div className="flex flex-col justify-center space-y-8">
-								<div className="space-y-4">
+						<div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+							<div className="flex flex-col justify-center space-y-6 lg:space-y-8">
+								<div className="space-y-3 lg:space-y-4">
 									<div className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 font-medium text-blue-800 text-sm">
 										<Award className="mr-2 h-4 w-4" />
 										Official PMI India Portal
 									</div>
-									<h1 className="font-bold text-4xl text-gray-900 tracking-tight sm:text-6xl">
+									<h1 className="font-bold text-3xl text-gray-900 tracking-tight sm:text-4xl lg:text-5xl xl:text-6xl">
 										Become a{" "}
 										<span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
 											certified success
 										</span>
 									</h1>
-									<p className="text-gray-600 text-xl leading-relaxed">
+									<p className="text-base text-gray-600 leading-relaxed sm:text-lg lg:text-xl">
 										No matter what your professional goals are, we have a
 										certification to help you reach them. Join thousands of
 										professionals advancing their careers through PMI
@@ -63,7 +65,7 @@ function HomeComponent() {
 									</p>
 								</div>
 
-								<div className="flex flex-col gap-4 sm:flex-row">
+								<div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
 									<Button
 										size="lg"
 										className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
@@ -76,7 +78,7 @@ function HomeComponent() {
 									</Button>
 								</div>
 
-								<div className="flex items-center space-x-8 text-gray-600 text-sm">
+								<div className="flex flex-col gap-3 text-gray-600 text-sm sm:flex-row sm:items-center sm:gap-6 lg:gap-8">
 									<div className="flex items-center">
 										<Users className="mr-2 h-4 w-4" />
 										700K+ Members
@@ -95,10 +97,10 @@ function HomeComponent() {
 							<div className="flex items-center justify-center">
 								<Card className="w-full max-w-md border-0 bg-white/80 shadow-xl backdrop-blur-sm">
 									<CardHeader className="space-y-1">
-										<CardTitle className="text-center font-bold text-2xl">
+										<CardTitle className="text-center font-bold text-xl lg:text-2xl">
 											Access Exam Portal
 										</CardTitle>
-										<p className="text-center text-gray-600">
+										<p className="text-center text-gray-600 text-sm">
 											Sign in to continue your certification journey
 										</p>
 									</CardHeader>
@@ -111,106 +113,166 @@ function HomeComponent() {
 					</div>
 				</section>
 
-				{/* Certifications Showcase */}
-				<section className="bg-white py-20">
+				{/* PMI Certifications Showcase */}
+				<section className="bg-gray-50 py-12 sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4">
-						<div className="mb-16 text-center">
-							<h2 className="mb-4 font-bold text-3xl text-gray-900">
-								Popular PMI Certifications
+						<div className="mb-8 text-center lg:mb-12">
+							<h2 className="mb-3 font-bold text-2xl text-gray-900 sm:text-3xl lg:mb-4 lg:text-4xl">
+								PMI Certifications
 							</h2>
-							<p className="mx-auto max-w-2xl text-gray-600 text-lg">
-								Advance your career with industry-recognized certifications that
-								demonstrate your expertise and commitment to excellence.
+							<p className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg">
+								Choose from industry-leading certifications that validate your
+								project management expertise
 							</p>
 						</div>
-
-						<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-							{certifications.map((cert, index) => (
-								<Card
-									key={index.toString()}
-									className="group border-0 bg-gradient-to-br from-gray-50 to-white transition-all duration-300 hover:shadow-lg"
-								>
-									<CardHeader className="space-y-4">
-										<div className="flex items-center justify-between">
-											<div className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 font-medium text-blue-800 text-xs">
-												Certification
-											</div>
-											<div className="rounded-full bg-blue-100 p-2">
-												<Award className="h-5 w-5 text-blue-600" />
-											</div>
+						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+							<Card className="group hover:-translate-y-1 cursor-pointer border-0 bg-white shadow-md transition-all hover:shadow-lg">
+								<CardContent className="p-4 sm:p-6">
+									<div className="mb-3 text-center sm:mb-4">
+										<div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 sm:mb-4 sm:h-16 sm:w-16">
+											<Award className="h-6 w-6 sm:h-8 sm:w-8" />
 										</div>
-										<CardTitle className="font-bold text-lg transition-colors group-hover:text-blue-600">
-											{cert.name}
-										</CardTitle>
-										<p className="text-gray-600 text-sm">{cert.experience}</p>
-									</CardHeader>
-									<CardContent className="space-y-4">
-										<p className="text-gray-700 text-sm leading-relaxed">
-											{cert.description}
-										</p>
-										<Button
-											variant="outline"
-											size="sm"
-											className="w-full group-hover:bg-blue-50"
-										>
-											Learn More
-										</Button>
-									</CardContent>
-								</Card>
-							))}
+										<h3 className="font-bold text-lg sm:text-xl">
+											PMP<sup>®</sup>
+										</h3>
+									</div>
+									<p className="mb-3 text-center text-gray-600 text-sm sm:mb-4 sm:text-base">
+										Project Management Professional - The gold standard for
+										project managers worldwide
+									</p>
+									<ul className="space-y-1.5 text-gray-700 text-sm sm:space-y-2 sm:text-base">
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											35 hours training required
+										</li>
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											4,500 hours experience
+										</li>
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											180 questions, 230 minutes
+										</li>
+									</ul>
+								</CardContent>
+							</Card>
+
+							<Card className="group hover:-translate-y-1 cursor-pointer border-0 bg-white shadow-md transition-all hover:shadow-lg">
+								<CardContent className="p-4 sm:p-6">
+									<div className="mb-3 text-center sm:mb-4">
+										<div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600 sm:mb-4 sm:h-16 sm:w-16">
+											<BookOpen className="h-6 w-6 sm:h-8 sm:w-8" />
+										</div>
+										<h3 className="font-bold text-lg sm:text-xl">
+											CAPM<sup>®</sup>
+										</h3>
+									</div>
+									<p className="mb-3 text-center text-gray-600 text-sm sm:mb-4 sm:text-base">
+										Certified Associate in Project Management - Perfect entry
+										point for new project managers
+									</p>
+									<ul className="space-y-1.5 text-gray-700 text-sm sm:space-y-2 sm:text-base">
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											23 hours training required
+										</li>
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											No experience required
+										</li>
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											150 questions, 180 minutes
+										</li>
+									</ul>
+								</CardContent>
+							</Card>
+
+							<Card className="group hover:-translate-y-1 cursor-pointer border-0 bg-white shadow-md transition-all hover:shadow-lg sm:col-span-2 lg:col-span-1">
+								<CardContent className="p-4 sm:p-6">
+									<div className="mb-3 text-center sm:mb-4">
+										<div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 sm:mb-4 sm:h-16 sm:w-16">
+											<Zap className="h-6 w-6 sm:h-8 sm:w-8" />
+										</div>
+										<h3 className="font-bold text-lg sm:text-xl">
+											PMI-ACP<sup>®</sup>
+										</h3>
+									</div>
+									<p className="mb-3 text-center text-gray-600 text-sm sm:mb-4 sm:text-base">
+										Agile Certified Practitioner - Validate your agile project
+										management skills
+									</p>
+									<ul className="space-y-1.5 text-gray-700 text-sm sm:space-y-2 sm:text-base">
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											21 hours agile training
+										</li>
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											2,000 hours agile experience
+										</li>
+										<li className="flex items-start">
+											<CheckCircle className="mt-0.5 mr-2 h-4 w-4 flex-shrink-0 text-green-500" />
+											120 questions, 180 minutes
+										</li>
+									</ul>
+								</CardContent>
+							</Card>
 						</div>
 					</div>
 				</section>
 
 				{/* Benefits Section */}
-				<section className="bg-gradient-to-r from-gray-50 to-blue-50 py-20">
+				<section className="bg-gradient-to-r from-gray-50 to-blue-50 py-12 sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4">
-						<div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-							<div className="space-y-8">
-								<div className="space-y-4">
-									<h2 className="font-bold text-3xl text-gray-900">
+						<div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+							<div className="space-y-6 lg:space-y-8">
+								<div className="space-y-3 lg:space-y-4">
+									<h2 className="font-bold text-2xl text-gray-900 sm:text-3xl lg:text-4xl">
 										Why Choose PMI Certifications?
 									</h2>
-									<p className="text-gray-600 text-lg">
+									<p className="text-base text-gray-600 sm:text-lg lg:text-xl">
 										Join a global community of professionals who are
 										transforming organizations through project success.
 									</p>
 								</div>
 
-								<div className="space-y-6">
+								<div className="space-y-4 sm:space-y-6">
 									{benefits.map((benefit, index) => (
 										<div
 											key={index.toString()}
-											className="flex items-start space-x-4"
+											className="flex items-start space-x-3 sm:space-x-4"
 										>
-											<div className="flex-shrink-0 rounded-full bg-green-100 p-2">
-												<CheckCircle className="h-5 w-5 text-green-600" />
+											<div className="flex-shrink-0 rounded-full bg-green-100 p-1.5 sm:p-2">
+												<CheckCircle className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
 											</div>
 											<div>
-												<h3 className="font-semibold text-gray-900">
+												<h3 className="font-semibold text-gray-900 text-sm sm:text-base">
 													{benefit.title}
 												</h3>
-												<p className="text-gray-600">{benefit.description}</p>
+												<p className="text-gray-600 text-sm sm:text-base">
+													{benefit.description}
+												</p>
 											</div>
 										</div>
 									))}
 								</div>
 							</div>
 
-							<div className="grid grid-cols-2 gap-6">
+							<div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
 								{stats.map((stat, index) => (
 									<Card
 										key={index.toString()}
-										className="border-0 bg-white p-6 text-center shadow-lg"
+										className="border-0 bg-white p-3 text-center shadow-lg sm:p-4 lg:p-6"
 									>
-										<CardContent className="space-y-2">
-											<div className="font-bold text-3xl text-blue-600">
+										<CardContent className="space-y-1 sm:space-y-2">
+											<div className="font-bold text-blue-600 text-xl sm:text-2xl lg:text-3xl">
 												{stat.value}
 											</div>
-											<div className="font-medium text-gray-900 text-sm">
+											<div className="font-medium text-gray-900 text-xs sm:text-sm lg:text-base">
 												{stat.label}
 											</div>
-											<div className="text-gray-600 text-xs">
+											<div className="text-gray-600 text-xs lg:text-sm">
 												{stat.description}
 											</div>
 										</CardContent>
@@ -222,34 +284,34 @@ function HomeComponent() {
 				</section>
 
 				{/* Features Section */}
-				<section className="bg-white py-20">
+				<section className="bg-white py-12 sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4">
-						<div className="mb-16 text-center">
-							<h2 className="mb-4 font-bold text-3xl text-gray-900">
+						<div className="mb-8 text-center lg:mb-12">
+							<h2 className="mb-3 font-bold text-2xl text-gray-900 sm:text-3xl lg:mb-4 lg:text-4xl">
 								Exam Portal Features
 							</h2>
-							<p className="text-gray-600 text-lg">
+							<p className="text-base text-gray-600 sm:text-lg">
 								Experience a secure, reliable, and user-friendly examination
 								platform
 							</p>
 						</div>
 
-						<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
 							{features.map((feature, index) => (
 								<Card
 									key={index.toString()}
 									className="group border-0 bg-gradient-to-br from-white to-gray-50 transition-all duration-300 hover:shadow-lg"
 								>
-									<CardHeader className="space-y-4 text-center">
-										<div className="mx-auto w-fit rounded-full bg-blue-100 p-3 transition-colors group-hover:bg-blue-200">
+									<CardHeader className="space-y-3 text-center sm:space-y-4">
+										<div className="mx-auto w-fit rounded-full bg-blue-100 p-2.5 transition-colors group-hover:bg-blue-200 sm:p-3">
 											{feature.icon}
 										</div>
-										<CardTitle className="font-bold text-lg">
+										<CardTitle className="font-bold text-base sm:text-lg">
 											{feature.title}
 										</CardTitle>
 									</CardHeader>
 									<CardContent className="text-center">
-										<p className="text-gray-600 leading-relaxed">
+										<p className="text-gray-600 text-sm leading-relaxed sm:text-base">
 											{feature.description}
 										</p>
 									</CardContent>
@@ -260,17 +322,17 @@ function HomeComponent() {
 				</section>
 
 				{/* CTA Section */}
-				<section className="bg-gradient-to-r from-blue-600 to-cyan-600 py-20 text-white">
+				<section className="bg-gradient-to-r from-blue-600 to-cyan-600 py-12 text-white sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4 text-center">
-						<div className="mx-auto max-w-3xl space-y-8">
-							<h2 className="font-bold text-3xl">
+						<div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
+							<h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl">
 								Ready to Advance Your Career?
 							</h2>
-							<p className="text-xl opacity-90">
+							<p className="text-base opacity-90 sm:text-lg lg:text-xl">
 								Join thousands of professionals who have transformed their
 								careers through PMI certifications. Start your journey today.
 							</p>
-							<div className="flex flex-col justify-center gap-4 sm:flex-row">
+							<div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
 								<Button
 									size="lg"
 									variant="secondary"
@@ -297,27 +359,6 @@ function HomeComponent() {
 }
 
 // Data for the enhanced components
-const certifications = [
-	{
-		name: "PMP® - Project Management Professional",
-		experience: "3+ years of experience",
-		description:
-			"The gold standard of project management certification, demonstrating your ability to lead and direct projects.",
-	},
-	{
-		name: "CAPM® - Certified Associate in Project Management",
-		experience: "No experience required",
-		description:
-			"Perfect for those new to project management or seeking to enhance their project management skills.",
-	},
-	{
-		name: "PMI-ACP® - PMI Agile Certified Practitioner",
-		experience: "2+ years of experience",
-		description:
-			"Validate your ability to use agile practices in your projects while demonstrating increased professional versatility.",
-	},
-];
-
 const benefits = [
 	{
 		title: "Boost Career Growth",
