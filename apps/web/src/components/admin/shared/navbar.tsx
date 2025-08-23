@@ -1,9 +1,9 @@
+import { useMutation } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
+import { Loader2, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Loader2, LogOut } from "lucide-react";
 
 const links = [
 	{ href: "/dashboard", label: "Dashboard" },
