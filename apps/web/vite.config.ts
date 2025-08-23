@@ -14,8 +14,9 @@ export default defineConfig({
 		},
 	},
 	server: {
-		allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
-			? import.meta.env.VITE_ALLOWED_HOSTS.split(",")
-			: [],
+		// allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
+		// 	? import.meta.env.VITE_ALLOWED_HOSTS.split(",")
+		// 	: [],
+		allowedHosts: [".localhost", "exam.dev.pmiindia.org"],
 	},
 });
