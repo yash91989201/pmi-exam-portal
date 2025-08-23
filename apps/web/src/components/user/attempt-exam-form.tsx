@@ -31,6 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { useCheatDetection } from "@/hooks/use-cheat-detection";
 import { useExamTimer } from "@/hooks/use-exam-timer";
@@ -563,3 +564,124 @@ export const AttemptExamForm = ({
 		</div>
 	);
 };
+
+export const AttemptExamFormSkeleton = () => {
+	return (
+		<div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+			<header className="sticky top-0 z-50 border-slate-200 border-b bg-white/90 shadow-lg backdrop-blur-sm dark:border-slate-700 dark:bg-slate-950/90">
+				<div className="container mx-auto py-4">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center space-x-4">
+							<div className="flex items-center space-x-2">
+								<Skeleton className="h-6 w-32" />
+							</div>
+							<div className="hidden text-slate-400 md:block">•</div>
+							<Skeleton className="h-7 w-48" />
+						</div>
+						<div className="flex items-center space-x-6">
+							<div className="flex items-center space-x-2">
+								<Skeleton className="h-5 w-5 rounded-full" />
+								<Skeleton className="h-7 w-24" />
+							</div>
+						</div>
+					</div>
+
+					<div className="mt-4 space-y-2">
+						<div className="flex items-center justify-between text-sm">
+							<Skeleton className="h-4 w-32" />
+							<Skeleton className="h-4 w-40" />
+						</div>
+						<div className="relative">
+							<Skeleton className="h-3 w-full" />
+						</div>
+					</div>
+				</div>
+			</header>
+
+			<main className="container mx-auto py-6">
+				<div className="mx-auto grid max-w-9xl grid-cols-1 gap-8 lg:grid-cols-[360px_1fr]">
+					{/* Sidebar Skeleton */}
+					<aside className="hidden lg:block">
+						<div className="sticky top-32">
+							<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-950">
+								<div className="border-slate-200 border-b bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
+									<Skeleton className="h-7 w-24" />
+									<Skeleton className="mt-2 h-4 w-40" />
+								</div>
+								<div className="h-[calc(100vh-300px)] p-4">
+									<div className="space-y-2">
+										{Array.from({ length: 15 }).map((_, index) => (
+											<div
+												key={index.toString()}
+												className="flex items-center space-x-3 rounded-lg p-3"
+											>
+												<Skeleton className="h-8 w-8 rounded-full" />
+												<Skeleton className="h-4 flex-grow" />
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
+					</aside>
+
+					{/* Main Content Skeleton */}
+					<div className="col-span-1">
+						<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-950">
+							<div className="flex h-full flex-col">
+								{/* Question Header Skeleton */}
+								<div className="border-slate-200 border-b bg-slate-50 p-8 dark:border-slate-700 dark:bg-slate-900">
+									<div className="mb-4 flex items-center justify-between">
+										<Skeleton className="h-8 w-40" />
+										<Skeleton className="h-6 w-28 rounded-full" />
+									</div>
+									<div className="space-y-3">
+										<Skeleton className="h-5 w-full" />
+										<Skeleton className="h-5 w-4/5" />
+									</div>
+								</div>
+
+								{/* Options Section Skeleton */}
+								<div className="flex-grow p-8">
+									<Skeleton className="mb-6 h-6 w-52" />
+									<div className="space-y-4">
+										{Array.from({ length: 4 }).map((_, index) => (
+											<div
+												key={index.toString()}
+												className="flex items-center space-x-4 rounded-xl border-2 border-slate-200 p-5 dark:border-slate-700"
+											>
+												<Skeleton className="h-10 w-10 rounded-full" />
+												<Skeleton className="h-5 flex-grow" />
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Mobile Question Navigation Skeleton */}
+						<div className="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-lg lg:hidden dark:border-slate-700 dark:bg-slate-950">
+							<Skeleton className="mb-3 h-6 w-40" />
+							<div className="grid grid-cols-5 gap-2">
+								{Array.from({ length: 10 }).map((_, index) => (
+									<Skeleton key={index.toString()} className="h-10 w-full" />
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+
+			{/* Footer Skeleton */}
+			<footer className="sticky bottom-0 border-slate-200 border-t bg-white/95 shadow-lg backdrop-blur-sm dark:border-slate-700 dark:bg-slate-950/95">
+				<div className="container mx-auto flex items-center justify-end px-6 py-4">
+					<div className="flex gap-3">
+						<Skeleton className="h-10 w-24" />
+						<Skeleton className="h-10 w-36" />
+					</div>
+				</div>
+			</footer>
+		</div>
+	);
+};
+
