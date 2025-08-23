@@ -1,18 +1,18 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
 	ArrowRight,
+	Award,
 	BookOpen,
 	BookOpenCheck,
+	CheckCircle,
 	Clock,
 	Globe,
 	LifeBuoy,
 	ShieldCheck,
 	Target,
 	TrendingUp,
-	Award,
 	Users,
 	Zap,
-	CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,9 +22,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { UserLoginForm } from "@/components/user/login-form";
 import { Footer } from "@/components/user/shared/footer";
 import { Header } from "@/components/user/shared/header";
-import { UserLoginForm } from "@/components/user/login-form";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
@@ -87,7 +87,7 @@ function HomeComponent() {
 				</section>
 
 				{/* Stats Section */}
-				<section className="border-b border-border bg-muted/30 py-8 sm:py-12">
+				<section className="border-border border-b bg-muted/30 py-8 sm:py-12">
 					<div className="container mx-auto px-4">
 						<div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-6">
 							{stats.map((stat, index) => (
@@ -95,7 +95,7 @@ function HomeComponent() {
 									<div className="font-bold text-2xl text-foreground sm:text-3xl lg:text-4xl">
 										{stat.value}
 									</div>
-									<div className="text-xs text-muted-foreground sm:text-sm lg:text-base">
+									<div className="text-muted-foreground text-xs sm:text-sm lg:text-base">
 										{stat.label}
 									</div>
 								</div>
@@ -108,7 +108,7 @@ function HomeComponent() {
 				<section className="bg-background py-12 sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4">
 						<div className="mb-8 text-center lg:mb-12">
-							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:text-4xl lg:mb-4">
+							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:mb-4 lg:text-4xl">
 								PMI Certifications Available
 							</h2>
 							<p className="text-base text-muted-foreground sm:text-lg">
@@ -132,10 +132,10 @@ function HomeComponent() {
 										</CardTitle>
 									</CardHeader>
 									<CardContent className="space-y-3 text-center sm:space-y-4">
-										<p className="text-sm text-muted-foreground leading-relaxed sm:text-base">
+										<p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
 											{cert.description}
 										</p>
-										<div className="flex items-center justify-center gap-4 text-xs text-muted-foreground sm:text-sm">
+										<div className="flex items-center justify-center gap-4 text-muted-foreground text-xs sm:text-sm">
 											<div className="flex items-center gap-1">
 												<Clock className="h-3 w-3" />
 												{cert.duration}
@@ -161,7 +161,7 @@ function HomeComponent() {
 				<section className="bg-muted/30 py-12 sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4">
 						<div className="mb-8 text-center lg:mb-12">
-							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:text-4xl lg:mb-4">
+							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:mb-4 lg:text-4xl">
 								Why Choose Our Platform?
 							</h2>
 							<p className="text-base text-muted-foreground sm:text-lg">
@@ -182,7 +182,7 @@ function HomeComponent() {
 									<h3 className="mb-2 font-bold text-base text-card-foreground sm:mb-3 sm:text-lg">
 										{benefit.title}
 									</h3>
-									<p className="text-sm text-muted-foreground leading-relaxed sm:text-base">
+									<p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
 										{benefit.description}
 									</p>
 								</div>
@@ -195,7 +195,7 @@ function HomeComponent() {
 				<section className="bg-background py-12 sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4">
 						<div className="mb-8 text-center lg:mb-12">
-							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:text-4xl lg:mb-4">
+							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:mb-4 lg:text-4xl">
 								Exam Portal Features
 							</h2>
 							<p className="text-base text-muted-foreground sm:text-lg">
@@ -219,7 +219,7 @@ function HomeComponent() {
 										</CardTitle>
 									</CardHeader>
 									<CardContent className="text-center">
-										<p className="text-sm text-muted-foreground leading-relaxed sm:text-base">
+										<p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
 											{feature.description}
 										</p>
 									</CardContent>
