@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated")({
 		if (!session) {
 			if (location.pathname.startsWith("/_authenticated/admin")) {
 				throw redirect({
-					to: "/auth/admin/login",
+					to: "/auth/admin/sign-in",
 				});
 			}
 			throw redirect({

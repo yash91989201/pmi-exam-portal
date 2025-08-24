@@ -14,7 +14,7 @@ export function Header() {
 						<Link to="/exams">Support</Link>
 					</Button>
 					<Button variant="secondary" asChild>
-						<Link to="/auth/admin/login">Admin Login</Link>
+						<Link to="/auth/admin/sign-in">Admin Sign In</Link>
 					</Button>
 				</div>
 			</div>
