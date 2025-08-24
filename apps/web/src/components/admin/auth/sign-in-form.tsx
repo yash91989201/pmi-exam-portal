@@ -1,11 +1,11 @@
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { ArrowRight, Loader2, Mail, RectangleEllipsis } from "lucide-react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -41,6 +41,7 @@ export const AdminSignInForm = () => {
 		resolver: standardSchemaResolver(AdminSignInSchema),
 		defaultValues: {
 			email: "",
+			otp: "",
 			formState: {
 				otpSent: false,
 			},
@@ -70,13 +71,8 @@ export const AdminSignInForm = () => {
 			return sendVerificationOtpRes;
 		},
 		onSuccess: ({ data }) => {
-			if (data.success) {
-				toast.success("OTP sent to your email");
-
-				form.setValue("formState", {
-					otpSent: data.success,
-				});
-			}
+			if (!data.success) return;
+			toast.success("OTP sent to your email");
 		},
 		onError: (error) => {
 			toast.error(error.message);
@@ -97,32 +93,32 @@ export const AdminSignInForm = () => {
 
 			return emailOtpSignInRes;
 		},
-		onSuccess: ({ data }) => {
-			if (data.user) {
-				toast.success("Signed in successfully");
-
-				router.navigate({
-					to: "/dashboard",
-				});
-			}
+		onSuccess: () => {
+			toast.success("Signed in successfully");
 		},
 		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
 
+	const handleSendOtp = async () => {
+		const emailValid = await form.trigger("email");
+		if (!emailValid) return;
+
+		const email = form.getValues("email");
+
+		const { data } = await sendVerificationOtp({ email });
+
+		form.setValue("formState", {
+			otpSent: data.success,
+		});
+	};
+
 	const onSubmit: SubmitHandler<AdminSignInSchemaType> = async ({
 		formState: _,
 		...formData
 	}) => {
 		try {
-			if (!formData.otp) {
-				await sendVerificationOtp({
-					email: formData.email,
-				});
-				return;
-			}
-
 			const {
 				data: { user },
 			} = await signInWithEmailOtp({
@@ -134,9 +130,15 @@ export const AdminSignInForm = () => {
 				userId: user.id,
 			});
 
-			if (createAdminRes.success) {
-				toast.success(createAdminRes.message);
+			if (!createAdminRes.success) {
+				throw new Error(createAdminRes.message);
 			}
+
+			toast.success(createAdminRes.message);
+
+			router.navigate({
+				to: "/dashboard",
+			});
 		} catch (error) {
 			toast.error(
 				error instanceof Error ? error.message : "SignIn failed, try again.",
@@ -176,6 +178,7 @@ export const AdminSignInForm = () => {
 											<Input
 												placeholder="Enter your email"
 												{...field}
+												disabled={field.disabled || otpSent}
 												className="border-border bg-background pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
 											/>
 										</div>
@@ -244,6 +247,7 @@ export const AdminSignInForm = () => {
 								className="group w-full bg-primary text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25"
 								disabled={form.formState.isSubmitting}
 								size="lg"
+								onClick={handleSendOtp}
 							>
 								{isSendingVerificationOtp ? (
 									<Loader2 className="mr-3 size-4.5 animate-spin" />
@@ -255,6 +259,22 @@ export const AdminSignInForm = () => {
 						)}
 					</form>
 				</Form>
+
+				<p className="mx-auto w-fit gap-1.5 text-sm">
+					Donot have an admin account?
+					<Link
+						to="/auth/admin/sign-up"
+						className={buttonVariants({
+							variant: "link",
+							className:
+								"inline w-auto px-0 font-medium text-primary underline decoration-primary/70 underline-offset-4 transition-colors hover:text-primary/90 hover:decoration-2 focus-visible:outline-2 focus-visible:outline-primary",
+						})}
+						aria-label="Sign in to your admin account"
+					>
+						Sign Up
+					</Link>
+					here
+				</p>
 
 				<p className="text-center text-muted-foreground text-xs leading-relaxed">
 					By signing in, you agree to our{" "}

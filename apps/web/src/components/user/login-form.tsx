@@ -31,23 +31,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
-import { AdminLoginSchema } from "@/lib/schema";
-import type { AdminLoginSchemaType } from "@/lib/types";
+import { UserLoginSchema } from "@/lib/schema";
+import type { UserLoginSchemaType } from "@/lib/types";
 
 export function UserLoginForm() {
 	const router = useRouter();
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const [rememberMe, setRememberMe] = useState(false);
 
-	const form = useForm<AdminLoginSchemaType>({
-		resolver: standardSchemaResolver(AdminLoginSchema),
+	const form = useForm<UserLoginSchemaType>({
+		resolver: standardSchemaResolver(UserLoginSchema),
 		defaultValues: {
 			email: "",
 			password: "",
 		},
 	});
 
-	const onSubmit: SubmitHandler<AdminLoginSchemaType> = async (formData) => {
+	const onSubmit: SubmitHandler<UserLoginSchemaType> = async (formData) => {
 		try {
 			await authClient.signIn.email({
 				email: formData.email,
