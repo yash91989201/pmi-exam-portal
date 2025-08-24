@@ -13,9 +13,9 @@ export default defineConfig({
 			"@server-types": path.resolve(__dirname, "../server/src/lib/types"),
 		},
 	},
-	// preview: {
-	// 	allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
-	// 		? import.meta.env.VITE_ALLOWED_HOSTS.split(",")
-	// 		: [],
-	// },
+	preview: {
+	 	allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
+	 		? import.meta.env.VITE_ALLOWED_HOSTS.split(",")
+	 		: [],
+	 },
 });
