@@ -12,8 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticateduserRouteRouteImport } from './routes/_authenticated/(user)/route'
-import { Route as AuthAdminSignupRouteImport } from './routes/auth/admin/signup'
-import { Route as AuthAdminLoginRouteImport } from './routes/auth/admin/login'
+import { Route as AuthAdminSignUpRouteImport } from './routes/auth/admin/sign-up'
+import { Route as AuthAdminSignInRouteImport } from './routes/auth/admin/sign-in'
 import { Route as AuthenticateduserExamAttemptExamRouteImport } from './routes/_authenticated/(user-exam)/attempt-exam'
 import { Route as AuthenticateduserOrdersRouteImport } from './routes/_authenticated/(user)/orders'
 import { Route as AuthenticateduserExamsRouteImport } from './routes/_authenticated/(user)/exams'
@@ -43,14 +43,14 @@ const AuthenticateduserRouteRoute = AuthenticateduserRouteRouteImport.update({
   id: '/(user)',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthAdminSignupRoute = AuthAdminSignupRouteImport.update({
-  id: '/auth/admin/signup',
-  path: '/auth/admin/signup',
+const AuthAdminSignUpRoute = AuthAdminSignUpRouteImport.update({
+  id: '/auth/admin/sign-up',
+  path: '/auth/admin/sign-up',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthAdminLoginRoute = AuthAdminLoginRouteImport.update({
-  id: '/auth/admin/login',
-  path: '/auth/admin/login',
+const AuthAdminSignInRoute = AuthAdminSignInRouteImport.update({
+  id: '/auth/admin/sign-in',
+  path: '/auth/admin/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticateduserExamAttemptExamRoute =
@@ -151,8 +151,8 @@ export interface FileRoutesByFullPath {
   '/exams': typeof AuthenticateduserExamsRoute
   '/orders': typeof AuthenticateduserOrdersRoute
   '/attempt-exam': typeof AuthenticateduserExamAttemptExamRoute
-  '/auth/admin/login': typeof AuthAdminLoginRoute
-  '/auth/admin/signup': typeof AuthAdminSignupRoute
+  '/auth/admin/sign-in': typeof AuthAdminSignInRoute
+  '/auth/admin/sign-up': typeof AuthAdminSignUpRoute
   '/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
   '/dashboard/': typeof AuthenticatedadminDashboardIndexRoute
   '/dashboard/users/$userId': typeof AuthenticatedadminDashboardUsersUserIdRouteRouteWithChildren
@@ -170,8 +170,8 @@ export interface FileRoutesByTo {
   '/exams': typeof AuthenticateduserExamsRoute
   '/orders': typeof AuthenticateduserOrdersRoute
   '/attempt-exam': typeof AuthenticateduserExamAttemptExamRoute
-  '/auth/admin/login': typeof AuthAdminLoginRoute
-  '/auth/admin/signup': typeof AuthAdminSignupRoute
+  '/auth/admin/sign-in': typeof AuthAdminSignInRoute
+  '/auth/admin/sign-up': typeof AuthAdminSignUpRoute
   '/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
   '/dashboard': typeof AuthenticatedadminDashboardIndexRoute
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
@@ -192,8 +192,8 @@ export interface FileRoutesById {
   '/_authenticated/(user)/exams': typeof AuthenticateduserExamsRoute
   '/_authenticated/(user)/orders': typeof AuthenticateduserOrdersRoute
   '/_authenticated/(user-exam)/attempt-exam': typeof AuthenticateduserExamAttemptExamRoute
-  '/auth/admin/login': typeof AuthAdminLoginRoute
-  '/auth/admin/signup': typeof AuthAdminSignupRoute
+  '/auth/admin/sign-in': typeof AuthAdminSignInRoute
+  '/auth/admin/sign-up': typeof AuthAdminSignUpRoute
   '/_authenticated/(admin)/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
   '/_authenticated/(admin)/dashboard/': typeof AuthenticatedadminDashboardIndexRoute
   '/_authenticated/(admin)/dashboard/users/$userId': typeof AuthenticatedadminDashboardUsersUserIdRouteRouteWithChildren
@@ -214,8 +214,8 @@ export interface FileRouteTypes {
     | '/exams'
     | '/orders'
     | '/attempt-exam'
-    | '/auth/admin/login'
-    | '/auth/admin/signup'
+    | '/auth/admin/sign-in'
+    | '/auth/admin/sign-up'
     | '/dashboard/orders'
     | '/dashboard/'
     | '/dashboard/users/$userId'
@@ -233,8 +233,8 @@ export interface FileRouteTypes {
     | '/exams'
     | '/orders'
     | '/attempt-exam'
-    | '/auth/admin/login'
-    | '/auth/admin/signup'
+    | '/auth/admin/sign-in'
+    | '/auth/admin/sign-up'
     | '/dashboard/orders'
     | '/dashboard'
     | '/dashboard/exams/create-exam'
@@ -254,8 +254,8 @@ export interface FileRouteTypes {
     | '/_authenticated/(user)/exams'
     | '/_authenticated/(user)/orders'
     | '/_authenticated/(user-exam)/attempt-exam'
-    | '/auth/admin/login'
-    | '/auth/admin/signup'
+    | '/auth/admin/sign-in'
+    | '/auth/admin/sign-up'
     | '/_authenticated/(admin)/dashboard/orders'
     | '/_authenticated/(admin)/dashboard/'
     | '/_authenticated/(admin)/dashboard/users/$userId'
@@ -271,8 +271,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  AuthAdminLoginRoute: typeof AuthAdminLoginRoute
-  AuthAdminSignupRoute: typeof AuthAdminSignupRoute
+  AuthAdminSignInRoute: typeof AuthAdminSignInRoute
+  AuthAdminSignUpRoute: typeof AuthAdminSignUpRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,18 +298,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticateduserRouteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/auth/admin/signup': {
-      id: '/auth/admin/signup'
-      path: '/auth/admin/signup'
-      fullPath: '/auth/admin/signup'
-      preLoaderRoute: typeof AuthAdminSignupRouteImport
+    '/auth/admin/sign-up': {
+      id: '/auth/admin/sign-up'
+      path: '/auth/admin/sign-up'
+      fullPath: '/auth/admin/sign-up'
+      preLoaderRoute: typeof AuthAdminSignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/admin/login': {
-      id: '/auth/admin/login'
-      path: '/auth/admin/login'
-      fullPath: '/auth/admin/login'
-      preLoaderRoute: typeof AuthAdminLoginRouteImport
+    '/auth/admin/sign-in': {
+      id: '/auth/admin/sign-in'
+      path: '/auth/admin/sign-in'
+      fullPath: '/auth/admin/sign-in'
+      preLoaderRoute: typeof AuthAdminSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/(user-exam)/attempt-exam': {
@@ -512,8 +512,8 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  AuthAdminLoginRoute: AuthAdminLoginRoute,
-  AuthAdminSignupRoute: AuthAdminSignupRoute,
+  AuthAdminSignInRoute: AuthAdminSignInRoute,
+  AuthAdminSignUpRoute: AuthAdminSignUpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

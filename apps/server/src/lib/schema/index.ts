@@ -21,10 +21,24 @@ export const ToggleRegistrationOutput = z.object({
 
 export const RegistrationStatusOutput = z.object({
 	success: z.boolean(),
-	message: z.string().optional(),
+	message: z.string(),
 	data: z
 		.object({
-			enabled: z.boolean(),
+			registrationEnabled: z.boolean(),
+		})
+		.optional(),
+});
+
+export const CreateAdminInput = z.object({
+	userId: z.string(),
+});
+
+export const CreateAdminOutput = z.object({
+	success: z.boolean(),
+	message: z.string(),
+	data: z
+		.object({
+			userId: z.string(),
 		})
 		.optional(),
 });

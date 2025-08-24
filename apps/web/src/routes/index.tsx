@@ -22,9 +22,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { UserLoginForm } from "@/components/user/login-form";
 import { Footer } from "@/components/user/shared/footer";
 import { Header } from "@/components/user/shared/header";
+import { UserSignInForm } from "@/components/user/sign-in-form";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
@@ -80,7 +80,7 @@ function HomeComponent() {
 								</div>
 							</div>
 							<div className="flex justify-center">
-								<UserLoginForm />
+								<UserSignInForm />
 							</div>
 						</div>
 					</div>

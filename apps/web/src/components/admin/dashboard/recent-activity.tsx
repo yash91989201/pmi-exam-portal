@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { queryUtils } from "@/utils/orpc";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const statusConfig = {
 	completed: { icon: CheckCircle, color: "text-green-600", bg: "bg-green-100" },
@@ -47,53 +48,59 @@ export function RecentActivity() {
 					{data.recentAttempts.length === 0 ? (
 						<p className="text-muted-foreground text-sm">No recent attempts</p>
 					) : (
-						data.recentAttempts.map((attempt) => {
-							const StatusIcon =
-								statusConfig[attempt.status as keyof typeof statusConfig]
-									?.icon || AlertCircle;
-							const statusStyle =
-								statusConfig[attempt.status as keyof typeof statusConfig] ||
-								statusConfig.in_progress;
+						<ScrollArea className="h-96">
+							{data.recentAttempts.map((attempt) => {
+								const StatusIcon =
+									statusConfig[attempt.status as keyof typeof statusConfig]
+										?.icon || AlertCircle;
+								const statusStyle =
+									statusConfig[attempt.status as keyof typeof statusConfig] ||
+									statusConfig.in_progress;
 
-							return (
-								<div
-									key={attempt.id}
-									className="flex items-center justify-between rounded-lg border p-3"
-								>
-									<div className="flex items-center gap-3">
-										<div className={`rounded-full p-2 ${statusStyle.bg}`}>
-											<StatusIcon className={`h-4 w-4 ${statusStyle.color}`} />
+								return (
+									<div
+										key={attempt.id}
+										className="mb-3 flex items-center justify-between rounded-lg border p-3"
+									>
+										<div className="flex items-center gap-3">
+											<div className={`rounded-full p-2 ${statusStyle.bg}`}>
+												<StatusIcon
+													className={`h-4 w-4 ${statusStyle.color}`}
+												/>
+											</div>
+											<div>
+												<div className="font-medium text-sm">
+													{attempt.userName || "Unknown User"}
+												</div>
+												<div className="text-muted-foreground text-xs">
+													{attempt.examCertification}
+												</div>
+												<div className="text-muted-foreground text-xs">
+													{attempt.completedAt
+														? `Completed ${formatDistanceToNow(attempt.completedAt, { addSuffix: true })}`
+														: "In progress"}
+												</div>
+											</div>
 										</div>
-										<div>
+										<div className="text-right">
 											<div className="font-medium text-sm">
-												{attempt.userName || "Unknown User"}
+												{attempt.marks !== null ? `${attempt.marks}%` : "-"}
 											</div>
-											<div className="text-muted-foreground text-xs">
-												{attempt.examCertification}
-											</div>
-											<div className="text-muted-foreground text-xs">
-												{attempt.completedAt
-													? `Completed ${formatDistanceToNow(attempt.completedAt, { addSuffix: true })}`
-													: "In progress"}
-											</div>
+											<Badge
+												variant={
+													attempt.status === "completed"
+														? "default"
+														: "secondary"
+												}
+												className="text-xs"
+											>
+												{attempt.status}
+											</Badge>
 										</div>
 									</div>
-									<div className="text-right">
-										<div className="font-medium text-sm">
-											{attempt.marks !== null ? `${attempt.marks}%` : "-"}
-										</div>
-										<Badge
-											variant={
-												attempt.status === "completed" ? "default" : "secondary"
-											}
-											className="text-xs"
-										>
-											{attempt.status}
-										</Badge>
-									</div>
-								</div>
-							);
-						})
+								);
+							})}
+						</ScrollArea>
 					)}
 				</CardContent>
 			</Card>

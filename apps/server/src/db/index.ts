@@ -6,3 +6,5 @@ import { env } from "@/env";
 export const db = drizzle(env.DATABASE_URL, {
 	schema: { ...schema, ...authSchema },
 });
+
+export type DBType = typeof db;

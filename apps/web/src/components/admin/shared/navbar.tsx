@@ -20,7 +20,7 @@ export const AdminNavbar = () => {
 		mutationFn: async () => {
 			const res = await authClient.signOut();
 			if (res.data?.success) {
-				router.navigate({ to: "/auth/admin/login" });
+				router.navigate({ to: "/auth/admin/sign-in" });
 				return;
 			}
 			toast.error("Unable to logout try again");

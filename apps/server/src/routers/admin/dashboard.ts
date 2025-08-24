@@ -79,7 +79,8 @@ export const adminDashboardRouter = {
 					// Total users count
 					context.db
 						.select({ count: count() })
-						.from(user),
+						.from(user)
+						.where(eq(user.role, "user")),
 					// Total exams count
 					context.db
 						.select({ count: count() })
