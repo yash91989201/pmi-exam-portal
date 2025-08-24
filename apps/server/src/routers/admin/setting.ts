@@ -1,32 +1,46 @@
-import { ORPCError } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import { user } from "@/db/schema/auth";
 import { publicProcedure } from "@/lib/orpc";
 import {
+	CreateAdminInput,
+	CreateAdminOutput,
 	RegistrationStatusOutput,
-	ToggleRegistrationInput,
-	ToggleRegistrationOutput,
-	UpdateDefaultAdminIdInput,
-	UpdateDefaultAdminIdOutput,
 } from "@/lib/schema";
-import {
-	isRegistrationEnabled,
-	toggleRegistration,
-} from "@/utils/admin-settings";
+import { createAdminSettingsManager } from "@/utils/admin-settings-manager";
 
 export const adminSettingRouter = {
-	toggleRegistration: publicProcedure
-		.input(ToggleRegistrationInput)
-		.output(ToggleRegistrationOutput)
-		.handler(async ({ input }) => {
+	createAdmin: publicProcedure
+		.input(CreateAdminInput)
+		.output(CreateAdminOutput)
+		.handler(async ({ context, input }) => {
 			try {
-				await toggleRegistration(input.enabled);
+				const adminSettingsManager = createAdminSettingsManager(context.db);
+				const registrationEnabled =
+					await adminSettingsManager.isRegistrationEnabled();
+
+				if (!registrationEnabled) {
+					throw new Error("Admin registration is disabled");
+				}
+
+				const updateUserRes = await context.db
+					.update(user)
+					.set({
+						role: "admin",
+					})
+					.where(eq(user.id, input.userId))
+					.returning();
+
+				await adminSettingsManager.disableRegistration();
+
 				return {
 					success: true,
-					message: "Registration toggled successfully",
+					message:
+						"First admin created successfully, and disabled further registrations.",
+					data: {
+						userId: updateUserRes[0].id,
+					},
 				};
 			} catch (error) {
-				console.error(error);
 				return {
 					success: false,
 					message:
@@ -37,51 +51,27 @@ export const adminSettingRouter = {
 			}
 		}),
 
-	registrationEnabled: publicProcedure
+	getRegistrationStatus: publicProcedure
 		.output(RegistrationStatusOutput)
-		.handler(async () => {
+		.handler(async ({ context }) => {
 			try {
-				const enabled = await isRegistrationEnabled();
+				const adminSettingsManager = createAdminSettingsManager(context.db);
+				const registrationEnabled =
+					await adminSettingsManager.isRegistrationEnabled();
 
 				return {
 					success: true,
-					data: { enabled },
+					message: "Fetched registration status successfully",
+					data: { registrationEnabled },
 				};
 			} catch (error) {
-				console.error(error);
-
 				return {
 					success: false,
 					message:
 						error instanceof Error
 							? error.message
-							: "Admin registration is disabled",
+							: "Admin registration is disabled currently.",
 				};
-			}
-		}),
-
-	updateDefaultAdmin: publicProcedure
-		.input(UpdateDefaultAdminIdInput)
-		.output(UpdateDefaultAdminIdOutput)
-		.handler(async ({ context, input }) => {
-			try {
-				await context.db
-					.update(user)
-					.set({
-						role: "admin",
-					})
-					.where(eq(user.id, input.generatedId));
-				return {
-					success: true,
-					message: "Default admin updated successfully",
-				};
-			} catch (error) {
-				throw new ORPCError(
-					error instanceof Error
-						? error.message
-						: "Unable to update default admin.",
-					{ status: 400 },
-				);
 			}
 		}),
 };

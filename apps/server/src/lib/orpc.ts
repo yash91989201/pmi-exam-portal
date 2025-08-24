@@ -1,4 +1,5 @@
 import { ORPCError, os } from "@orpc/server";
+import { createAdminSettingsManager } from "@/utils/admin-settings-manager";
 import type { Context } from "./context";
 
 export const o = os.$context<Context>();
@@ -25,10 +26,12 @@ const requireAdmin = o.middleware(async ({ context, next }) => {
 	if (context.session.user.role !== "admin") {
 		throw new ORPCError("FORBIDDEN");
 	}
+	const adminSettingsManager = createAdminSettingsManager(context.db);
 
 	return next({
 		context: {
 			session: context.session,
+			adminSettingsManager,
 		},
 	});
 });
