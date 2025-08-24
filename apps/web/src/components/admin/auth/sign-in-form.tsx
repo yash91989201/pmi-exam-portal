@@ -32,7 +32,6 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { AdminSignInSchema } from "@/lib/schema";
 import type { AdminSignInSchemaType } from "@/lib/types";
-import { queryUtils } from "@/utils/orpc";
 
 export const AdminSignInForm = () => {
 	const router = useRouter();
@@ -48,10 +47,6 @@ export const AdminSignInForm = () => {
 		},
 	});
 
-	const { mutateAsync: createAdmin } = useMutation(
-		queryUtils.admin.createAdmin.mutationOptions({}),
-	);
-
 	const {
 		mutateAsync: sendVerificationOtp,
 		isPending: isSendingVerificationOtp,
@@ -61,7 +56,7 @@ export const AdminSignInForm = () => {
 			const sendVerificationOtpRes =
 				await authClient.emailOtp.sendVerificationOtp({
 					email,
-					type: "email-verification",
+					type: "sign-in",
 				});
 
 			if (sendVerificationOtpRes.error) {
@@ -119,22 +114,10 @@ export const AdminSignInForm = () => {
 		...formData
 	}) => {
 		try {
-			const {
-				data: { user },
-			} = await signInWithEmailOtp({
+			await signInWithEmailOtp({
 				email: formData.email,
 				otp: formData.otp,
 			});
-
-			const createAdminRes = await createAdmin({
-				userId: user.id,
-			});
-
-			if (!createAdminRes.success) {
-				throw new Error(createAdminRes.message);
-			}
-
-			toast.success(createAdminRes.message);
 
 			router.navigate({
 				to: "/dashboard",
