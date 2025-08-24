@@ -134,14 +134,11 @@ export const UserSignInForm = () => {
 	return (
 		<Card className="mx-auto w-full max-w-lg border-border bg-card shadow-lg transition-all duration-300 hover:shadow-primary/10 hover:shadow-xl">
 			<CardHeader className="space-y-1 text-center">
-				<div className="mx-auto mb-6 w-fit">
-					<img src="/pmi_logo.webp" alt="PMI Logo" className="h-16 w-auto" />
-				</div>
 				<CardTitle className="font-bold text-2xl text-card-foreground">
-					User Sign In
+					Sign In
 				</CardTitle>
 				<CardDescription className="text-muted-foreground">
-					Sign in to your account to access your exams
+					Sign in to your account to access your exams and certifications.
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
