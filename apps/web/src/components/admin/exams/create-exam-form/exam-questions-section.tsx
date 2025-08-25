@@ -35,6 +35,7 @@ export const ExamQuestionsSection = () => {
 			text: "",
 			mark: defaultMark,
 			order: questionFields.length,
+			imageId: null,
 			options: [
 				{ text: "", isCorrect: true, order: 0 },
 				{ text: "", isCorrect: false, order: 1 },

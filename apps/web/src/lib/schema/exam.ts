@@ -10,7 +10,7 @@ const QuestionSchema = z.object({
 	text: z.string().min(1, "Question text is required"),
 	mark: z.number().int().positive("Mark must be a positive integer"),
 	order: z.number().int().min(0),
-	imageId: z.string().optional(),
+	imageId: z.string().nullable(),
 	options: z
 		.array(OptionSchema)
 		.min(2, "At least 2 options are required")
