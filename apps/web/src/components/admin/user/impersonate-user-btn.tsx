@@ -4,6 +4,7 @@ import { Loader2, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { queryClient, queryUtils } from "@/utils/orpc";
 
 export const ImpersonateUserBtn = ({ userId }: { userId: string }) => {
 	const router = useRouter();
@@ -18,7 +19,9 @@ export const ImpersonateUserBtn = ({ userId }: { userId: string }) => {
 			if (data) {
 				toast.success(`Started ${data.user.name}'s session.`);
 
-				router.invalidate();
+				queryClient.invalidateQueries({
+					queryKey: queryUtils.key(),
+				});
 
 				router.navigate({
 					to: "/exams",
