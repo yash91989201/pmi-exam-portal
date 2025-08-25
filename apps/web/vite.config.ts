@@ -14,8 +14,8 @@ export default defineConfig({
 		},
 	},
 	preview: {
-		allowedHosts: import.meta.env.VITE_ALLOWED_HOSTS
-			? import.meta.env.VITE_ALLOWED_HOSTS.split(",")
+		allowedHosts: process.env.VITE_ALLOWED_HOSTS
+			? process.env.VITE_ALLOWED_HOSTS.split(",")
 			: [],
 	},
 });
