@@ -6,6 +6,7 @@ import { ExamSchema, UserExamSchema } from "./exam";
 
 export * from "./auth";
 export * from "./exam";
+export * from "./setting";
 
 export const OrderSchema = createSelectSchema(orders);
 export const UserOrderSchema = createSelectSchema(userOrders);

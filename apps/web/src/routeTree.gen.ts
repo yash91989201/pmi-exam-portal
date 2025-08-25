@@ -20,6 +20,7 @@ import { Route as AuthenticateduserExamsRouteImport } from './routes/_authentica
 import { Route as AuthenticateduserCertificatesRouteImport } from './routes/_authenticated/(user)/certificates'
 import { Route as AuthenticatedadminDashboardRouteRouteImport } from './routes/_authenticated/(admin)/dashboard/route'
 import { Route as AuthenticatedadminDashboardIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/index'
+import { Route as AuthenticatedadminDashboardSettingsRouteImport } from './routes/_authenticated/(admin)/dashboard/settings'
 import { Route as AuthenticatedadminDashboardOrdersRouteImport } from './routes/_authenticated/(admin)/dashboard/orders'
 import { Route as AuthenticatedadminDashboardUsersIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/users/index'
 import { Route as AuthenticatedadminDashboardExamsIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/exams/index'
@@ -85,6 +86,12 @@ const AuthenticatedadminDashboardIndexRoute =
   AuthenticatedadminDashboardIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AuthenticatedadminDashboardRouteRoute,
+  } as any)
+const AuthenticatedadminDashboardSettingsRoute =
+  AuthenticatedadminDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => AuthenticatedadminDashboardRouteRoute,
   } as any)
 const AuthenticatedadminDashboardOrdersRoute =
@@ -154,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/auth/admin/sign-in': typeof AuthAdminSignInRoute
   '/auth/admin/sign-up': typeof AuthAdminSignUpRoute
   '/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
+  '/dashboard/settings': typeof AuthenticatedadminDashboardSettingsRoute
   '/dashboard/': typeof AuthenticatedadminDashboardIndexRoute
   '/dashboard/users/$userId': typeof AuthenticatedadminDashboardUsersUserIdRouteRouteWithChildren
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
@@ -173,6 +181,7 @@ export interface FileRoutesByTo {
   '/auth/admin/sign-in': typeof AuthAdminSignInRoute
   '/auth/admin/sign-up': typeof AuthAdminSignUpRoute
   '/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
+  '/dashboard/settings': typeof AuthenticatedadminDashboardSettingsRoute
   '/dashboard': typeof AuthenticatedadminDashboardIndexRoute
   '/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
   '/dashboard/exams': typeof AuthenticatedadminDashboardExamsIndexRoute
@@ -195,6 +204,7 @@ export interface FileRoutesById {
   '/auth/admin/sign-in': typeof AuthAdminSignInRoute
   '/auth/admin/sign-up': typeof AuthAdminSignUpRoute
   '/_authenticated/(admin)/dashboard/orders': typeof AuthenticatedadminDashboardOrdersRoute
+  '/_authenticated/(admin)/dashboard/settings': typeof AuthenticatedadminDashboardSettingsRoute
   '/_authenticated/(admin)/dashboard/': typeof AuthenticatedadminDashboardIndexRoute
   '/_authenticated/(admin)/dashboard/users/$userId': typeof AuthenticatedadminDashboardUsersUserIdRouteRouteWithChildren
   '/_authenticated/(admin)/dashboard/exams/create-exam': typeof AuthenticatedadminDashboardExamsCreateExamRoute
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/auth/admin/sign-in'
     | '/auth/admin/sign-up'
     | '/dashboard/orders'
+    | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/users/$userId'
     | '/dashboard/exams/create-exam'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/auth/admin/sign-in'
     | '/auth/admin/sign-up'
     | '/dashboard/orders'
+    | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/exams/create-exam'
     | '/dashboard/exams'
@@ -257,6 +269,7 @@ export interface FileRouteTypes {
     | '/auth/admin/sign-in'
     | '/auth/admin/sign-up'
     | '/_authenticated/(admin)/dashboard/orders'
+    | '/_authenticated/(admin)/dashboard/settings'
     | '/_authenticated/(admin)/dashboard/'
     | '/_authenticated/(admin)/dashboard/users/$userId'
     | '/_authenticated/(admin)/dashboard/exams/create-exam'
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthenticatedadminDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedadminDashboardRouteRoute
+    }
+    '/_authenticated/(admin)/dashboard/settings': {
+      id: '/_authenticated/(admin)/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedadminDashboardSettingsRouteImport
       parentRoute: typeof AuthenticatedadminDashboardRouteRoute
     }
     '/_authenticated/(admin)/dashboard/orders': {
@@ -464,6 +484,7 @@ const AuthenticatedadminDashboardUsersUserIdRouteRouteWithChildren =
 
 interface AuthenticatedadminDashboardRouteRouteChildren {
   AuthenticatedadminDashboardOrdersRoute: typeof AuthenticatedadminDashboardOrdersRoute
+  AuthenticatedadminDashboardSettingsRoute: typeof AuthenticatedadminDashboardSettingsRoute
   AuthenticatedadminDashboardIndexRoute: typeof AuthenticatedadminDashboardIndexRoute
   AuthenticatedadminDashboardUsersUserIdRouteRoute: typeof AuthenticatedadminDashboardUsersUserIdRouteRouteWithChildren
   AuthenticatedadminDashboardExamsCreateExamRoute: typeof AuthenticatedadminDashboardExamsCreateExamRoute
@@ -475,6 +496,8 @@ const AuthenticatedadminDashboardRouteRouteChildren: AuthenticatedadminDashboard
   {
     AuthenticatedadminDashboardOrdersRoute:
       AuthenticatedadminDashboardOrdersRoute,
+    AuthenticatedadminDashboardSettingsRoute:
+      AuthenticatedadminDashboardSettingsRoute,
     AuthenticatedadminDashboardIndexRoute:
       AuthenticatedadminDashboardIndexRoute,
     AuthenticatedadminDashboardUsersUserIdRouteRoute:

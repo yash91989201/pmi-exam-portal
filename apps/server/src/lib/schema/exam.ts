@@ -312,3 +312,24 @@ export const GetExamStatsOutput = z.object({
 	highestScore: z.number().min(0).max(100),
 	mostRecentAttempt: z.date().nullable(),
 });
+
+export const ListUserExamsOutput = z.object({
+	userExams: z.array(
+		UserExamSchema.extend({
+			exam: ExamSchema,
+		}),
+	),
+});
+
+export const UserExamResultSchema = z.object({
+	id: z.string(),
+	examName: z.string(),
+	completedAt: z.date(),
+	marks: z.number(),
+	totalMarks: z.number(),
+	status: z.enum(["passed", "failed"]),
+});
+
+export const ListExamResultsOutput = z.object({
+	results: z.array(UserExamResultSchema),
+});

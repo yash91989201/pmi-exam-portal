@@ -8,12 +8,14 @@ import { user } from "@/db/schema/auth";
 export const ADMIN_SETTING_KEYS = {
 	ENABLE_REGISTRATION: "enable_registration",
 	EMAIL_VERIFICATION_REQUIRED: "email_verification_required",
+	ENABLE_EXAM_MONITORING: "enable_exam_monitoring",
 } as const;
 
 // Default values for admin settings
 export const ADMIN_SETTING_DEFAULTS: Record<string, string> = {
-	[ADMIN_SETTING_KEYS.ENABLE_REGISTRATION]: "1", // true
-	[ADMIN_SETTING_KEYS.EMAIL_VERIFICATION_REQUIRED]: "1", // true
+	[ADMIN_SETTING_KEYS.ENABLE_REGISTRATION]: "1",
+	[ADMIN_SETTING_KEYS.EMAIL_VERIFICATION_REQUIRED]: "1",
+	[ADMIN_SETTING_KEYS.ENABLE_EXAM_MONITORING]: "0",
 } as const;
 
 export type AdminSettingKey =

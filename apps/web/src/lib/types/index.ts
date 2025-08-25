@@ -13,3 +13,4 @@ export type OrderFormSchemaType = z.infer<typeof OrderFormSchema>;
 export type AdminSignupSchemaType = z.infer<typeof AdminSignupSchema>;
 export type AdminSignInSchemaType = z.infer<typeof AdminSignInSchema>;
 export type UserSignInSchemaType = z.infer<typeof UserSignInSchema>;
+export * from "./setting";
