@@ -13,11 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import type { ExamFormSchemaType } from "@/lib/schema/exam";
+import type { CreateExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
 
 export const ExamQuestionsSection = () => {
-	const form = useFormContext<ExamFormSchemaType>();
+	const form = useFormContext<CreateExamFormSchemaType>();
 	const defaultMark = form.watch("formState.defaultMarks");
 	const selectedQuestionIndex = form.watch("formState.selectedQuestionIndex");
 
@@ -92,7 +92,7 @@ export const ExamQuestionsSection = () => {
 							onClick={addQuestion}
 							className="shadow-md transition-all hover:shadow-lg"
 						>
-							<Plus className="mr-2 h-4 w-4" />
+							<Plus className="mr-1.5 size-4.5" />
 							Add Question
 						</Button>
 					</div>
@@ -110,69 +110,67 @@ export const ExamQuestionsSection = () => {
 						</div>
 					) : (
 						<div className="flex flex-row gap-6">
-							<ScrollArea className="h-[80vh] w-80">
-								<div className="flex h-fit w-full flex-col rounded-md bg-white p-1">
-									{questionFields.map((question, index) => {
-										const watchedQuestion = form.watch(`questions.${index}`);
-										const isComplete =
-											watchedQuestion.text?.trim() &&
-											watchedQuestion.mark > 0 &&
-											watchedQuestion.options?.length >= 2 &&
-											watchedQuestion.options.every(
-												(opt) => opt.text?.trim()?.length >= 3,
-											) &&
-											watchedQuestion.options.some((opt) => opt.isCorrect);
+							<ScrollArea className="h-[80vh] w-96">
+								{questionFields.map((question, index) => {
+									const watchedQuestion = form.watch(`questions.${index}`);
+									const isComplete =
+										watchedQuestion.text?.trim() &&
+										watchedQuestion.mark > 0 &&
+										watchedQuestion.options?.length >= 2 &&
+										watchedQuestion.options.every(
+											(opt) => opt.text?.trim()?.length >= 3,
+										) &&
+										watchedQuestion.options.some((opt) => opt.isCorrect);
 
-										// Get first few words of the question text
-										const questionPreview = watchedQuestion.text
-											? watchedQuestion.text
-													.trim()
-													.split(" ")
-													.slice(0, 4)
-													.join(" ") +
-												(watchedQuestion.text.trim().split(" ").length > 4
-													? "..."
-													: "")
-											: `Question ${index + 1}`;
+									// Get first few words of the question text
+									const questionPreview = watchedQuestion.text
+										? watchedQuestion.text
+												.trim()
+												.split(" ")
+												.slice(0, 4)
+												.join(" ") +
+											(watchedQuestion.text.trim().split(" ").length > 4
+												? "..."
+												: "")
+										: `Question ${index + 1}`;
 
-										return (
-											<Button
-												key={`${question.id}-${index}`}
-												type="button"
-												variant={
-													selectedQuestionIndex === index
-														? "secondary"
-														: "outline"
-												}
-												className="mb-3 h-auto w-full justify-start px-3 py-4"
-												onClick={() => handleQuestionSelect(index)}
-											>
-												<div className="flex w-full items-start gap-3">
-													<div
-														className={cn(
-															"flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md font-bold text-xs",
-															selectedQuestionIndex === index
-																? "bg-white text-primary"
-																: "bg-primary text-white",
-														)}
-													>
-														Q{index + 1}
-													</div>
-													<div className="min-w-0 flex-1 text-left">
-														<div className="truncate font-medium text-sm">
-															{questionPreview}
-														</div>
-													</div>
-													{isComplete ? (
-														<CheckCircle2 className="h-4 w-4 flex-shrink-0 text-green-600" />
-													) : (
-														<Badge className="rounded-xl">Draft</Badge>
+									return (
+										<Button
+											key={`${question.id}-${index}`}
+											type="button"
+											variant={
+												selectedQuestionIndex === index
+													? "secondary"
+													: "outline"
+											}
+											className="mb-3 h-auto w-full justify-start px-3 py-4"
+											onClick={() => handleQuestionSelect(index)}
+										>
+											<div className="flex w-full items-start gap-3">
+												<div
+													className={cn(
+														"flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md font-bold text-xs",
+														selectedQuestionIndex === index
+															? "bg-white text-primary"
+															: "bg-primary text-white",
 													)}
+												>
+													Q{index + 1}
 												</div>
-											</Button>
-										);
-									})}
-								</div>
+												<div className="min-w-0 flex-1 text-left">
+													<div className="truncate font-medium text-sm">
+														{questionPreview}
+													</div>
+												</div>
+												{isComplete ? (
+													<CheckCircle2 className="h-4 w-4 flex-shrink-0 text-green-600" />
+												) : (
+													<Badge className="rounded-xl">Draft</Badge>
+												)}
+											</div>
+										</Button>
+									);
+								})}
 							</ScrollArea>
 
 							<div className="flex-1">
@@ -206,7 +204,7 @@ export const QuestionEditor = ({
 	questionIndex: number;
 	removeQuestion: (index: number) => void;
 }) => {
-	const form = useFormContext<ExamFormSchemaType>();
+	const form = useFormContext<CreateExamFormSchemaType>();
 
 	const {
 		fields: optionFields,
