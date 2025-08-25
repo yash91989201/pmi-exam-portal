@@ -61,6 +61,7 @@ export const Route = createFileRoute(
 	onLeave: async ({ context: { orpcClient }, search }) => {
 		await orpcClient.user.terminateExam({
 			examId: search.examId,
+			examAttemptId: search.examAttemptId,
 			reason: "User navigated within the app.",
 		});
 	},

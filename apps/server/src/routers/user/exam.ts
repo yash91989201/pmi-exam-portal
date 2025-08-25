@@ -62,9 +62,12 @@ export const userExamRouter = {
 				})
 				.returning();
 
-			await context.db.update(userExam).set({
-				attempts: existingUserExam.attempts + 1,
-			});
+			await context.db
+				.update(userExam)
+				.set({
+					attempts: existingUserExam.attempts + 1,
+				})
+				.where(eq(userExam.id, input.userExamId));
 
 			return {
 				success: true,
@@ -110,8 +113,14 @@ export const userExamRouter = {
 				.update(examAttempt)
 				.set({
 					status: "in_progress",
+					startedAt: new Date(),
 				})
-				.where(eq(examAttempt.id, input.examAttemptId));
+				.where(
+					and(
+						eq(examAttempt.id, input.examAttemptId),
+						eq(examAttempt.status, "started"),
+					),
+				);
 
 			const examDataForAttempt = {
 				...examRecord,
@@ -154,7 +163,7 @@ export const userExamRouter = {
 		.input(SubmitExamInput)
 		.output(SubmitExamOutput)
 		.handler(async ({ context, input }) => {
-			const { examId, answers } = input;
+			const { examId, examAttemptId, answers } = input;
 			const { db, session } = context;
 
 			const userExamRecord = await db.query.userExam.findFirst({
@@ -166,9 +175,6 @@ export const userExamRouter = {
 
 			if (!userExamRecord) {
 				throw new ORPCError("NOT_FOUND");
-			}
-			if (userExamRecord.attempts >= userExamRecord.maxAttempts) {
-				throw new ORPCError("PRECONDITION_FAILED");
 			}
 
 			const questions = await db.query.question.findMany({
@@ -204,26 +210,18 @@ export const userExamRouter = {
 
 			try {
 				await db.transaction(async (tx) => {
-					await tx.insert(examAttempt).values({
-						id: createId(),
-						userExamId: userExamRecord.id,
-						startedAt: new Date(), // This should be tracked properly
-						completedAt: new Date(),
-						status: "completed",
-						marks: totalScore,
-						attemptNumber: userExamRecord.attempts + 1,
-					});
+					await tx
+						.update(examAttempt)
+						.set({
+							completedAt: new Date(),
+							status: "completed",
+							marks: totalScore,
+						})
+						.where(eq(examAttempt.id, examAttemptId));
 
 					if (responses.length > 0) {
 						await tx.insert(attemptResponse).values(responses);
 					}
-
-					await tx
-						.update(userExam)
-						.set({
-							attempts: userExamRecord.attempts + 1,
-						})
-						.where(eq(userExam.id, userExamRecord.id));
 				});
 			} catch (error) {
 				console.error("Failed to submit exam:", error);
@@ -240,7 +238,7 @@ export const userExamRouter = {
 		.input(TerminateExamInput)
 		.output(SubmitExamOutput)
 		.handler(async ({ context, input }) => {
-			const { examId, reason } = input;
+			const { examId, examAttemptId, reason } = input;
 			const { db, session } = context;
 
 			const userExamRecord = await db.query.userExam.findFirst({
@@ -256,23 +254,14 @@ export const userExamRouter = {
 
 			try {
 				await db.transaction(async (tx) => {
-					await tx.insert(examAttempt).values({
-						id: createId(),
-						userExamId: userExamRecord.id,
-						startedAt: new Date(), // This should be tracked properly
-						completedAt: new Date(),
-						status: "terminated",
-						marks: 0,
-						attemptNumber: userExamRecord.attempts + 1,
-						terminationReason: reason,
-					});
-
 					await tx
-						.update(userExam)
+						.update(examAttempt)
 						.set({
-							attempts: userExamRecord.attempts + 1,
+							completedAt: new Date(),
+							status: "terminated",
+							terminationReason: reason,
 						})
-						.where(eq(userExam.id, userExamRecord.id));
+						.where(eq(examAttempt.id, examAttemptId));
 				});
 			} catch (error) {
 				console.error("Failed to terminate exam:", error);

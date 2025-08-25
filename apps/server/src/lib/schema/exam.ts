@@ -83,6 +83,7 @@ export const GetExamAttemptStatusOutput = z.object({
 
 export const SubmitExamInput = z.object({
 	examId: z.cuid2(),
+	examAttemptId: z.cuid2(),
 	answers: z.array(
 		z.object({
 			questionId: z.cuid2(),
@@ -93,6 +94,7 @@ export const SubmitExamInput = z.object({
 
 export const TerminateExamInput = z.object({
 	examId: z.cuid2(),
+	examAttemptId: z.cuid2(),
 	reason: z.string(),
 });
 

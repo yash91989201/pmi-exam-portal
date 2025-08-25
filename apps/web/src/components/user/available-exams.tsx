@@ -69,6 +69,9 @@ export function AvailableExams() {
 							</CardContent>
 							<CardFooter>
 								<Button
+									disabled={
+										isPending || userExam.attempts >= userExam.maxAttempts
+									}
 									onClick={() =>
 										handleAttemptExam({
 											examId: userExam.examId,
