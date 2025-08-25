@@ -10,6 +10,7 @@ import type {
 	GetExamForAttemptOutput,
 	GetUserExamsDataInput,
 	GetUserExamsDataOutput,
+	ListExamResultsOutput,
 	OptionInsertSchema,
 	OptionSchema,
 	QuestionInsertSchema,
@@ -18,6 +19,7 @@ import type {
 	SubmitExamOutput,
 	TerminateExamInput,
 	UserExamSchema,
+	UserExamResultSchema,
 } from "@/lib/schema/exam";
 
 export type OptionType = z.infer<typeof OptionSchema>;
@@ -48,3 +50,5 @@ export type QuestionFormData = Omit<QuestionType, "id" | "examId"> & {
 export type OptionFormData = z.infer<typeof OptionSchema>;
 export type ExcelQuestionRowType = z.infer<typeof ExcelQuestionRowSchema>;
 export type ExcelImportType = z.infer<typeof ExcelImportSchema>;
+export type UserExamResultType = z.infer<typeof UserExamResultSchema>;
+export type ListExamResultsOutputType = z.infer<typeof ListExamResultsOutput>;

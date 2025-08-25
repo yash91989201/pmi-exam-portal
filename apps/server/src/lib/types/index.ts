@@ -1,4 +1,5 @@
-export type * from "./auth";
+export * from "./exam";
+export * from "./setting";
 
 import type z from "zod";
 import type {

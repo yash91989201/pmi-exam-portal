@@ -16,7 +16,7 @@ import {
 	createAdminSettingsManager,
 } from "@/utils/admin-settings-manager";
 
-export const adminSettingRouter = {
+export const settingRouter = {
 	verifyEmail: publicProcedure
 		.input(VerifyAdminEmailInput)
 		.output(VerifyAdminEmailOutput)
@@ -189,4 +189,4 @@ export const adminSettingRouter = {
 		}),
 };
 
-export type AdminSettingRouter = typeof adminSettingRouter;
+export type SettingRouter = typeof settingRouter;
