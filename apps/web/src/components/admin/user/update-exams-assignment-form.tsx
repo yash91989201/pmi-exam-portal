@@ -58,6 +58,12 @@ export const UpdateExamsAssignmentForm = ({
 							input: { userId },
 						}),
 					);
+
+					queryClient.invalidateQueries(
+						queryUtils.admin.getUserExamsData.queryOptions({
+							input: { userId },
+						}),
+					);
 				},
 				onError: (error) => {
 					toast.error(error.message || "Failed to update exam assignments");
