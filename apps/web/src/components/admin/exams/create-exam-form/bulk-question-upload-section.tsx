@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import type { ExamFormSchemaType } from "@/lib/schema/exam";
+import type { CreateExamFormSchemaType } from "@/lib/schema/exam";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
 export const BulkQuestionUploadSection = () => {
-	const form = useFormContext<ExamFormSchemaType>();
+	const form = useFormContext<CreateExamFormSchemaType>();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadProgress, setUploadProgress] = useState(0);
@@ -253,7 +253,7 @@ export const BulkQuestionUploadSection = () => {
 							<div className="space-y-1 text-blue-800 dark:text-blue-200">
 								<p>
 									<strong>Required columns:</strong> Question Text, Option A,
-									Option B, Option C, Option D, Correct Answer, Marks
+									Option B, Option C, Option D, Correct Option, Marks
 								</p>
 								<p>
 									<strong>Supported formats:</strong> .xlsx, .xls, .ods

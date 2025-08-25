@@ -214,7 +214,7 @@ export const ExcelQuestionRowSchema = z.object({
 	"Option D": z.string().optional(),
 	"Option E": z.string().optional(),
 	"Option F": z.string().optional(),
-	"Correct Answer": z.enum(["A", "B", "C", "D", "E", "F"]),
+	"Correct Option": z.enum(["A", "B", "C", "D", "E", "F"]),
 	Marks: z.union([
 		z.number().int().positive("Marks must be a positive integer"),
 		z.string().transform((val, ctx) => {
@@ -255,7 +255,7 @@ export const ExcelImportSchema = z
 			}
 
 			// Correct answer must correspond to a non-empty option
-			const correctIndex = row["Correct Answer"].charCodeAt(0) - 65; // A=0, B=1, etc.
+			const correctIndex = row["Correct Option"].charCodeAt(0) - 65; // A=0, B=1, etc.
 			return (
 				correctIndex < nonEmptyOptions.length &&
 				options[correctIndex] &&
@@ -273,7 +273,7 @@ export const BulkUploadExcelOutput = z.object({
 				text: z.string(),
 				mark: z.number(),
 				order: z.number(),
-				imageId: z.string().nullable().optional(),
+				imageId: z.string().nullable(),
 				options: z.array(
 					z.object({
 						text: z.string(),
