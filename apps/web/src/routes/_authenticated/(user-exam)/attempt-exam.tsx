@@ -58,12 +58,34 @@ export const Route = createFileRoute(
 		};
 	},
 	component: RouteComponent,
-	onLeave: async ({ context: { orpcClient }, search }) => {
-		await orpcClient.user.terminateExam({
-			examId: search.examId,
-			examAttemptId: search.examAttemptId,
-			reason: "User navigated within the app.",
-		});
+	onLeave: async ({
+		context: { orpcClient, queryClient, queryUtils },
+		search,
+	}) => {
+		const { data: examAttemptStatusData } =
+			await orpcClient.user.getExamAttemptStatus({
+				examAttemptId: search.examAttemptId,
+			});
+		if (examAttemptStatusData?.status === undefined) {
+			return;
+		}
+
+		const examAttemptStatus = examAttemptStatusData.status;
+
+		if (
+			examAttemptStatus === "in_progress" ||
+			examAttemptStatus === "started"
+		) {
+			await orpcClient.user.terminateExam({
+				examId: search.examId,
+				examAttemptId: search.examAttemptId,
+				reason: "User navigated within the app.",
+			});
+
+			queryClient.invalidateQueries({
+				queryKey: queryUtils.user.key(),
+			});
+		}
 	},
 });
 

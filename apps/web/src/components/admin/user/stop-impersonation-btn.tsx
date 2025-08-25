@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
+import { queryClient, queryUtils } from "@/utils/orpc";
 
 export const StopImpersonationBtn = () => {
 	const router = useRouter();
@@ -30,7 +31,9 @@ export const StopImpersonationBtn = () => {
 				if (sessionData) {
 					toast.success(`Stopped ${sessionData.user.name}'s session.`);
 
-					router.invalidate();
+					queryClient.invalidateQueries({
+						queryKey: queryUtils.key(),
+					});
 
 					router.navigate({
 						to: "/dashboard/users/$userId/manage-user",

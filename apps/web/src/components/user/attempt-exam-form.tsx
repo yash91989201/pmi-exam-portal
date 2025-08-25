@@ -38,7 +38,7 @@ import { useExamTimer } from "@/hooks/use-exam-timer";
 import { AttemptExamFormSchema } from "@/lib/schema/exam";
 import type { AttemptExamFormSchemaType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { queryUtils } from "@/utils/orpc";
+import { queryClient, queryUtils } from "@/utils/orpc";
 
 export const AttemptExamForm = ({
 	examId,
@@ -76,8 +76,12 @@ export const AttemptExamForm = ({
 		queryUtils.user.submitExam.mutationOptions({
 			onSuccess: () => {
 				examSubmitted.current = true;
+
+				queryClient.invalidateQueries({
+					queryKey: queryUtils.user.key(),
+				});
+
 				toast.success("Exam submitted successfully!");
-				router.invalidate();
 				router.navigate({ to: "/exams" });
 			},
 			onError: (error) => {
@@ -90,8 +94,12 @@ export const AttemptExamForm = ({
 		queryUtils.user.terminateExam.mutationOptions({
 			onSuccess: () => {
 				examSubmitted.current = true;
+
+				queryClient.invalidateQueries({
+					queryKey: queryUtils.user.key(),
+				});
+
 				toast.error("Exam terminated due to suspicious activity.");
-				router.invalidate();
 				router.navigate({ to: "/exams" });
 			},
 			onError: (error) => {
