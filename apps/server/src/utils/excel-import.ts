@@ -114,7 +114,7 @@ export function convertToQuestionSchema(
 
 				return {
 					text: optionText.toString().trim(),
-					isCorrect: row["Correct Answer"] === label,
+					isCorrect: row["Correct Option"] === label,
 					order: optionIndex,
 				};
 			})

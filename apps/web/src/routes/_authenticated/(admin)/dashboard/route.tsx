@@ -9,9 +9,9 @@ function AdminLayout() {
 	return (
 		<>
 			<AdminNavbar />
-			<main className="container mx-auto py-6">
+			<main className="container mx-auto py-8">
 				<Outlet />
 			</main>
 		</>
-	)
+	);
 }

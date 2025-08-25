@@ -21,11 +21,11 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import type { ExamFormSchemaType } from "@/lib/schema/exam";
+import type { CreateExamFormSchemaType } from "@/lib/schema/exam";
 import { BulkQuestionUploadSection } from "./bulk-question-upload-section";
 
 export const ExamDetailsCard = () => {
-	const form = useFormContext<ExamFormSchemaType>();
+	const form = useFormContext<CreateExamFormSchemaType>();
 	const watchedQuestions = form.watch("questions") || [];
 
 	const totalMarks = watchedQuestions.reduce(

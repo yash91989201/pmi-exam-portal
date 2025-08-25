@@ -12,7 +12,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	return (
-		<div className="container mx-auto space-y-6 px-4 pb-10">
+		<div className="container mx-auto space-y-6">
 			<div className="space-y-6">
 				<div className="flex items-center gap-4">
 					<Button variant="ghost" size="sm" asChild>

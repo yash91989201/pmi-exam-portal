@@ -79,19 +79,12 @@ export const userExamRouter = {
 		.input(GetExamForAttemptInput)
 		.output(GetExamForAttemptOutput)
 		.handler(async ({ context, input }) => {
-			const userExamRecord = await context.db.query.userExam.findFirst({
-				where: and(
-					eq(userExam.userId, context.session.user.id),
-					eq(userExam.examId, input.examId),
-				),
+			const existingExamAttempt = await context.db.query.examAttempt.findFirst({
+				where: eq(examAttempt.id, input.examAttemptId),
 			});
 
-			if (!userExamRecord) {
+			if (!existingExamAttempt) {
 				throw new ORPCError("NOT_FOUND");
-			}
-
-			if (userExamRecord.attempts >= userExamRecord.maxAttempts) {
-				throw new ORPCError("PRECONDITION_FAILED");
 			}
 
 			const examRecord = await context.db.query.exam.findFirst({
