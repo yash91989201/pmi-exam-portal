@@ -10,7 +10,7 @@ export const ImpersonateUserBtn = ({ userId }: { userId: string }) => {
 	const router = useRouter();
 
 	const { mutateAsync: impersonateUser, isPending } = useMutation({
-		mutationKey: ["impersonateUser"],
+		mutationKey: ["impersonate-user", userId],
 		mutationFn: async () => {
 			const { data, error } = await authClient.admin.impersonateUser({
 				userId,
@@ -25,6 +25,7 @@ export const ImpersonateUserBtn = ({ userId }: { userId: string }) => {
 
 				router.navigate({
 					to: "/exams",
+					replace: true,
 				});
 			} else {
 				toast.error(error.message);

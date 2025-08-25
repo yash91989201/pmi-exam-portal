@@ -11,7 +11,7 @@ export const StopImpersonationBtn = () => {
 	const router = useRouter();
 
 	const { data: sessionData } = useSuspenseQuery({
-		queryKey: ["sessionData"],
+		queryKey: ["session-data"],
 		queryFn: async () => {
 			const { data, error } = await authClient.getSession();
 			if (error) {
@@ -23,7 +23,7 @@ export const StopImpersonationBtn = () => {
 	});
 
 	const { mutateAsync: stopImpersonating, isPending } = useMutation({
-		mutationKey: ["stopImpersonating"],
+		mutationKey: ["stop-impsersonating", sessionData?.user.id],
 		mutationFn: async () => {
 			const { data, error } = await authClient.admin.stopImpersonating();
 
@@ -40,6 +40,7 @@ export const StopImpersonationBtn = () => {
 						params: {
 							userId: sessionData.user.id,
 						},
+						replace: true,
 					});
 				}
 			} else {
