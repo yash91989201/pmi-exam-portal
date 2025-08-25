@@ -22,16 +22,10 @@ export const AdminSignupSchema = z
 
 export const AdminSignInSchema = z.object({
 	email: z.email("Invalid email address").min(1, "Email is required"),
-	otp: z.string().min(6, "OTP is required"),
-	formState: z.object({
-		otpSent: z.boolean(),
-	}),
+	password: z.string().min(1, "Password is required"),
 });
 
 export const UserSignInSchema = z.object({
 	email: z.email("Invalid email address").min(1, "Email is required"),
-	otp: z.string().min(6, "OTP is required"),
-	formState: z.object({
-		otpSent: z.boolean(),
-	}),
+	password: z.string().min(1, "Password is required"),
 });
