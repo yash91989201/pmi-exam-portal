@@ -47,7 +47,8 @@ export const CreateExamFormSchema = z.object({
 });
 
 export const AttemptExamFormSchema = z.object({
-	examId: z.string(),
+	examId: z.cuid2(),
+	examAttemptId: z.cuid2(),
 	answers: z.array(
 		z.object({
 			questionId: z.string(),

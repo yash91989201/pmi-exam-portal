@@ -7,13 +7,19 @@ const DEVTOOLS_THRESHOLD = 160;
 
 export function useCheatDetection({
 	examId,
+	examAttemptId,
 	examSubmitted,
 	onTerminate,
 	isImpersonating = false,
 }: {
 	examId: string;
+	examAttemptId: string;
 	examSubmitted: React.RefObject<boolean>;
-	onTerminate: (payload: { examId: string; reason: string }) => void;
+	onTerminate: (payload: {
+		examId: string;
+		examAttemptId: string;
+		reason: string;
+	}) => void;
 	isImpersonating?: boolean;
 }) {
 	const [warningCount, setWarningCount] = useState(0);
@@ -56,6 +62,7 @@ export function useCheatDetection({
 					if (!examSubmitted.current) {
 						onTerminate({
 							examId,
+							examAttemptId,
 							reason: `Multiple violations detected: ${reason}`,
 						});
 					}
@@ -161,7 +168,7 @@ export function useCheatDetection({
 			clearInterval(devToolsInterval);
 			clearInterval(inactivityInterval);
 		};
-	}, [isMonitoring, examId, onTerminate, examSubmitted]);
+	}, [isMonitoring, examId, examAttemptId, onTerminate, examSubmitted]);
 
 	return {
 		isMonitoring,

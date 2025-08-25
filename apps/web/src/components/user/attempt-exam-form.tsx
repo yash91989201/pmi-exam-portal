@@ -67,6 +67,7 @@ export const AttemptExamForm = ({
 		resolver: standardSchemaResolver(AttemptExamFormSchema),
 		defaultValues: {
 			examId,
+			examAttemptId,
 			answers: examDataForAttempt.questions,
 		},
 	});
@@ -107,6 +108,7 @@ export const AttemptExamForm = ({
 		setShowWarningDialog,
 	} = useCheatDetection({
 		examId,
+		examAttemptId,
 		examSubmitted,
 		onTerminate: terminateExam,
 		isImpersonating,
@@ -684,4 +686,3 @@ export const AttemptExamFormSkeleton = () => {
 		</div>
 	);
 };
-
