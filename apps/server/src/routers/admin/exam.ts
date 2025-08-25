@@ -1,12 +1,20 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, count, eq, type SQL } from "drizzle-orm";
+import { and, asc, count, eq, inArray, type SQL } from "drizzle-orm";
 import z from "zod";
-import { exam, examAttempt, option, question } from "@/db/schema";
+import {
+	exam,
+	examAttempt,
+	option,
+	question,
+	userExam,
+	attemptResponse,
+} from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
 import {
 	BulkUploadExcelOutput,
 	CreateExamInput,
 	CreateExamOutput,
+	DeleteExamInput,
 	ListExamsInput,
 	ListExamsOutput,
 } from "@/lib/schema/exam";
@@ -175,6 +183,59 @@ export const adminExamRouter = {
 				hasPreviousPage: page > 1,
 				hasNextPage: page < totalPages,
 			};
+		}),
+	deleteExam: adminProcedure
+		.input(DeleteExamInput)
+		.output(z.object({ success: z.boolean() }))
+		.handler(async ({ context, input }) => {
+			try {
+				await context.db.transaction(async (tx) => {
+					const { id: examId } = input;
+
+					const userExamsToDelete = await tx.query.userExam.findMany({
+						where: eq(userExam.examId, examId),
+						columns: { id: true },
+					});
+
+					if (userExamsToDelete.length > 0) {
+						const userExamIds = userExamsToDelete.map((ue) => ue.id);
+
+						await tx
+							.delete(attemptResponse)
+							.where(inArray(attemptResponse.userExamId, userExamIds));
+						await tx
+							.delete(examAttempt)
+							.where(inArray(examAttempt.userExamId, userExamIds));
+
+						await tx.delete(userExam).where(eq(userExam.examId, examId));
+					}
+
+					const questionsToDelete = await tx.query.question.findMany({
+						where: eq(question.examId, examId),
+						columns: { id: true },
+					});
+
+					if (questionsToDelete.length > 0) {
+						const questionIds = questionsToDelete.map((q) => q.id);
+
+						await tx
+							.delete(option)
+							.where(inArray(option.questionId, questionIds));
+
+						await tx.delete(question).where(eq(question.examId, examId));
+					}
+
+					await tx.delete(exam).where(eq(exam.id, examId));
+				});
+
+				return { success: true };
+			} catch (error) {
+				console.error("Error deleting exam:", error);
+				throw new ORPCError(
+					error instanceof Error ? error.message : "Failed to delete exam",
+					{ status: 500 },
+				);
+			}
 		}),
 };
 

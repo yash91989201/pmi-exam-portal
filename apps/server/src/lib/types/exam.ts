@@ -2,6 +2,7 @@ import type { z } from "zod";
 import type {
 	AttemptStatusSchema,
 	CreateExamInput,
+	DeleteExamInput,
 	ExamInsertSchema,
 	ExamSchema,
 	ExcelImportSchema,
@@ -52,3 +53,4 @@ export type ExcelQuestionRowType = z.infer<typeof ExcelQuestionRowSchema>;
 export type ExcelImportType = z.infer<typeof ExcelImportSchema>;
 export type UserExamResultType = z.infer<typeof UserExamResultSchema>;
 export type ListExamResultsOutputType = z.infer<typeof ListExamResultsOutput>;
+export type DeleteExamInputType = z.infer<typeof DeleteExamInput>;

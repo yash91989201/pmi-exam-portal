@@ -1,5 +1,5 @@
 import type { ExamType } from "@server-types/index";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -7,6 +7,7 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	MoreHorizontal,
+	Trash2,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
@@ -44,6 +45,7 @@ export const ExamsTable = ({
 	const navigate = useNavigate();
 	const {
 		data: { exams, totalPages, hasNextPage, hasPreviousPage },
+		refetch,
 	} = useSuspenseQuery(
 		queryUtils.admin.listExams.queryOptions({
 			input: {
@@ -52,6 +54,18 @@ export const ExamsTable = ({
 			},
 		}),
 	);
+
+	const { mutate: deleteExam } = useMutation(
+		queryUtils.admin.deleteExam.mutationOptions({
+			onSuccess: () => {
+				refetch();
+			},
+		}),
+	);
+
+	const handleDeleteExam = (examId: string) => {
+		deleteExam({ id: examId });
+	};
 
 	const handleLimitChange = (limit: number) => {
 		navigate({
@@ -62,7 +76,7 @@ export const ExamsTable = ({
 
 	return (
 		<>
-			<DataTable columns={columns} data={exams} />
+			<DataTable columns={getColumns({ handleDeleteExam })} data={exams} />
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
 					<span className="text-sm">Rows per page</span>
@@ -146,7 +160,11 @@ export const ExamsTable = ({
 	);
 };
 
-const columns: ColumnDef<ExamType>[] = [
+const getColumns = ({
+	handleDeleteExam,
+}: {
+	handleDeleteExam: (examId: string) => void;
+}): ColumnDef<ExamType>[] => [
 	{
 		accessorKey: "certification",
 		header: ({ column }) => (
@@ -188,7 +206,13 @@ const columns: ColumnDef<ExamType>[] = [
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>View details</DropdownMenuItem>
-						<DropdownMenuItem>Delete</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => handleDeleteExam(exam.id)}
+							className="text-red-600"
+						>
+							<Trash2 className="mr-2 h-4 w-4" />
+							Delete
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

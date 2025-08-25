@@ -161,6 +161,10 @@ export const ListExamsOutput = z.object({
 	hasNextPage: z.boolean().default(false),
 });
 
+export const DeleteExamInput = z.object({
+	id: z.cuid2("Invalid exam ID format"),
+});
+
 export const CreateExamInput = ExamInsertSchema.extend({
 	questions: z
 		.array(
