@@ -1,39 +1,64 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Suspense } from "react";
+import z from "zod";
 import {
-	UpdateExamsAssignmentForm,
-	UpdateExamsAssignmentFormSkeleton,
-} from "@/components/admin/user/update-exams-assignment-form";
+	UpdateExamsAssignmentTable,
+	UpdateExamsAssignmentTableSkeleton,
+} from "@/components/admin/user/update-exams-assignment-table";
 import { queryUtils } from "@/utils/orpc";
+
+const RouteSearchSchema = z.object({
+	exam: z.string().optional(),
+});
 
 export const Route = createFileRoute(
 	"/_authenticated/(admin)/dashboard/users/$userId/manage-exams-assignment",
 )({
+	validateSearch: RouteSearchSchema,
 	loader: async ({
-		context: { queryUtils, queryClient },
+		context: { queryClient },
 		params: { userId },
+		location,
 	}) => {
-		queryClient.prefetchQuery(
+		const { exam } = location.search as z.infer<typeof RouteSearchSchema>;
+		await queryClient.prefetchQuery(
 			queryUtils.admin.getExamsAssignedStatus.queryOptions({
-				input: { userId },
+				input: { userId, query: { exam } },
 			}),
 		);
 	},
 	component: RouteComponent,
-	pendingComponent: () => <UpdateExamsAssignmentFormSkeleton />,
 });
 
 function RouteComponent() {
-	const userId = Route.useParams().userId;
-	const {
-		data: { examsAssignedStatus },
-	} = useSuspenseQuery(
-		queryUtils.admin.getExamsAssignedStatus.queryOptions({ input: { userId } }),
+	const { userId } = Route.useParams();
+	const { exam } = Route.useSearch();
+	const router = useRouter();
+
+	const { data } = useSuspenseQuery(
+		queryUtils.admin.getExamsAssignedStatus.queryOptions({
+			input: { userId, query: { exam } },
+		}),
 	);
+
 	return (
-		<UpdateExamsAssignmentForm
-			userId={userId}
-			examsAssignedStatus={examsAssignedStatus}
-		/>
+		<Suspense fallback={<UpdateExamsAssignmentTableSkeleton />}>
+			<UpdateExamsAssignmentTable
+				userId={userId}
+				searchQuery={exam}
+				examsAssignedStatus={data.examsAssignedStatus}
+				onSearchQueryChange={(exam) =>
+					router.navigate({
+						to: "/dashboard/users/$userId/manage-exams-assignment",
+						params: { userId },
+						search: {
+							exam,
+						},
+						replace: true,
+					})
+				}
+			/>
+		</Suspense>
 	);
 }

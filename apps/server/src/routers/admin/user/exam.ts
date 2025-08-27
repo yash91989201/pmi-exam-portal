@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, ilike, sql } from "drizzle-orm";
 import { exam, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { adminProcedure } from "@/lib/orpc";
@@ -19,6 +19,9 @@ export const adminUserExamRouter = {
 		.input(GetExamsAssignedStatusInput)
 		.output(GetExamsAssignedStatusOutput)
 		.handler(async ({ context, input }) => {
+			const { userId, query } = input;
+			const examQuery = query?.exam;
+
 			const examsAssignedStatus = await context.db
 				.select({
 					examId: exam.id,
@@ -28,8 +31,9 @@ export const adminUserExamRouter = {
 				.from(exam)
 				.leftJoin(
 					userExam,
-					and(eq(userExam.userId, input.userId), eq(userExam.examId, exam.id)),
+					and(eq(userExam.userId, userId), eq(userExam.examId, exam.id)),
 				)
+				.where(examQuery ? ilike(exam.certification, `%${examQuery}%`) : undefined)
 				.orderBy(asc(exam.id));
 
 			const transformedResult = examsAssignedStatus.map((item) => ({

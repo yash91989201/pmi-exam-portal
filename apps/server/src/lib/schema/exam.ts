@@ -140,6 +140,11 @@ export const UpdateExamsAssignedStatusOutput = z.object({
 
 export const GetExamsAssignedStatusInput = z.object({
 	userId: z.string(),
+	query: z
+		.object({
+			exam: z.string().optional(),
+		})
+		.optional(),
 });
 
 export const GetExamsAssignedStatusOutput = z.object({

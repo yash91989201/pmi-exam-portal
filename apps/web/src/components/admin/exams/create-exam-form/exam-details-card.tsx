@@ -1,4 +1,11 @@
-import { ArrowDown, ArrowUp, ListChecks, Target, Trophy } from "lucide-react";
+import {
+	ArrowDown,
+	ArrowUp,
+	ListChecks,
+	Loader2,
+	Target,
+	Trophy,
+} from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -159,7 +166,12 @@ export const ExamDetailsCard = () => {
 
 				<Separator />
 
-				<Button>Create Exam</Button>
+				<Button size="lg" disabled={form.formState.isSubmitting}>
+					{form.formState.isSubmitting ? (
+						<Loader2 className="size-4.5 animate-spin" />
+					) : null}
+					Create Exam
+				</Button>
 
 				<div>
 					<Label className="mb-2 block font-medium text-sm">Exam Stats</Label>
