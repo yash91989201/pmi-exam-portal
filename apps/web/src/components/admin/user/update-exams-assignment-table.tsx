@@ -1,4 +1,3 @@
-import type { UpdateExamsAssignementStatusInputType } from "@server-types/index";
 import { useMutation } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -10,7 +9,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { BookCheck, BookX, CircleX, Search } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -137,23 +136,13 @@ export const UpdateExamsAssignmentTable = ({
 							input: { userId },
 						}),
 					);
+					table.resetRowSelection();
 				},
 				onError: (error: Error) => {
 					toast.error(error.message || "Failed to update exam assignments");
 				},
 			}),
 		);
-
-	const handleUpdateAssignments = async () => {
-		const payload: UpdateExamsAssignementStatusInputType = {
-			userId,
-			examsAssignedStatus: examsAssignedStatus.map(({ examId, assigned }) => ({
-				examId,
-				assigned,
-			})),
-		};
-		await updateExamsAssignmentStatusMutation(payload);
-	};
 
 	const assignedExamsCount = useMemo(
 		() => examsAssignedStatus.filter((e) => e.assigned).length,
@@ -175,18 +164,26 @@ export const UpdateExamsAssignmentTable = ({
 		},
 	});
 
-	const handleBulkAction = (assign: boolean) => {
+	const handleBulkAction = async (assign: boolean) => {
 		const selectedExamIds = table
 			.getSelectedRowModel()
 			.rows.map((row) => row.original.examId);
-		setExamsAssignedStatus((currentStatus) =>
-			currentStatus.map((exam) =>
-				selectedExamIds.includes(exam.examId)
-					? { ...exam, assigned: assign }
-					: exam,
-			),
+
+		const newExamsAssignedStatus = examsAssignedStatus.map((exam) =>
+			selectedExamIds.includes(exam.examId)
+				? { ...exam, assigned: assign }
+				: exam,
 		);
-		table.resetRowSelection();
+
+		await updateExamsAssignmentStatusMutation({
+			userId,
+			examsAssignedStatus: newExamsAssignedStatus.map(
+				({ examId, assigned }) => ({
+					examId,
+					assigned,
+				}),
+			),
+		});
 	};
 
 	const selectedRows = table.getSelectedRowModel().rows;
@@ -247,6 +244,7 @@ export const UpdateExamsAssignmentTable = ({
 								type="button"
 								variant="outline"
 								onClick={() => handleBulkAction(false)}
+								disabled={isPending}
 							>
 								<BookX className="mr-2 h-4 w-4" />
 								Unassign Selected ({selectedRows.length})
@@ -256,6 +254,7 @@ export const UpdateExamsAssignmentTable = ({
 								size="sm"
 								type="button"
 								onClick={() => handleBulkAction(true)}
+								disabled={isPending}
 							>
 								<BookCheck className="mr-2 h-4 w-4" />
 								Assign Selected ({selectedRows.length})
@@ -311,20 +310,6 @@ export const UpdateExamsAssignmentTable = ({
 						)}
 					</TableBody>
 				</Table>
-			</div>
-
-			<div className="flex justify-end gap-2 pt-4">
-				<Button
-					type="button"
-					variant="outline"
-					onClick={() => setExamsAssignedStatus(initialExamsAssignedStatus)}
-					disabled={isPending}
-				>
-					Reset
-				</Button>
-				<Button onClick={handleUpdateAssignments} disabled={isPending}>
-					{isPending ? "Updating..." : "Update Assignments"}
-				</Button>
 			</div>
 		</div>
 	);
