@@ -88,8 +88,11 @@ export const CreateExamForm = () => {
 				toast.error(mutationRes.message || "Failed to create exam");
 			}
 		} catch (error) {
-			console.error("Error creating exam:", error);
-			toast.error("Failed to create exam. Please try again.");
+			toast.error(
+				error instanceof Error
+					? error.message
+					: "Failed to create exam. Please try again.",
+			);
 		}
 	};
 

@@ -7,16 +7,23 @@ import {
 
 export const Route = createFileRoute(
 	"/_authenticated/(admin)/dashboard/users/$userId/manage-order",
-)({ component: RouteComponent });
+)({
+	loader: async ({ context: { queryClient, queryUtils }, params }) => {
+		queryClient.prefetchQuery(
+			queryUtils.admin.getUserOrders.queryOptions({
+				input: { userId: params.userId },
+			}),
+		);
+	},
+	component: RouteComponent,
+});
 
 function RouteComponent() {
 	const { userId } = Route.useParams();
 
 	return (
-		<div className="container mx-auto py-4 md:py-6">
-			<Suspense fallback={<ManageOrdersFormSkeleton />}>
-				<ManageOrdersForm userId={userId} />
-			</Suspense>
-		</div>
+		<Suspense fallback={<ManageOrdersFormSkeleton />}>
+			<ManageOrdersForm userId={userId} />
+		</Suspense>
 	);
 }
