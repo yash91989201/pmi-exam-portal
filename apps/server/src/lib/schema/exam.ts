@@ -231,6 +231,7 @@ export const GetUserExamsDataOutput = z.object({
 			attempt: z.number(),
 			timeSpent: z.number(),
 			maxAttempts: z.number(),
+			terminationReason: z.string().nullable(),
 		}),
 	),
 });

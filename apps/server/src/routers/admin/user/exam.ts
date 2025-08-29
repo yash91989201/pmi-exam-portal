@@ -180,6 +180,7 @@ export const adminUserExamRouter = {
 					attempt: sql<number>`COALESCE(${examAttempt.attemptNumber}, 0)`,
 					timeSpent: sql<number>`COALESCE(${examAttempt.timeSpent}, 0)`,
 					maxAttempts: userExam.maxAttempts,
+					terminationReason: examAttempt.terminationReason,
 				})
 				.from(userExam)
 				.innerJoin(exam, eq(userExam.examId, exam.id))
