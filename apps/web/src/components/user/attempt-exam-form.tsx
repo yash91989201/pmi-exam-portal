@@ -149,8 +149,10 @@ export const AttemptExamForm = ({
 			form.handleSubmit(onSubmit)();
 		});
 
+	console.log({ timeSpentInMinutes });
 	const onSubmit = useCallback(
 		(values: AttemptExamFormSchemaType) => {
+			console.log(timeSpentInMinutes);
 			!examSubmitted.current &&
 				submitExam({
 					timeSpent: timeSpentInMinutes,
