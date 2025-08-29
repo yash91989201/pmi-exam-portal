@@ -145,6 +145,16 @@ export const GetExamsAssignedStatusInput = z.object({
 			exam: z.string().optional(),
 		})
 		.optional(),
+	filter: z
+		.object({
+			status: z
+				.enum(["all", "assigned", "unassigned"])
+				.default("all")
+				.optional(),
+		})
+		.optional(),
+	cursor: z.string().optional(),
+	limit: z.number().min(1).max(100).default(10),
 });
 
 export const GetExamsAssignedStatusOutput = z.object({
@@ -155,6 +165,7 @@ export const GetExamsAssignedStatusOutput = z.object({
 			assigned: z.boolean(),
 		}),
 	),
+	nextCursor: z.string().optional(),
 });
 
 export const ListExamsOutput = z.object({

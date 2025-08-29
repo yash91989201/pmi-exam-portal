@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, eq, ilike, sql } from "drizzle-orm";
+import { and, asc, eq, ilike, isNotNull, isNull, sql } from "drizzle-orm";
 import { exam, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { adminProcedure } from "@/lib/orpc";
@@ -19,32 +19,74 @@ export const adminUserExamRouter = {
 		.input(GetExamsAssignedStatusInput)
 		.output(GetExamsAssignedStatusOutput)
 		.handler(async ({ context, input }) => {
-			const { userId, query } = input;
-			const examQuery = query?.exam;
+			try {
+				const { userId, query, filter, cursor, limit } = input;
+				const examQuery = query?.exam;
+				const assignmentStatus = filter?.status ?? "all";
 
-			const examsAssignedStatus = await context.db
-				.select({
-					examId: exam.id,
-					examCertification: exam.certification,
-					assigned: userExam.userId,
-				})
-				.from(exam)
-				.leftJoin(
-					userExam,
-					and(eq(userExam.userId, userId), eq(userExam.examId, exam.id)),
-				)
-				.where(examQuery ? ilike(exam.certification, `%${examQuery}%`) : undefined)
-				.orderBy(asc(exam.id));
+				// Build base where conditions
+				const whereConditions = [];
 
-			const transformedResult = examsAssignedStatus.map((item) => ({
-				examId: item.examId,
-				examCertification: item.examCertification,
-				assigned: item.assigned !== null,
-			}));
+				// Add exam search filter
+				if (examQuery) {
+					whereConditions.push(ilike(exam.certification, `%${examQuery}%`));
+				}
 
-			return {
-				examsAssignedStatus: transformedResult,
-			};
+				// Add assignment status filter
+				if (assignmentStatus === "assigned") {
+					whereConditions.push(isNotNull(userExam.userId));
+				} else if (assignmentStatus === "unassigned") {
+					whereConditions.push(isNull(userExam.userId));
+				}
+
+				// Add cursor condition if provided
+				if (cursor) {
+					whereConditions.push(sql`${exam.id} > ${cursor}`);
+				}
+
+				const whereClause =
+					whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+				// Get data with limit + 1 to determine if there are more results
+				const queryBuilder = context.db
+					.select({
+						examId: exam.id,
+						examCertification: exam.certification,
+						assigned: sql<boolean>`CASE WHEN ${userExam.userId} IS NOT NULL THEN true ELSE false END`,
+					})
+					.from(exam)
+					.leftJoin(
+						userExam,
+						and(eq(userExam.userId, userId), eq(userExam.examId, exam.id)),
+					)
+					.where(whereClause)
+					.orderBy(asc(exam.id))
+					.limit(limit + 1); // Get one extra to check if there are more results
+
+				const results = await queryBuilder;
+
+				// Determine if there are more results
+				const hasMore = results.length > limit;
+				const data = hasMore ? results.slice(0, limit) : results;
+
+				// Generate next cursor
+				let nextCursor: string | undefined;
+				if (hasMore && data.length > 0) {
+					const lastItem = data[data.length - 1];
+					if (lastItem) {
+						nextCursor = lastItem.examId;
+					}
+				}
+
+				return { examsAssignedStatus: data, nextCursor };
+			} catch (error) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message:
+						error instanceof Error
+							? error.message
+							: "Failed to fetch exams assigned status",
+				});
+			}
 		}),
 	updateExamsAssignedStatus: adminProcedure
 		.input(UpdateExamsAssignedStatusInput)
@@ -113,8 +155,6 @@ export const adminUserExamRouter = {
 					data: results,
 				};
 			} catch (error) {
-				console.error("Error managing user exams:", error);
-
 				if (error instanceof ORPCError) {
 					throw error;
 				}
@@ -162,14 +202,12 @@ export const adminUserExamRouter = {
 					},
 				};
 			} catch (error) {
-				console.error("Error increasing exam attempts:", error);
-
 				return {
 					success: false,
 					message:
 						error instanceof Error
 							? error.message
-							: "Failed to increase exam attempts",
+							: "Failed to increase user exams",
 				};
 			}
 		}),

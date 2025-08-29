@@ -127,8 +127,7 @@ export const adminDashboardRouter = {
 						? Number(averageScoreResult[0].avgScore)
 						: null,
 				};
-			} catch (error) {
-				console.error("Error fetching dashboard stats:", error);
+			} catch (_error: unknown) {
 				return {
 					totalUsers: 0,
 					totalExams: 0,
@@ -240,8 +239,7 @@ export const adminDashboardRouter = {
 				});
 
 				return { examStats };
-			} catch (error) {
-				console.error("Error fetching exam stats:", error);
+			} catch (_error: unknown) {
 				return { examStats: [] };
 			}
 		}),

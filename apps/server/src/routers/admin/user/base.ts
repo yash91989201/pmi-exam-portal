@@ -44,7 +44,6 @@ export const adminUserBaseRouter = {
 					hasPreviousPage: page > 1,
 				};
 			} catch (error) {
-				console.error("Error listing users:", error);
 				throw new ORPCError(
 					error instanceof Error ? error.message : "Failed to list users",
 					{ status: 500 },
@@ -53,11 +52,17 @@ export const adminUserBaseRouter = {
 		}),
 	getUser: adminProcedure
 		.input(GetUserInput)
-		.output(UserSchema.optional())
+		.output(UserSchema)
 		.handler(async ({ input, context }) => {
 			const existingUser = await context.db.query.user.findFirst({
 				where: eq(user.id, input.userId),
 			});
+
+			if (!existingUser) {
+				throw new ORPCError("NOT_FOUND", {
+					message: `User with ${input.userId} not found!`,
+				});
+			}
 
 			return existingUser;
 		}),

@@ -209,8 +209,10 @@ export const userExamAttemptRouter = {
 					}
 				});
 			} catch (error) {
-				console.error("Failed to submit exam:", error);
-				throw new ORPCError("INTERNAL_SERVER_ERROR");
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message:
+						error instanceof Error ? error.message : "Failed to submit exam",
+				});
 			}
 
 			return {
@@ -249,8 +251,10 @@ export const userExamAttemptRouter = {
 						.where(eq(examAttempt.id, examAttemptId));
 				});
 			} catch (error) {
-				console.error("Failed to terminate exam:", error);
-				throw new ORPCError("INTERNAL_SERVER_ERROR");
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message:
+						error instanceof Error ? error.message : "Failed to terminate exam",
+				});
 			}
 
 			return {

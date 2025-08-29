@@ -71,7 +71,6 @@ export const adminExamRouter = {
 					data: result,
 				};
 			} catch (error) {
-				console.error("Error creating exam:", error);
 				throw new ORPCError(
 					error instanceof Error ? error.message : "Failed to create exam",
 					{ status: 500 },
@@ -230,7 +229,6 @@ export const adminExamRouter = {
 
 				return { success: true };
 			} catch (error) {
-				console.error("Error deleting exam:", error);
 				throw new ORPCError(
 					error instanceof Error ? error.message : "Failed to delete exam",
 					{ status: 500 },

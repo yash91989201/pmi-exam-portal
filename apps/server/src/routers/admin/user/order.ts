@@ -60,8 +60,6 @@ export const adminUserOrderRouter = {
 					message: "User orders updated successfully",
 				};
 			} catch (error) {
-				console.error("Error managing user orders:", error);
-
 				if (error instanceof ORPCError) {
 					throw error;
 				}
@@ -77,3 +75,4 @@ export const adminUserOrderRouter = {
 };
 
 export type AdminUserOrderRouter = typeof adminUserOrderRouter;
+
