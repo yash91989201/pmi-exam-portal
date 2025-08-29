@@ -19,7 +19,7 @@ export function useManageExamsAssignmentFilter({ userId }: { userId: string }) {
 			router.navigate({
 				to: "/dashboard/users/$userId/manage-exams-assignment",
 				params: { userId },
-				search: (prev) => ({ ...prev, exam: internalSearch || undefined, cursor: undefined }),
+				search: (prev) => ({ ...prev, exam: internalSearch.trim() === '' ? undefined : internalSearch, cursor: undefined }),
 				replace: true,
 			});
 		}, 500);
