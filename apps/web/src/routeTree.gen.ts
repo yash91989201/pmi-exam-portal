@@ -17,7 +17,6 @@ import { Route as AuthAdminSignInRouteImport } from './routes/auth/admin/sign-in
 import { Route as AuthenticateduserExamAttemptExamRouteImport } from './routes/_authenticated/(user-exam)/attempt-exam'
 import { Route as AuthenticateduserOrdersRouteImport } from './routes/_authenticated/(user)/orders'
 import { Route as AuthenticateduserExamsRouteImport } from './routes/_authenticated/(user)/exams'
-import { Route as AuthenticateduserCertificatesRouteImport } from './routes/_authenticated/(user)/certificates'
 import { Route as AuthenticatedadminDashboardRouteRouteImport } from './routes/_authenticated/(admin)/dashboard/route'
 import { Route as AuthenticatedadminDashboardIndexRouteImport } from './routes/_authenticated/(admin)/dashboard/index'
 import { Route as AuthenticatedadminDashboardSettingsRouteImport } from './routes/_authenticated/(admin)/dashboard/settings'
@@ -70,12 +69,6 @@ const AuthenticateduserExamsRoute = AuthenticateduserExamsRouteImport.update({
   path: '/exams',
   getParentRoute: () => AuthenticateduserRouteRoute,
 } as any)
-const AuthenticateduserCertificatesRoute =
-  AuthenticateduserCertificatesRouteImport.update({
-    id: '/certificates',
-    path: '/certificates',
-    getParentRoute: () => AuthenticateduserRouteRoute,
-  } as any)
 const AuthenticatedadminDashboardRouteRoute =
   AuthenticatedadminDashboardRouteRouteImport.update({
     id: '/(admin)/dashboard',
@@ -154,7 +147,6 @@ const AuthenticatedadminDashboardUsersUserIdManageExamsAssignmentRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticateduserRouteRouteWithChildren
   '/dashboard': typeof AuthenticatedadminDashboardRouteRouteWithChildren
-  '/certificates': typeof AuthenticateduserCertificatesRoute
   '/exams': typeof AuthenticateduserExamsRoute
   '/orders': typeof AuthenticateduserOrdersRoute
   '/attempt-exam': typeof AuthenticateduserExamAttemptExamRoute
@@ -174,7 +166,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticateduserRouteRouteWithChildren
-  '/certificates': typeof AuthenticateduserCertificatesRoute
   '/exams': typeof AuthenticateduserExamsRoute
   '/orders': typeof AuthenticateduserOrdersRoute
   '/attempt-exam': typeof AuthenticateduserExamAttemptExamRoute
@@ -197,7 +188,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_authenticated/(user)': typeof AuthenticateduserRouteRouteWithChildren
   '/_authenticated/(admin)/dashboard': typeof AuthenticatedadminDashboardRouteRouteWithChildren
-  '/_authenticated/(user)/certificates': typeof AuthenticateduserCertificatesRoute
   '/_authenticated/(user)/exams': typeof AuthenticateduserExamsRoute
   '/_authenticated/(user)/orders': typeof AuthenticateduserOrdersRoute
   '/_authenticated/(user-exam)/attempt-exam': typeof AuthenticateduserExamAttemptExamRoute
@@ -220,7 +210,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/certificates'
     | '/exams'
     | '/orders'
     | '/attempt-exam'
@@ -240,7 +229,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/certificates'
     | '/exams'
     | '/orders'
     | '/attempt-exam'
@@ -262,7 +250,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/_authenticated/(user)'
     | '/_authenticated/(admin)/dashboard'
-    | '/_authenticated/(user)/certificates'
     | '/_authenticated/(user)/exams'
     | '/_authenticated/(user)/orders'
     | '/_authenticated/(user-exam)/attempt-exam'
@@ -344,13 +331,6 @@ declare module '@tanstack/react-router' {
       path: '/exams'
       fullPath: '/exams'
       preLoaderRoute: typeof AuthenticateduserExamsRouteImport
-      parentRoute: typeof AuthenticateduserRouteRoute
-    }
-    '/_authenticated/(user)/certificates': {
-      id: '/_authenticated/(user)/certificates'
-      path: '/certificates'
-      fullPath: '/certificates'
-      preLoaderRoute: typeof AuthenticateduserCertificatesRouteImport
       parentRoute: typeof AuthenticateduserRouteRoute
     }
     '/_authenticated/(admin)/dashboard': {
@@ -441,14 +421,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticateduserRouteRouteChildren {
-  AuthenticateduserCertificatesRoute: typeof AuthenticateduserCertificatesRoute
   AuthenticateduserExamsRoute: typeof AuthenticateduserExamsRoute
   AuthenticateduserOrdersRoute: typeof AuthenticateduserOrdersRoute
 }
 
 const AuthenticateduserRouteRouteChildren: AuthenticateduserRouteRouteChildren =
   {
-    AuthenticateduserCertificatesRoute: AuthenticateduserCertificatesRoute,
     AuthenticateduserExamsRoute: AuthenticateduserExamsRoute,
     AuthenticateduserOrdersRoute: AuthenticateduserOrdersRoute,
   }
