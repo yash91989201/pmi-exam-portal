@@ -8,14 +8,21 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { BookCheck, BookX, CircleX, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { BookCheck, BookX, FilterX, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
@@ -25,6 +32,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { useManageExamsAssignmentFilter } from "@/hooks/use-manage-exams-assignment-filter";
 import { queryClient, queryUtils } from "@/utils/orpc";
 
 type ExamAssignment = {
@@ -36,8 +44,7 @@ type ExamAssignment = {
 type UpdateExamsAssignmentTableProps = {
 	userId: string;
 	examsAssignedStatus: ExamAssignment[];
-	searchQuery: string | undefined;
-	onSearchQueryChange: (query: string) => void;
+	nextCursor: string | null | undefined;
 };
 
 const getColumns = (): ColumnDef<ExamAssignment>[] => [
@@ -97,29 +104,22 @@ const getColumns = (): ColumnDef<ExamAssignment>[] => [
 
 export const UpdateExamsAssignmentTable = ({
 	userId,
-	examsAssignedStatus: initialExamsAssignedStatus,
-	searchQuery,
-	onSearchQueryChange,
+	examsAssignedStatus,
+	nextCursor,
 }: UpdateExamsAssignmentTableProps) => {
 	const [rowSelection, setRowSelection] = useState({});
-	const [examsAssignedStatus, setExamsAssignedStatus] = useState(
-		initialExamsAssignedStatus,
-	);
-	const [internalSearch, setInternalSearch] = useState(searchQuery ?? "");
 
-	useEffect(() => {
-		const handler = setTimeout(() => {
-			onSearchQueryChange(internalSearch);
-		}, 500);
-
-		return () => {
-			clearTimeout(handler);
-		};
-	}, [internalSearch, onSearchQueryChange]);
-
-	useEffect(() => {
-		setExamsAssignedStatus(initialExamsAssignedStatus);
-	}, [initialExamsAssignedStatus]);
+	const {
+		searchQuery,
+		internalSearch,
+		setInternalSearch,
+		status,
+		onStatusChange,
+		onClearFilters,
+		goToNextPage,
+		goToPreviousPage,
+		canGoPrevious,
+	} = useManageExamsAssignmentFilter({ userId });
 
 	const { mutateAsync: updateExamsAssignmentStatusMutation, isPending } =
 		useMutation(
@@ -143,11 +143,6 @@ export const UpdateExamsAssignmentTable = ({
 				},
 			}),
 		);
-
-	const assignedExamsCount = useMemo(
-		() => examsAssignedStatus.filter((e) => e.assigned).length,
-		[examsAssignedStatus],
-	);
 
 	const columns: ColumnDef<ExamAssignment>[] = useMemo(() => getColumns(), []);
 
@@ -193,48 +188,51 @@ export const UpdateExamsAssignmentTable = ({
 
 	return (
 		<div className="space-y-6">
-			<div className="space-y-3">
-				<h3 className="font-medium text-lg">Exam Assignments</h3>
+			<div className="space-y-1">
+				<h3 className="font-medium text-lg">Assign / Un-Assign Exams</h3>
 				<p className="text-muted-foreground text-sm">
 					Assign or unassign exams for this user. Only exams with no attempts
 					can be un-assigned.
 				</p>
-
-				{initialExamsAssignedStatus.length > 0 && (
-					<div className="flex gap-3">
-						<Badge
-							variant="outline"
-							className="border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300"
-						>
-							Total exams: {initialExamsAssignedStatus.length}
-						</Badge>
-						<Badge
-							variant="outline"
-							className="border-green-200 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-900/50 dark:text-green-300"
-						>
-							Assigned exams: {assignedExamsCount}
-						</Badge>
-					</div>
-				)}
 			</div>
 
 			<div className="flex items-center justify-between">
-				<div className="relative flex items-center gap-3">
-					<span className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground">
-						<Search className="size-4.5" />
-					</span>
-					<Input
-						placeholder="Search by exam name..."
-						value={internalSearch}
-						onChange={(e) => setInternalSearch(e.target.value)}
-						className="w-96 px-9 py-6"
-					/>
-					<span className="-translate-y-1/2 absolute top-1/2 right-3 text-muted-foreground">
-						<CircleX
-							onClick={() => setInternalSearch("")}
-							className="size-4.5 cursor-pointer"
+				<div className="flex flex-1 items-center gap-3">
+					<div className="relative grid w-full max-w-sm gap-1.5">
+						<Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+						<Input
+							placeholder="Search by exam name..."
+							value={internalSearch}
+							onChange={(e) => setInternalSearch(e.target.value)}
+							className="w-full pl-10"
 						/>
-					</span>
+					</div>
+
+					<Select
+						value={status ?? "all"}
+						onValueChange={(value) =>
+							onStatusChange(value as "all" | "assigned" | "unassigned")
+						}
+					>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Filter by status" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">All Statuses</SelectItem>
+							<SelectItem value="assigned">Assigned</SelectItem>
+							<SelectItem value="unassigned">Unassigned</SelectItem>
+						</SelectContent>
+					</Select>
+					<Button
+						size="icon"
+						variant="destructive"
+						onClick={onClearFilters}
+						disabled={
+							(!searchQuery || searchQuery.trim() === "") && status === "all"
+						}
+					>
+						<FilterX className="size-4.5" />
+					</Button>
 				</div>
 				<div className="flex items-center gap-2">
 					{areAnyRowsSelected &&
@@ -311,13 +309,36 @@ export const UpdateExamsAssignmentTable = ({
 					</TableBody>
 				</Table>
 			</div>
+			<div className="flex items-center justify-end py-4">
+				<div className="flex items-center space-x-2">
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={goToPreviousPage}
+						disabled={!canGoPrevious}
+					>
+						Previous
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => {
+							if (!nextCursor) return;
+							goToNextPage(nextCursor);
+						}}
+						disabled={!nextCursor}
+					>
+						Next
+					</Button>
+				</div>
+			</div>
 		</div>
 	);
 };
 
 export const UpdateExamsAssignmentTableSkeleton = () => {
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4">
 			<div className="space-y-3">
 				<Skeleton className="h-7 w-64" />
 				<Skeleton className="h-4 w-3/4" />
@@ -327,11 +348,26 @@ export const UpdateExamsAssignmentTableSkeleton = () => {
 					<Skeleton className="h-6 w-24 rounded-full" />
 				</div>
 			</div>
+			<div className="my-4 flex items-center justify-between">
+				<div className="flex flex-1 items-center space-x-2">
+					<div className="grid w-full max-w-sm gap-1.5">
+						<Skeleton className="h-4 w-32" />
+						<Skeleton className="h-10 w-full" />
+					</div>
+					<div className="grid gap-1.5">
+						<Skeleton className="h-4 w-16" />
+						<Skeleton className="h-10 w-[180px]" />
+					</div>
+				</div>
+				<div className="flex items-center gap-2">
+					<Skeleton className="h-10 w-24" />
+				</div>
+			</div>
 			<div className="rounded-md border">
 				<Table>
 					<TableHeader>
 						<TableRow>
-							{[...Array(4)].map((_, i) => (
+							{[...Array(3)].map((_, i) => (
 								<TableHead key={i.toString()}>
 									<Skeleton className="h-5 w-full" />
 								</TableHead>
@@ -339,9 +375,9 @@ export const UpdateExamsAssignmentTableSkeleton = () => {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{[...Array(5)].map((_, i) => (
+						{[...Array(10)].map((_, i) => (
 							<TableRow key={i.toString()}>
-								{[...Array(4)].map((_, j) => (
+								{[...Array(3)].map((_, j) => (
 									<TableCell key={j.toString()}>
 										<Skeleton className="h-4 w-full" />
 									</TableCell>
@@ -351,9 +387,11 @@ export const UpdateExamsAssignmentTableSkeleton = () => {
 					</TableBody>
 				</Table>
 			</div>
-			<div className="flex justify-end space-x-3 pt-4">
-				<Skeleton className="h-10 w-24 rounded-md" />
-				<Skeleton className="h-10 w-32 rounded-md" />
+			<div className="flex items-center justify-end py-4">
+				<div className="flex items-center space-x-2">
+					<Skeleton className="h-10 w-20" />
+					<Skeleton className="h-10 w-20" />
+				</div>
 			</div>
 		</div>
 	);

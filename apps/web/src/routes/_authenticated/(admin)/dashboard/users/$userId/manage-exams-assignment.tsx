@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import z from "zod";
 import {
@@ -10,6 +10,9 @@ import { queryUtils } from "@/utils/orpc";
 
 const RouteSearchSchema = z.object({
 	exam: z.string().optional(),
+	status: z.enum(["all", "assigned", "unassigned"]).default("all").optional(),
+	cursor: z.string().optional(),
+	limit: z.number().catch(10),
 });
 
 export const Route = createFileRoute(
@@ -21,10 +24,19 @@ export const Route = createFileRoute(
 		params: { userId },
 		location,
 	}) => {
-		const { exam } = location.search as z.infer<typeof RouteSearchSchema>;
+		const { exam, status, cursor, limit } = location.search as z.infer<
+			typeof RouteSearchSchema
+		>;
+
 		await queryClient.prefetchQuery(
 			queryUtils.admin.getExamsAssignedStatus.queryOptions({
-				input: { userId, query: { exam } },
+				input: {
+					userId,
+					query: { exam },
+					filter: { status },
+					cursor,
+					limit,
+				},
 			}),
 		);
 	},
@@ -33,12 +45,17 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	const { userId } = Route.useParams();
-	const { exam } = Route.useSearch();
-	const router = useRouter();
+	const { exam, status, cursor, limit } = Route.useSearch();
 
 	const { data } = useSuspenseQuery(
 		queryUtils.admin.getExamsAssignedStatus.queryOptions({
-			input: { userId, query: { exam } },
+			input: {
+				userId,
+				query: { exam },
+				filter: { status },
+				cursor,
+				limit,
+			},
 		}),
 	);
 
@@ -46,18 +63,8 @@ function RouteComponent() {
 		<Suspense fallback={<UpdateExamsAssignmentTableSkeleton />}>
 			<UpdateExamsAssignmentTable
 				userId={userId}
-				searchQuery={exam}
 				examsAssignedStatus={data.examsAssignedStatus}
-				onSearchQueryChange={(exam) =>
-					router.navigate({
-						to: "/dashboard/users/$userId/manage-exams-assignment",
-						params: { userId },
-						search: {
-							exam,
-						},
-						replace: true,
-					})
-				}
+				nextCursor={data.nextCursor}
 			/>
 		</Suspense>
 	);
