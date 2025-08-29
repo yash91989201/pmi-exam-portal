@@ -11,7 +11,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -90,7 +89,7 @@ const getColumns = (
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</TooltipTrigger>
 								<TooltipContent>
-									{/* <p>{latestAttempt.terminationReason}</p> */}
+									<p>Cheating Detected: {row.original.terminationReason}</p>
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
