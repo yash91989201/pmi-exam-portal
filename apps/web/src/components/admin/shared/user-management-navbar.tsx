@@ -23,7 +23,7 @@ export const UserManagementNavbar = ({ userId }: { userId: string }) => {
 	const navItems = [
 		{
 			path: "/dashboard/users/$userId/",
-			label: `${user.name.split(" ")[0]}'s Exam Info`,
+			label: `${user.name.split(" ")[0]}'s Exams Info`,
 			icon: User,
 		},
 		{
@@ -98,27 +98,25 @@ export const UserManagementNavbar = ({ userId }: { userId: string }) => {
 
 export const UserManagementNavbarSkeleton = () => {
 	return (
-		<>
-			<div>
-				<Skeleton className="mb-2 h-8 w-64" />
-				<Skeleton className="h-5 w-96" />
+		<div className="space-y-6">
+			<div className="space-y-1">
+				<h1 className="font-bold text-2xl text-foreground">User Management</h1>
+				<p className="text-muted-foreground">
+					View/manage user details, exam assignments, orders, and settings.
+				</p>
 			</div>
 
-			<nav className="mb-8 grid grid-cols-1 gap-3 md:grid-cols-3">
-				{[...Array(3)].map((_, i) => (
+			<nav className="grid grid-cols-1 gap-3 md:grid-cols-4">
+				{[...Array(4)].map((_, i) => (
 					<div
 						key={i.toString()}
-						className="group block rounded-lg border p-6 transition-all duration-200"
+						className="flex items-center space-x-3 rounded-md border p-4"
 					>
-						<div className="mb-3 flex items-center space-x-3">
-							<Skeleton className="size-10 rounded-md" />
-							<Skeleton className="h-6 w-48" />
-						</div>
-						<Skeleton className="h-4 w-full" />
-						<Skeleton className="mt-1 h-4 w-3/4" />
+						<Skeleton className="size-9 shrink-0 rounded-md" />
+						<Skeleton className="h-6 w-full" />
 					</div>
 				))}
 			</nav>
-		</>
+		</div>
 	);
 };
