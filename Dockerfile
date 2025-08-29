@@ -9,8 +9,8 @@ COPY apps/server/package.json ./apps/server/
 
 # Install dependencies
 RUN bun install --frozen-lockfile
-# Copy all source code needed for web build (web app needs server for type definitions and schemas)
 
+# Copy all source code needed for web build (web app needs server for type definitions and schemas)
 COPY apps/web ./apps/web
 COPY apps/server ./apps/server
 
