@@ -1,6 +1,6 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, eq, ilike, isNotNull, isNull, sql } from "drizzle-orm";
-import { exam, userExam } from "@/db/schema";
+import { and, asc, eq, ilike, isNotNull, isNull, sql, inArray } from "drizzle-orm";
+import { exam, examAttempt, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { adminProcedure } from "@/lib/orpc";
 import {
@@ -170,12 +170,57 @@ export const adminUserExamRouter = {
 	getUserExamsData: adminProcedure
 		.input(GetUserExamsDataInput)
 		.output(GetUserExamsDataOutput)
-		.handler(async ({ context, input }) => {
-			const userExamsData = await context.db.query.userExam.findMany({
-				where: eq(userExam.userId, input.userId),
+		.handler(async ({ context: { db }, input: { userId } }) => {
+			const userExams = await db.query.userExam.findMany({
+				where: eq(userExam.userId, userId),
 				with: {
 					exam: true,
 				},
+			});
+
+			if (userExams.length === 0) {
+				return { userExamsData: [] };
+			}
+
+			const userExamIds = userExams.map((ue) => ue.id);
+
+			const latestAttemptSubquery = db
+				.select({
+					userExamId: examAttempt.userExamId,
+					status: examAttempt.status,
+					marks: examAttempt.marks,
+					attemptNumber: examAttempt.attemptNumber,
+					timeSpent: examAttempt.timeSpent,
+					terminationReason: examAttempt.terminationReason,
+					rn: sql<number>`ROW_NUMBER() OVER (PARTITION BY ${examAttempt.userExamId} ORDER BY ${examAttempt.attemptNumber} DESC)`.as(
+						"rn",
+					),
+				})
+				.from(examAttempt)
+				.where(inArray(examAttempt.userExamId, userExamIds))
+				.as("latest_attempts_sq");
+
+			const latestAttempts = await db
+				.select()
+				.from(latestAttemptSubquery)
+				.where(eq(latestAttemptSubquery.rn, 1));
+
+			const userExamsData = userExams.map((ue) => {
+				const latestAttempt = latestAttempts.find(
+					(la) => la.userExamId === ue.id,
+				);
+				return {
+					...ue,
+					latestAttempt: latestAttempt
+						? {
+								status: latestAttempt.status,
+								marks: latestAttempt.marks,
+								attemptNumber: latestAttempt.attemptNumber,
+								timeSpent: latestAttempt.timeSpent,
+								terminationReason: latestAttempt.terminationReason,
+							}
+						: null,
+				};
 			});
 
 			return { userExamsData };

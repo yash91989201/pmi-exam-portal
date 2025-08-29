@@ -84,6 +84,7 @@ export const GetExamAttemptStatusOutput = z.object({
 export const SubmitExamInput = z.object({
 	examId: z.cuid2(),
 	examAttemptId: z.cuid2(),
+	timeSpent: z.number().positive().int().min(0),
 	answers: z.array(
 		z.object({
 			questionId: z.cuid2(),
@@ -222,8 +223,23 @@ export const GetUserExamsDataInput = z.object({
 
 export const GetUserExamsDataOutput = z.object({
 	userExamsData: z.array(
-		UserExamSchema.extend({
+		z.object({
+			id: z.string(),
+			userId: z.string(),
+			examId: z.string(),
+			assignedAt: z.date(),
+			attempts: z.number(),
+			maxAttempts: z.number(),
 			exam: ExamSchema,
+			latestAttempt: z
+				.object({
+					status: z.string().nullable(),
+					marks: z.number().nullable(),
+					attemptNumber: z.number().nullable(),
+					timeSpent: z.number().nullable(),
+					terminationReason: z.string().nullable(),
+				})
+				.nullable(),
 		}),
 	),
 });
