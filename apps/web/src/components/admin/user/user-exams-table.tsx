@@ -66,17 +66,14 @@ const getColumns = (
 			</Button>
 		),
 		cell: ({ row }) => (
-			<span className="font-medium">{row.original.exam.certification}</span>
+			<span className="font-medium">{row.original.certification}</span>
 		),
 	},
 	{
-		accessorKey: "latestAttempt.status",
+		accessorKey: "status",
 		header: () => <div className="text-right">Status</div>,
 		cell: ({ row }) => {
-			const { latestAttempt } = row.original;
-			if (!latestAttempt) return <div className="text-right">-</div>;
-
-			const { status } = latestAttempt;
+			const { status } = row.original;
 			if (status === null) {
 				return null;
 			}
@@ -93,7 +90,7 @@ const getColumns = (
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</TooltipTrigger>
 								<TooltipContent>
-									<p>{latestAttempt.terminationReason}</p>
+									{/* <p>{latestAttempt.terminationReason}</p> */}
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
@@ -111,30 +108,24 @@ const getColumns = (
 		},
 	},
 	{
-		accessorKey: "latestAttempt.marks",
+		accessorKey: "marks",
 		header: () => <div className="text-right">Marks</div>,
 		cell: ({ row }) => (
-			<div className="text-right">
-				{row.original.latestAttempt?.marks ?? "-"}
-			</div>
+			<div className="text-right">{row.original.marks ?? "-"}</div>
 		),
 	},
 	{
-		accessorKey: "latestAttempt.attemptNumber",
+		accessorKey: "attemptNumber",
 		header: () => <div className="text-right">Attempt</div>,
 		cell: ({ row }) => (
-			<div className="text-right">
-				{row.original.latestAttempt?.attemptNumber ?? "-"}
-			</div>
+			<div className="text-right">{row.original.attempt ?? "-"}</div>
 		),
 	},
 	{
-		accessorKey: "latestAttempt.timeSpent",
+		accessorKey: "timeSpent",
 		header: () => <div className="text-right">Time Spent (mins)</div>,
 		cell: ({ row }) => (
-			<div className="text-right">
-				{row.original.latestAttempt?.timeSpent ?? "-"}
-			</div>
+			<div className="text-right">{row.original.timeSpent ?? "-"}</div>
 		),
 	},
 	{
@@ -159,16 +150,8 @@ const getColumns = (
 					<DropdownMenuContent align="end">
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(userExam.examId)}
-						>
-							Copy Exam ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View details</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem
 							onClick={() =>
-								increaseUserExamAttempts({ userExamId: userExam.id })
+								increaseUserExamAttempts({ userExamId: userExam.userExamId })
 							}
 						>
 							Increase Attempts
