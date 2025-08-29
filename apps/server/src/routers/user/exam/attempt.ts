@@ -148,7 +148,7 @@ export const userExamAttemptRouter = {
 		.input(SubmitExamInput)
 		.output(SubmitExamOutput)
 		.handler(async ({ context, input }) => {
-			const { examId, examAttemptId, answers } = input;
+			const { examId, examAttemptId, answers, timeSpent } = input;
 			const { db, session } = context;
 
 			const userExamRecord = await db.query.userExam.findFirst({
@@ -201,6 +201,7 @@ export const userExamAttemptRouter = {
 							completedAt: new Date(),
 							status: "completed",
 							marks: totalScore,
+							timeSpent,
 						})
 						.where(eq(examAttempt.id, examAttemptId));
 
