@@ -52,7 +52,7 @@ export const adminUserExamRouter = {
 					.select({
 						examId: exam.id,
 						examCertification: exam.certification,
-						assigned: sql<boolean>`CASE WHEN ${userExam.userId} IS NOT NULL THEN true ELSE false END`,
+						assigned: sql<boolean>`${userExam.userId} IS NOT NULL`,
 					})
 					.from(exam)
 					.leftJoin(
