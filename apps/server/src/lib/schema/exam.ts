@@ -224,22 +224,13 @@ export const GetUserExamsDataInput = z.object({
 export const GetUserExamsDataOutput = z.object({
 	userExamsData: z.array(
 		z.object({
-			id: z.string(),
-			userId: z.string(),
-			examId: z.string(),
-			assignedAt: z.date(),
-			attempts: z.number(),
+			certification: z.string(),
+			userExamId: z.cuid2(),
+			status: z.string(),
+			marks: z.number(),
+			attempt: z.number(),
+			timeSpent: z.number(),
 			maxAttempts: z.number(),
-			exam: ExamSchema,
-			latestAttempt: z
-				.object({
-					status: z.string().nullable(),
-					marks: z.number().nullable(),
-					attemptNumber: z.number().nullable(),
-					timeSpent: z.number().nullable(),
-					terminationReason: z.string().nullable(),
-				})
-				.nullable(),
 		}),
 	),
 });

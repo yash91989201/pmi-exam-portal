@@ -1,5 +1,5 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, eq, ilike, isNotNull, isNull, sql, inArray } from "drizzle-orm";
+import { and, asc, eq, ilike, isNotNull, isNull, sql } from "drizzle-orm";
 import { exam, examAttempt, userExam } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { adminProcedure } from "@/lib/orpc";
@@ -171,57 +171,27 @@ export const adminUserExamRouter = {
 		.input(GetUserExamsDataInput)
 		.output(GetUserExamsDataOutput)
 		.handler(async ({ context: { db }, input: { userId } }) => {
-			const userExams = await db.query.userExam.findMany({
-				where: eq(userExam.userId, userId),
-				with: {
-					exam: true,
-				},
-			});
-
-			if (userExams.length === 0) {
-				return { userExamsData: [] };
-			}
-
-			const userExamIds = userExams.map((ue) => ue.id);
-
-			const latestAttemptSubquery = db
+			const userExamsData = await db
 				.select({
-					userExamId: examAttempt.userExamId,
-					status: examAttempt.status,
-					marks: examAttempt.marks,
-					attemptNumber: examAttempt.attemptNumber,
-					timeSpent: examAttempt.timeSpent,
-					terminationReason: examAttempt.terminationReason,
-					rn: sql<number>`ROW_NUMBER() OVER (PARTITION BY ${examAttempt.userExamId} ORDER BY ${examAttempt.attemptNumber} DESC)`.as(
-						"rn",
-					),
+					userExamId: userExam.id,
+					certification: exam.certification,
+					status: sql<string>`COALESCE(${examAttempt.status}, 'assigned')`,
+					marks: sql<number>`COALESCE(${examAttempt.marks}, 0)`,
+					attempt: sql<number>`COALESCE(${examAttempt.attemptNumber}, 0)`,
+					timeSpent: sql<number>`COALESCE(${examAttempt.timeSpent}, 0)`,
+					maxAttempts: userExam.maxAttempts,
 				})
-				.from(examAttempt)
-				.where(inArray(examAttempt.userExamId, userExamIds))
-				.as("latest_attempts_sq");
-
-			const latestAttempts = await db
-				.select()
-				.from(latestAttemptSubquery)
-				.where(eq(latestAttemptSubquery.rn, 1));
-
-			const userExamsData = userExams.map((ue) => {
-				const latestAttempt = latestAttempts.find(
-					(la) => la.userExamId === ue.id,
-				);
-				return {
-					...ue,
-					latestAttempt: latestAttempt
-						? {
-								status: latestAttempt.status,
-								marks: latestAttempt.marks,
-								attemptNumber: latestAttempt.attemptNumber,
-								timeSpent: latestAttempt.timeSpent,
-								terminationReason: latestAttempt.terminationReason,
-							}
-						: null,
-				};
-			});
+				.from(userExam)
+				.innerJoin(exam, eq(userExam.examId, exam.id))
+				.leftJoin(
+					examAttempt,
+					sql`${examAttempt.userExamId} = ${userExam.id} AND ${examAttempt.attemptNumber} = (
+          SELECT MAX(${examAttempt.attemptNumber})
+          FROM ${examAttempt}
+          WHERE ${examAttempt.userExamId} = ${userExam.id}
+        )`,
+				)
+				.where(eq(userExam.userId, userId));
 
 			return { userExamsData };
 		}),
