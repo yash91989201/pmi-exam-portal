@@ -1,7 +1,9 @@
 import type { GetUserExamsDataOutputType } from "@server-types/index";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Info, MoreHorizontal } from "lucide-react";
+import type React from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import {
@@ -13,6 +15,12 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { queryUtils } from "@/utils/orpc";
 
 export const UserExamsTable = ({ userId }: { userId: string }) => {
@@ -47,7 +55,7 @@ const getColumns = (
 	increaseUserExamAttempts: (input: { userExamId: string }) => Promise<any>,
 ): ColumnDef<GetUserExamsDataOutputType["userExamsData"][0]>[] => [
 	{
-		accessorKey: "examCertification",
+		accessorKey: "exam.certification",
 		header: ({ column }) => (
 			<Button
 				variant="ghost"
@@ -62,21 +70,71 @@ const getColumns = (
 		),
 	},
 	{
-		accessorKey: "assignedAt",
-		header: () => <div className="text-right">Assigned At</div>,
+		accessorKey: "latestAttempt.status",
+		header: () => <div className="text-right">Status</div>,
+		cell: ({ row }) => {
+			const { latestAttempt } = row.original;
+			if (!latestAttempt) return <div className="text-right">-</div>;
+
+			const { status } = latestAttempt;
+			if (status === null) {
+				return null;
+			}
+
+			if (status === "terminated") {
+				return (
+					<div className="flex items-center justify-end gap-1 text-right">
+						<Badge variant={statusVariant[status]} className="capitalize">
+							{status.split("_").join(" ")}
+						</Badge>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger>
+									<Info className="h-4 w-4 text-muted-foreground" />
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{latestAttempt.terminationReason}</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
+				);
+			}
+
+			return (
+				<div className="text-right">
+					<Badge variant={statusVariant[status]} className="capitalize">
+						{status.split("_").join(" ")}
+					</Badge>
+				</div>
+			);
+		},
+	},
+	{
+		accessorKey: "latestAttempt.marks",
+		header: () => <div className="text-right">Marks</div>,
 		cell: ({ row }) => (
 			<div className="text-right">
-				{row.getValue("assignedAt")
-					? new Date(row.getValue("assignedAt")).toLocaleString()
-					: "-"}
+				{row.original.latestAttempt?.marks ?? "-"}
 			</div>
 		),
 	},
 	{
-		accessorKey: "attempts",
-		header: () => <div className="text-right">Attempts</div>,
+		accessorKey: "latestAttempt.attemptNumber",
+		header: () => <div className="text-right">Attempt</div>,
 		cell: ({ row }) => (
-			<div className="text-right">{row.getValue("attempts")}</div>
+			<div className="text-right">
+				{row.original.latestAttempt?.attemptNumber ?? "-"}
+			</div>
+		),
+	},
+	{
+		accessorKey: "latestAttempt.timeSpent",
+		header: () => <div className="text-right">Time Spent (mins)</div>,
+		cell: ({ row }) => (
+			<div className="text-right">
+				{row.original.latestAttempt?.timeSpent ?? "-"}
+			</div>
 		),
 	},
 	{
@@ -133,16 +191,22 @@ export const UserExamsTableSkeleton = () => {
 						<thead className="[&_tr]:border-b">
 							<tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
 								<th className="h-12 w-[200px] px-4 text-left align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
-									<Skeleton className="h-5 w-3/4" />
+									Exam Name
 								</th>
 								<th className="h-12 px-4 text-right align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
-									<Skeleton className="ml-auto h-5 w-1/2" />
+									Status
 								</th>
 								<th className="h-12 px-4 text-right align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
-									<Skeleton className="ml-auto h-5 w-1/3" />
+									Marks
 								</th>
 								<th className="h-12 px-4 text-right align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
-									<Skeleton className="ml-auto h-5 w-1/2" />
+									Attempt
+								</th>
+								<th className="h-12 px-4 text-right align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
+									Time Spent (mins)
+								</th>
+								<th className="h-12 px-4 text-right align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
+									Max Attempts
 								</th>
 								<th className="h-12 w-[50px] px-4 text-right align-middle font-semibold text-gray-700 [&:has([role=checkbox])]:pr-0">
 									<span className="sr-only">Actions</span>
@@ -159,10 +223,16 @@ export const UserExamsTableSkeleton = () => {
 										<Skeleton className="h-4 w-5/6" />
 									</td>
 									<td className="p-4 text-right align-middle [&:has([role=checkbox])]:pr-0">
-										<Skeleton className="ml-auto h-4 w-2/3" />
+										<Skeleton className="ml-auto h-5 w-20 rounded-full" />
 									</td>
 									<td className="p-4 text-right align-middle [&:has([role=checkbox])]:pr-0">
 										<Skeleton className="ml-auto h-4 w-1/4" />
+									</td>
+									<td className="p-4 text-right align-middle [&:has([role=checkbox])]:pr-0">
+										<Skeleton className="ml-auto h-4 w-1/4" />
+									</td>
+									<td className="p-4 text-right align-middle [&:has([role=checkbox])]:pr-0">
+										<Skeleton className="ml-auto h-4 w-1/3" />
 									</td>
 									<td className="p-4 text-right align-middle [&:has([role=checkbox])]:pr-0">
 										<Skeleton className="ml-auto h-4 w-1/4" />
@@ -178,4 +248,18 @@ export const UserExamsTableSkeleton = () => {
 			</div>
 		</section>
 	);
+};
+
+const statusVariant: Record<
+	string,
+	React.ComponentProps<typeof Badge>["variant"]
+> = {
+	assigned: "outline",
+	in_progress: "secondary",
+	started: "secondary",
+	completed: "default",
+	passed: "default",
+	failed: "destructive",
+	aborted: "destructive",
+	terminated: "destructive",
 };
