@@ -236,7 +236,7 @@ export const userExamAttemptRouter = {
 			});
 
 			if (!userExamRecord) {
-				throw new ORPCError("NOT_FOUND");
+				throw new ORPCError("NOT_FOUND", { message: "User's exam not found" });
 			}
 
 			try {
