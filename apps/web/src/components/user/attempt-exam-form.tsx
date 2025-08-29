@@ -144,18 +144,20 @@ export const AttemptExamForm = ({
 		[form, currentQuestion, examDataForAttempt.questions.length],
 	);
 
+	const { timeLeft, formattedTime, timerColor, timeSpentInMinutes } =
+		useExamTimer(examDataForAttempt.timeLimit, () => {
+			form.handleSubmit(onSubmit)();
+		});
+
 	const onSubmit = useCallback(
 		(values: AttemptExamFormSchemaType) => {
-			!examSubmitted.current && submitExam(values);
+			!examSubmitted.current &&
+				submitExam({
+					timeSpent: timeSpentInMinutes,
+					...values,
+				});
 		},
-		[submitExam],
-	);
-
-	const { timeLeft, formattedTime, timerColor } = useExamTimer(
-		examDataForAttempt.timeLimit,
-		() => {
-			form.handleSubmit(onSubmit)();
-		},
+		[submitExam, timeSpentInMinutes],
 	);
 
 	const question = useMemo(

@@ -5,10 +5,6 @@ import {
 	AvailableExamsSkeleton,
 } from "@/components/user/available-exams";
 import {
-	ExamResultsTable,
-	ExamResultsTableSkeleton,
-} from "@/components/user/exam-results-table";
-import {
 	ExamStatistics,
 	ExamStatisticsSkeleton,
 } from "@/components/user/exam-statistics";
@@ -23,11 +19,6 @@ function RouteComponent() {
 			{/* Available Exams Section */}
 			<Suspense fallback={<AvailableExamsSkeleton />}>
 				<AvailableExams />
-			</Suspense>
-
-			{/* Exam Results Table Section */}
-			<Suspense fallback={<ExamResultsTableSkeleton />}>
-				<ExamResultsTable />
 			</Suspense>
 
 			{/* Exam Statistics Section - Suspense with loader */}
