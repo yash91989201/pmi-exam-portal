@@ -1,7 +1,7 @@
 import type { GetUserExamsDataOutputType } from "@server-types/index";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Info, MoreHorizontal } from "lucide-react";
+import { Info, MoreHorizontal } from "lucide-react";
 import type React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,15 +55,7 @@ const getColumns = (
 ): ColumnDef<GetUserExamsDataOutputType["userExamsData"][0]>[] => [
 	{
 		accessorKey: "exam.certification",
-		header: ({ column }) => (
-			<Button
-				variant="ghost"
-				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-			>
-				Exam Name
-				<ArrowUpDown className="ml-2 h-4 w-4" />
-			</Button>
-		),
+		header: "Certification",
 		cell: ({ row }) => (
 			<span className="font-medium">{row.original.certification}</span>
 		),

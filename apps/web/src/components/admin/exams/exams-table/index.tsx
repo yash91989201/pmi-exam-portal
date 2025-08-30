@@ -1,19 +1,15 @@
 import type { ExamType } from "@server-types/index";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import {
-	ChevronLeft,
-	ChevronRight,
-	MoreHorizontal,
-	Trash2,
-} from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { MoreHorizontal, Trash2 } from "lucide-react";
+import { PaginationWindow } from "@/components/shared/pagination-window";
+import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -21,11 +17,6 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-} from "@/components/ui/pagination";
 import {
 	Select,
 	SelectContent,
@@ -42,7 +33,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
 export const ExamsTable = ({
@@ -102,28 +92,30 @@ export const ExamsTable = ({
 		},
 		{
 			id: "actions",
-			header: () => <div className="">Actions</div>,
+			header: () => <div className="text-right">Actions</div>,
 			cell: ({ row }) => {
 				const exam = row.original;
 				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" size="icon">
-								<span className="sr-only">Open menu</span>
-								<MoreHorizontal className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem
-								onClick={() => handleDeleteExam(exam.id)}
-								className="text-red-600"
-							>
-								<Trash2 className="mr-2 h-4 w-4" />
-								Delete
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<div className="text-right">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="ghost" size="icon">
+									<span className="sr-only">Open menu</span>
+									<MoreHorizontal className="h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuLabel>Actions</DropdownMenuLabel>
+								<DropdownMenuItem
+									onClick={() => handleDeleteExam(exam.id)}
+									className="text-red-600"
+								>
+									<Trash2 className="mr-2 h-4 w-4" />
+									Delete
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
 				);
 			},
 		},
@@ -139,7 +131,6 @@ export const ExamsTable = ({
 
 	return (
 		<section>
-			{/* Table implementation with scrollable body */}
 			<div className="flex flex-col gap-3">
 				<div className="overflow-hidden rounded-md border">
 					<Table>
@@ -221,66 +212,14 @@ export const ExamsTable = ({
 						</SelectContent>
 					</Select>
 				</div>
-				<Pagination className="mx-0 w-fit justify-end">
-					<PaginationContent>
-						<PaginationItem>
-							<Link
-								to="/dashboard/exams"
-								search={{ page: Math.max(1, page - 1), limit }}
-								className={cn(
-									buttonVariants({
-										variant: "outline",
-										size: "icon",
-									}),
-									!hasPreviousPage && "pointer-events-none opacity-50",
-								)}
-								aria-disabled={!hasPreviousPage}
-								tabIndex={!hasPreviousPage ? -1 : 0}
-							>
-								<ChevronLeft className="size-4.5" />
-							</Link>
-						</PaginationItem>
-						{Array.from({ length: totalPages }, (_, i) => {
-							const pageNum = i + 1;
-							return (
-								<PaginationItem key={pageNum}>
-									<Link
-										to="/dashboard/exams"
-										search={{ page: pageNum, limit }}
-										className={cn(
-											buttonVariants({
-												variant: "outline",
-												size: "icon",
-											}),
-											page === pageNum &&
-												"bg-accent font-bold text-accent-foreground hover:bg-accent hover:text-accent-foreground",
-										)}
-										aria-current={page === pageNum ? "page" : undefined}
-									>
-										{pageNum}
-									</Link>
-								</PaginationItem>
-							);
-						})}
-						<PaginationItem>
-							<Link
-								to="/dashboard/exams"
-								search={{ page: Math.min(totalPages, page + 1), limit }}
-								className={cn(
-									buttonVariants({
-										variant: "outline",
-										size: "icon",
-									}),
-									!hasNextPage && "pointer-events-none opacity-50",
-								)}
-								aria-disabled={!hasNextPage}
-								tabIndex={!hasNextPage ? -1 : 0}
-							>
-								<ChevronRight className="size-4.5" />
-							</Link>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
+				<PaginationWindow
+					page={page}
+					limit={limit}
+					totalPages={totalPages}
+					basePath="/dashboard/exams"
+					hasNextPage={hasNextPage}
+					hasPreviousPage={hasPreviousPage}
+				/>
 			</div>
 		</section>
 	);

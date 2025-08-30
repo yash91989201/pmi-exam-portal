@@ -8,8 +8,6 @@ import {
 } from "@tanstack/react-table";
 import type { UserWithRole } from "better-auth/plugins/admin";
 import {
-	ChevronLeft,
-	ChevronRight,
 	ClipboardPen,
 	ExternalLink,
 	ListOrdered,
@@ -19,6 +17,7 @@ import {
 	ShieldOff,
 	Trash2,
 } from "lucide-react";
+import { PaginationWindow } from "@/components/shared/pagination-window";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -28,11 +27,6 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-} from "@/components/ui/pagination";
 import {
 	Select,
 	SelectContent,
@@ -149,89 +143,93 @@ export const UsersTable = ({
 		},
 		{
 			id: "exams-info",
-			header: () => <div className="">Exams Info</div>,
+			header: () => <div className="text-right">Exams Info</div>,
 			cell: ({ row }) => (
-				<Link
-					className={buttonVariants({ variant: "outline", size: "icon" })}
-					to="/dashboard/users/$userId"
-					params={{ userId: row.original.id }}
-				>
-					<ExternalLink className="size-4.5" />
-				</Link>
+				<div className="text-right">
+					<Link
+						className={buttonVariants({ variant: "outline", size: "icon" })}
+						to="/dashboard/users/$userId"
+						params={{ userId: row.original.id }}
+					>
+						<ExternalLink className="size-4.5" />
+					</Link>
+				</div>
 			),
 		},
 		{
 			id: "actions",
-			header: () => <div className="">Actions</div>,
+			header: () => <div className="text-right">Actions</div>,
 			cell: ({ row }) => {
 				const user = row.original;
 				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<span className="sr-only">Open menu</span>
-								<MoreHorizontal className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem>
-								<Link
-									to="/dashboard/users/$userId/manage-exams-assignment"
-									params={{ userId: row.original.id }}
-									className="flex items-center gap-1.5"
-								>
-									<ClipboardPen className="size-4.5" />
-									<span>Assign / Un-Assign Exams</span>
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Link
-									to="/dashboard/users/$userId/manage-order"
-									params={{ userId: row.original.id }}
-									className="flex items-center gap-1.5"
-								>
-									<ListOrdered className="size-4.5" />
-									<span>Manage Orders</span>
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Link
-									to="/dashboard/users/$userId/manage-user"
-									params={{ userId: row.original.id }}
-									className="flex items-center gap-1.5"
-								>
-									<Settings className="size-4.5" />
-									<span>Manage User</span>
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							{user.banned ? (
-								<DropdownMenuItem
-									onClick={() => handleUnbanUser(user.id)}
-									className="text-green-600"
-								>
-									<ShieldOff className="mr-2 h-4 w-4" />
-									Unban User
+					<div className="text-right">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="ghost" className="h-8 w-8 p-0">
+									<span className="sr-only">Open menu</span>
+									<MoreHorizontal className="h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuLabel>Actions</DropdownMenuLabel>
+								<DropdownMenuItem>
+									<Link
+										to="/dashboard/users/$userId/manage-exams-assignment"
+										params={{ userId: row.original.id }}
+										className="flex items-center gap-1.5"
+									>
+										<ClipboardPen className="size-4.5" />
+										<span>Assign / Un-Assign Exams</span>
+									</Link>
 								</DropdownMenuItem>
-							) : (
-								<DropdownMenuItem
-									onClick={() => handleBanUser(user.id)}
-									className="text-yellow-600"
-								>
-									<Shield className="mr-2 h-4 w-4" />
-									Ban User
+								<DropdownMenuItem>
+									<Link
+										to="/dashboard/users/$userId/manage-order"
+										params={{ userId: row.original.id }}
+										className="flex items-center gap-1.5"
+									>
+										<ListOrdered className="size-4.5" />
+										<span>Manage Orders</span>
+									</Link>
 								</DropdownMenuItem>
-							)}
-							<DropdownMenuItem
-								onClick={() => handleDeleteUser(user.id)}
-								className="text-red-600"
-							>
-								<Trash2 className="mr-2 h-4 w-4" />
-								Delete User
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+								<DropdownMenuItem>
+									<Link
+										to="/dashboard/users/$userId/manage-user"
+										params={{ userId: row.original.id }}
+										className="flex items-center gap-1.5"
+									>
+										<Settings className="size-4.5" />
+										<span>Manage User</span>
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								{user.banned ? (
+									<DropdownMenuItem
+										onClick={() => handleUnbanUser(user.id)}
+										className="text-green-600"
+									>
+										<ShieldOff className="mr-2 h-4 w-4" />
+										Unban User
+									</DropdownMenuItem>
+								) : (
+									<DropdownMenuItem
+										onClick={() => handleBanUser(user.id)}
+										className="text-yellow-600"
+									>
+										<Shield className="mr-2 h-4 w-4" />
+										Ban User
+									</DropdownMenuItem>
+								)}
+								<DropdownMenuItem
+									onClick={() => handleDeleteUser(user.id)}
+									className="text-red-600"
+								>
+									<Trash2 className="mr-2 h-4 w-4" />
+									Delete User
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
 				);
 			},
 		},
@@ -258,7 +256,11 @@ export const UsersTable = ({
 										return (
 											<TableHead
 												key={header.id}
-												className="font-semibold text-gray-700"
+												className={cn(
+													"font-semibold text-gray-700",
+													header.column.id === "exams-info" && "text-right",
+													header.column.id === "actions" && "text-right",
+												)}
 											>
 												{header.isPlaceholder
 													? null
@@ -326,66 +328,14 @@ export const UsersTable = ({
 						</SelectContent>
 					</Select>
 				</div>
-				<Pagination className="mx-0 w-fit justify-end">
-					<PaginationContent>
-						<PaginationItem>
-							<Link
-								to="/dashboard/users"
-								search={{ page: Math.max(1, page - 1), limit }}
-								className={cn(
-									buttonVariants({
-										variant: "outline",
-										size: "icon",
-									}),
-									!hasPreviousPage && "pointer-events-none opacity-50",
-								)}
-								aria-disabled={!hasPreviousPage}
-								tabIndex={!hasPreviousPage ? -1 : 0}
-							>
-								<ChevronLeft className="size-4.5" />
-							</Link>
-						</PaginationItem>
-						{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-							const pageNum = i + 1;
-							return (
-								<PaginationItem key={pageNum}>
-									<Link
-										to="/dashboard/users"
-										search={{ page: pageNum, limit }}
-										className={cn(
-											buttonVariants({
-												variant: "outline",
-												size: "icon",
-											}),
-											page === pageNum &&
-												"bg-accent font-bold text-accent-foreground hover:bg-accent hover:text-accent-foreground",
-										)}
-										aria-current={page === pageNum ? "page" : undefined}
-									>
-										{pageNum}
-									</Link>
-								</PaginationItem>
-							);
-						})}
-						<PaginationItem>
-							<Link
-								to="/dashboard/users"
-								search={{ page: Math.min(totalPages, page + 1), limit }}
-								className={cn(
-									buttonVariants({
-										variant: "outline",
-										size: "icon",
-									}),
-									!hasNextPage && "pointer-events-none opacity-50",
-								)}
-								aria-disabled={!hasNextPage}
-								tabIndex={!hasNextPage ? -1 : 0}
-							>
-								<ChevronRight className="size-4.5" />
-							</Link>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
+				<PaginationWindow
+					page={page}
+					limit={limit}
+					totalPages={totalPages}
+					basePath="/dashboard/users"
+					hasNextPage={hasNextPage}
+					hasPreviousPage={hasPreviousPage}
+				/>
 			</div>
 		</section>
 	);
