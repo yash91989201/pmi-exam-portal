@@ -107,6 +107,11 @@ export const SubmitExamOutput = z.object({
 export const ListExamsInput = z.object({
 	page: z.number().min(1).default(1).catch(1),
 	limit: z.number().min(1).max(20).default(10).catch(10),
+	search: z
+		.object({
+			certification: z.string().optional(),
+		})
+		.optional(),
 	filter: z
 		.object({
 			attemptCount: z.number().int().optional(),
@@ -361,3 +366,4 @@ export const UserExamResultSchema = z.object({
 export const ListExamResultsOutput = z.object({
 	results: z.array(UserExamResultSchema),
 });
+

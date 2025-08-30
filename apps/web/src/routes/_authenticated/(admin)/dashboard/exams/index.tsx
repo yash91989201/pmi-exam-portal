@@ -11,6 +11,7 @@ import { buttonVariants } from "@/components/ui/button";
 export const RouteSearchSchema = z.object({
 	page: z.number().min(1).default(1).catch(1),
 	limit: z.number().min(1).max(20).default(10).catch(10),
+	certification: z.string().optional(),
 });
 
 export const Route = createFileRoute(
@@ -18,9 +19,16 @@ export const Route = createFileRoute(
 )({
 	validateSearch: RouteSearchSchema,
 	beforeLoad: async ({ context: { queryClient, queryUtils }, search }) => {
+		const { limit, page, certification } = search;
 		queryClient.ensureQueryData(
 			queryUtils.admin.listExams.queryOptions({
-				input: search,
+				input: {
+					limit,
+					page,
+					filter: {
+						certification,
+					},
+				},
 			}),
 		);
 	},
@@ -28,8 +36,6 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-	const { limit, page } = Route.useSearch();
-
 	return (
 		<div className="space-y-6">
 			<section className="flex items-center justify-between">
@@ -43,7 +49,7 @@ function RouteComponent() {
 				</Link>
 			</section>
 			<Suspense fallback={<ExamsTableSkeleton />}>
-				<ExamsTable limit={limit} page={page} />
+				<ExamsTable />
 			</Suspense>
 		</div>
 	);

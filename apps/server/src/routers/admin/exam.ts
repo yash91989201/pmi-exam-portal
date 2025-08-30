@@ -1,13 +1,13 @@
 import { ORPCError } from "@orpc/server";
-import { and, asc, count, eq, inArray, type SQL } from "drizzle-orm";
+import { and, asc, count, eq, inArray, like, type SQL } from "drizzle-orm";
 import z from "zod";
 import {
+	attemptResponse,
 	exam,
 	examAttempt,
 	option,
 	question,
 	userExam,
-	attemptResponse,
 } from "@/db/schema";
 import { adminProcedure } from "@/lib/orpc";
 import {
@@ -117,11 +117,16 @@ export const adminExamRouter = {
 		.input(ListExamsInput)
 		.output(ListExamsOutput)
 		.handler(async ({ context, input }) => {
-			const { page, limit, filter } = input;
+			const { page, limit, search, filter } = input;
 
-			// Build dynamic query conditions
 			const whereConditions: SQL[] = [];
 			let needsJoin = false;
+
+			if (search?.certification) {
+				whereConditions.push(
+					like(exam.certification, `%${search.certification}%`),
+				);
+			}
 
 			// Apply attemptCount filter if provided
 			if (filter?.attemptCount !== undefined) {
@@ -141,11 +146,6 @@ export const adminExamRouter = {
 
 			if (needsJoin) {
 				examsBaseQuery.innerJoin(
-					examAttempt,
-					eq(exam.id, examAttempt.userExamId),
-				);
-
-				examsCountBaseQuery.innerJoin(
 					examAttempt,
 					eq(exam.id, examAttempt.userExamId),
 				);

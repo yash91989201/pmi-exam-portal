@@ -1,6 +1,5 @@
 import type { ExamType } from "@server-types/index";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
 	flexRender,
@@ -17,6 +16,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
 	Select,
 	SelectContent,
@@ -33,16 +33,19 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { useExamsTableFilter } from "@/hooks/use-exams-table-filter";
 import { queryUtils } from "@/utils/orpc";
 
-export const ExamsTable = ({
-	limit = 10,
-	page = 1,
-}: {
-	limit?: number;
-	page?: number;
-}) => {
-	const navigate = useNavigate();
+export const ExamsTable = () => {
+	const {
+		page,
+		limit,
+		certification,
+		internalSearch,
+		setInternalSearch,
+		onLimitChange,
+	} = useExamsTableFilter();
+
 	const {
 		data: { exams, totalPages, hasNextPage, hasPreviousPage },
 		refetch,
@@ -51,6 +54,9 @@ export const ExamsTable = ({
 			input: {
 				limit,
 				page,
+				search: {
+					certification,
+				},
 			},
 		}),
 	);
@@ -67,14 +73,6 @@ export const ExamsTable = ({
 		deleteExam({ id: examId });
 	};
 
-	const handleLimitChange = (limit: number) => {
-		navigate({
-			to: "/dashboard/exams",
-			search: { page: 1, limit },
-		});
-	};
-
-	// Define columns
 	const columns: ColumnDef<ExamType>[] = [
 		{
 			accessorKey: "certification",
@@ -131,6 +129,14 @@ export const ExamsTable = ({
 
 	return (
 		<section>
+			<div className="flex items-center py-4">
+				<Input
+					placeholder="Filter by certification..."
+					value={internalSearch}
+					onChange={(event) => setInternalSearch(event.target.value)}
+					className="max-w-sm"
+				/>
+			</div>
 			<div className="flex flex-col gap-3">
 				<div className="overflow-hidden rounded-md border">
 					<Table>
@@ -199,7 +205,7 @@ export const ExamsTable = ({
 					<span className="text-sm">Rows per page</span>
 					<Select
 						value={limit.toString()}
-						onValueChange={(value) => handleLimitChange(+value)}
+						onValueChange={(value) => onLimitChange(+value)}
 					>
 						<SelectTrigger className="w-[70px]">
 							<SelectValue />
@@ -216,7 +222,7 @@ export const ExamsTable = ({
 					page={page}
 					limit={limit}
 					totalPages={totalPages}
-					basePath="/dashboard/exams"
+					basePath={`/dashboard/exams?certification=${certification ?? ""}`}
 					hasNextPage={hasNextPage}
 					hasPreviousPage={hasPreviousPage}
 				/>
@@ -278,3 +284,4 @@ export const ExamsTableSkeleton = () => {
 		</section>
 	);
 };
+
