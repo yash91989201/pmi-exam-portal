@@ -38,6 +38,7 @@ export const UserExamsTable = ({ userId }: { userId: string }) => {
 		}),
 	);
 
+	console.log(userExamsData);
 	return (
 		<section className="space-y-3">
 			<h2 className="font-bold text-xl">Exams Results</h2>
@@ -72,7 +73,7 @@ const getColumns = (
 		accessorKey: "status",
 		header: () => <div className="text-right">Status</div>,
 		cell: ({ row }) => {
-			const { status } = row.original;
+			const { status, terminationReason } = row.original;
 			if (status === null) {
 				return null;
 			}
@@ -86,10 +87,11 @@ const getColumns = (
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger>
-									<Info className="h-4 w-4 text-muted-foreground" />
+									<Info className="size-4.5 text-muted-foreground" />
 								</TooltipTrigger>
-								<TooltipContent>
-									<p>Cheating Detected: {row.original.terminationReason}</p>
+								<TooltipContent className="space-y-1.5">
+									<p className="font-semibold text-lg">Cheating Detected !!!</p>
+									<p className="font-medium">{terminationReason}</p>
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
