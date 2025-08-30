@@ -13,6 +13,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],
+			"@server/*": ["../server/src/*"],
 			"@server-schemas/*": ["../server/src/lib/schema/*"],
 			"@server-types/*": ["../server/src/lib/types/*"]
 		},

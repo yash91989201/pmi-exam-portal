@@ -121,7 +121,7 @@ export const UsersTable = ({
 	};
 
 	return (
-		<>
+		<section>
 			<DataTable
 				columns={getColumn({
 					handleBanUser,
@@ -206,107 +206,65 @@ export const UsersTable = ({
 					</PaginationContent>
 				</Pagination>
 			</div>
-		</>
+		</section>
 	);
 };
 
 export const UsersTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
 	return (
-		<>
-			<div className="rounded-md border">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>
-								<Button variant="ghost" disabled>
-									<span>Name</span>
-									<ArrowUpDown className="ml-2 size-4.5" />
-								</Button>
-							</TableHead>
-							<TableHead>
-								<Button variant="ghost" disabled>
-									Created
-									<ArrowUpDown className="ml-2 h-4 w-4" />
-								</Button>
-							</TableHead>
-							<TableHead>Exams Info</TableHead>
-							<TableHead>Actions</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{Array.from({ length: limit }).map((_, i) => (
-							<TableRow key={i.toString()}>
-								<TableCell>
-									<div className="flex flex-col gap-y-1">
-										<Skeleton className="h-5 w-24" />
-										<Skeleton className="h-4 w-36" />
+		<section>
+			{/* Table Header and Rows Skeleton */}
+			<div className="w-full">
+				<div className="rounded-md border">
+					{/* Table Header */}
+					<div className="border-b bg-muted/50 px-4 py-3">
+						<div className="flex items-center justify-between">
+							<div className="flex items-center space-x-4">
+								<Skeleton className="h-4 w-20" />
+								<Skeleton className="h-4 w-16" />
+								<Skeleton className="h-4 w-16" />
+								<Skeleton className="h-4 w-16" />
+							</div>
+						</div>
+					</div>
+
+					{/* Table Rows */}
+					{Array.from({ length: limit }, (_, i) => (
+						<div
+							key={i.toString()}
+							className="border-b px-4 py-3 last:border-b-0"
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center space-x-20">
+									<div className="flex flex-col gap-y-1.5">
+										<Skeleton className="h-4 w-24" />
+										<Skeleton className="h-3 w-36" />
 									</div>
-								</TableCell>
-								<TableCell>
-									<Skeleton className="h-5 w-20" />
-								</TableCell>
-								<TableCell>
-									<Button variant="outline" size="icon" disabled>
-										<ExternalLink className="size-4.5" />
-									</Button>
-								</TableCell>
-								<TableCell>
-									<Button variant="ghost" className="h-8 w-8 p-0" disabled>
-										<span className="sr-only">Open menu</span>
-										<MoreHorizontal className="h-4 w-4" />
-									</Button>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
+									<Skeleton className="h-4 w-20" />
+									<Skeleton className="h-9 w-9 rounded" />
+								</div>
+								<Skeleton className="h-8 w-8 rounded" />
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
+
+			{/* Pagination Skeleton */}
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
-					<span className="text-sm">Rows per page</span>
-					<Select value={limit.toString()} disabled>
-						<SelectTrigger className="w-[70px]">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="5">5</SelectItem>
-							<SelectItem value="10">10</SelectItem>
-							<SelectItem value="20">20</SelectItem>
-							<SelectItem value="50">50</SelectItem>
-						</SelectContent>
-					</Select>
+					<Skeleton className="h-4 w-20" />
+					<Skeleton className="h-9 w-[70px]" />
 				</div>
-				<Pagination className="mx-0 w-fit justify-end">
-					<PaginationContent>
-						<PaginationItem>
-							<Button
-								variant="outline"
-								size="icon"
-								disabled
-								className="pointer-events-none opacity-50"
-							>
-								<ChevronLeft className="size-4.5" />
-							</Button>{" "}
-						</PaginationItem>
-						{Array.from({ length: 5 }).map((_, i) => (
-							<PaginationItem key={i.toString()}>
-								<Skeleton className="h-9 w-9" />
-							</PaginationItem>
-						))}
-						<PaginationItem>
-							<Button
-								variant="outline"
-								size="icon"
-								disabled
-								className="pointer-events-none opacity-50"
-							>
-								<ChevronRight className="size-4.5" />
-							</Button>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
+				<div className="flex items-center space-x-1">
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+				</div>
 			</div>
-		</>
+		</section>
 	);
 };
 

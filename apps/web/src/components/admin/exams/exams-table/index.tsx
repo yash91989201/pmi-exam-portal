@@ -3,7 +3,6 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
-	ArrowUpDown,
 	ChevronLeft,
 	ChevronRight,
 	MoreHorizontal,
@@ -16,7 +15,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -75,7 +73,7 @@ export const ExamsTable = ({
 	};
 
 	return (
-		<>
+		<section>
 			<DataTable columns={getColumns({ handleDeleteExam })} data={exams} />
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
@@ -156,7 +154,7 @@ export const ExamsTable = ({
 					</PaginationContent>
 				</Pagination>
 			</div>
-		</>
+		</section>
 	);
 };
 
@@ -167,15 +165,7 @@ const getColumns = ({
 }): ColumnDef<ExamType>[] => [
 	{
 		accessorKey: "certification",
-		header: ({ column }) => (
-			<Button
-				variant="ghost"
-				onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-			>
-				Name
-				<ArrowUpDown className="ml-2 h-4 w-4" />
-			</Button>
-		),
+		header: () => "Certification",
 		cell: ({ row }) => (
 			<span className="font-medium">{row.getValue("certification")}</span>
 		),
@@ -187,25 +177,19 @@ const getColumns = ({
 	},
 	{
 		id: "actions",
+		header: () => <div className="">Actions</div>,
 		cell: ({ row }) => {
 			const exam = row.original;
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
+						<Button variant="ghost" size="icon">
 							<span className="sr-only">Open menu</span>
 							<MoreHorizontal className="h-4 w-4" />
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(exam.id)}
-						>
-							Copy Exam ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View details</DropdownMenuItem>
 						<DropdownMenuItem
 							onClick={() => handleDeleteExam(exam.id)}
 							className="text-red-600"
@@ -222,7 +206,7 @@ const getColumns = ({
 
 export const ExamsTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
 	return (
-		<>
+		<section>
 			{/* Table Header and Rows Skeleton */}
 			<div className="w-full">
 				<div className="rounded-md border">
@@ -270,6 +254,6 @@ export const ExamsTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
 					<Skeleton className="h-9 w-9" />
 				</div>
 			</div>
-		</>
+		</section>
 	);
 };

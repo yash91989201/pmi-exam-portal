@@ -20,7 +20,7 @@ import {
 	type ManageUserOrdersInputType,
 } from "@server-schemas/index";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { GripVertical, Trash } from "lucide-react";
+import { GripVertical, Plus, Trash } from "lucide-react";
 import {
 	type SubmitHandler,
 	type UseFormReturn,
@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { queryClient, queryUtils } from "@/utils/orpc";
 
 interface SortableItemProps {
@@ -78,61 +79,69 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 		zIndex: isDragging ? 10 : "auto",
 	};
 
+	const isCompleted = form.watch(`orders.${index}.isCompleted`);
+
 	return (
 		<div
 			ref={setNodeRef}
 			style={style}
-			className="mb-4 flex items-center gap-4 rounded-lg border bg-background p-4 shadow-sm"
+			className="mb-4 flex items-start gap-3 rounded-lg border bg-card p-4 shadow-sm"
 		>
-			<div
+			<Button
+				variant="ghost"
+				size="icon"
+				className="cursor-grab touch-none active:cursor-grabbing mt-1 flex-shrink-0"
 				{...attributes}
 				{...listeners}
-				className="cursor-grab touch-none active:cursor-grabbing"
 			>
-				<GripVertical className="h-6 w-6 text-muted-foreground" />
-			</div>
-			<div className="grid flex-grow grid-cols-1 gap-4 md:grid-cols-2">
+				<GripVertical className="h-5 w-5 text-muted-foreground" />
+			</Button>
+			<div className="flex-grow space-y-3">
 				<FormField
 					control={form.control}
 					name={`orders.${index}.orderText`}
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Order Description</FormLabel>
 							<FormControl>
-								<Input {...field} placeholder="E.g., Complete project report" />
+								<Input
+									{...field}
+									placeholder="Enter order description..."
+									className={cn(
+										"text-base",
+										isCompleted && "line-through text-muted-foreground",
+									)}
+								/>
 							</FormControl>
 						</FormItem>
 					)}
 				/>
-				<div className="flex items-end">
-					<FormField
-						control={form.control}
-						name={`orders.${index}.isCompleted`}
-						render={({ field }) => (
-							<FormItem className="flex h-10 items-center gap-2 space-y-0 rounded-md border border-input px-3">
-								<FormControl>
-									<Checkbox
-										checked={field.value}
-										onCheckedChange={field.onChange}
-										id={`completed-${id}`}
-									/>
-								</FormControl>
-								<FormLabel
-									htmlFor={`completed-${id}`}
-									className="cursor-pointer"
-								>
-									Completed
-								</FormLabel>
-							</FormItem>
-						)}
-					/>
-				</div>
+				<FormField
+					control={form.control}
+					name={`orders.${index}.isCompleted`}
+					render={({ field }) => (
+						<FormItem className="flex items-center gap-2 space-y-0">
+							<FormControl>
+								<Checkbox
+									checked={field.value}
+									onCheckedChange={field.onChange}
+									id={`completed-${id}`}
+								/>
+							</FormControl>
+							<FormLabel
+								htmlFor={`completed-${id}`}
+								className="cursor-pointer text-sm font-normal text-muted-foreground"
+							>
+								Mark as completed
+							</FormLabel>
+						</FormItem>
+					)}
+				/>
 			</div>
 			<Button
 				type="button"
 				variant="ghost"
 				size="icon"
-				className="text-destructive hover:bg-destructive/10"
+				className="mt-1 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
 				onClick={() => onRemove(index)}
 			>
 				<Trash className="h-5 w-5" />
@@ -159,7 +168,7 @@ export const ManageOrdersForm = ({ userId }: { userId: string }) => {
 		},
 	});
 
-	const { fields, remove, move } = useFieldArray({
+	const { fields, remove, move, append } = useFieldArray({
 		control: form.control,
 		name: "orders",
 	});
@@ -241,8 +250,23 @@ export const ManageOrdersForm = ({ userId }: { userId: string }) => {
 								))}
 							</SortableContext>
 						</DndContext>
+						<Button
+							type="button"
+							variant="outline"
+							className="mt-4"
+							onClick={() =>
+								append({
+									orderText: "",
+									isCompleted: false,
+									orderPriority: fields.length + 1,
+								})
+							}
+						>
+							<Plus className="mr-2 h-4 w-4" />
+							Add New Order
+						</Button>
 					</CardContent>
-					<CardFooter className="flex justify-end gap-2">
+					<CardFooter className="flex justify-end gap-2 border-t pt-6">
 						<Button
 							type="button"
 							variant="ghost"
@@ -276,27 +300,22 @@ export const ManageOrdersFormSkeleton = () => {
 					{[...Array(3)].map((_, i) => (
 						<div
 							key={i.toString()}
-							className="flex items-center gap-4 rounded-lg border bg-background p-4 shadow-sm"
+							className="flex items-start gap-3 rounded-lg border bg-card p-4 shadow-sm"
 						>
-							<Skeleton className="h-6 w-6" />
-							<div className="grid flex-grow grid-cols-1 gap-4 md:grid-cols-2">
-								<div className="space-y-2">
-									<Skeleton className="h-4 w-24" />
-									<Skeleton className="h-10 w-full" />
-								</div>
-								<div className="flex items-end">
-									<Skeleton className="h-10 w-32" />
-								</div>
+							<Skeleton className="mt-1 h-10 w-10 flex-shrink-0" />
+							<div className="flex-grow space-y-3">
+								<Skeleton className="h-10 w-full" />
+								<Skeleton className="h-5 w-40" />
 							</div>
-							<Skeleton className="h-10 w-10" />
+							<Skeleton className="mt-1 h-10 w-10 flex-shrink-0" />
 						</div>
 					))}
 				</div>
-				<Skeleton className="mt-4 h-10 w-full" />
+				<Skeleton className="mt-4 h-10 w-40" />
 			</CardContent>
-			<CardFooter className="flex justify-end gap-2">
+			<CardFooter className="flex justify-end gap-2 border-t pt-6">
 				<Skeleton className="h-10 w-20" />
-				<Skeleton className="h-10 w-28" />
+				<Skeleton className="h-10 w-32" />
 			</CardFooter>
 		</Card>
 	);

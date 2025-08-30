@@ -6,14 +6,6 @@ import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { OrderFormSchema } from "@/lib/schema";
 import type { OrderFormSchemaType } from "@/lib/types";
@@ -60,36 +52,28 @@ export default function CreateOrderForm({
 	};
 
 	return (
-		<Form {...createOrderForm}>
-			<form onSubmit={handleSubmit(onSubmit)} onReset={() => reset()}>
-				<Card>
-					<CardHeader>
-						<CardTitle>Order Status Configuration</CardTitle>
-						<CardDescription>
-							Manage the different statuses an order can have. You can add,
-							remove, and reorder the statuses.
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<OrdersField />
-					</CardContent>
-					<CardFooter className="flex justify-end">
-						<Button
-							type="submit"
-							disabled={formState.isSubmitting}
-							className="flex items-center gap-2"
-						>
-							{formState.isSubmitting ? (
-								<Loader2 className="h-4 w-4 animate-spin" />
-							) : (
-								<Save className="h-4 w-4" />
-							)}
-							<span>Update Statuses</span>
-						</Button>
-					</CardFooter>
-				</Card>
-			</form>
-		</Form>
+		<section>
+			<Form {...createOrderForm}>
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					onReset={() => reset()}
+					className="space-y-3"
+				>
+					<OrdersField />
+					<Button
+						type="submit"
+						disabled={formState.isSubmitting}
+						className="flex items-center gap-2"
+					>
+						{formState.isSubmitting ? (
+							<Loader2 className="h-4 w-4 animate-spin" />
+						) : (
+							<Save className="h-4 w-4" />
+						)}
+						<span>Update Statuses</span>
+					</Button>
+				</form>
+			</Form>
+		</section>
 	);
 }
-
