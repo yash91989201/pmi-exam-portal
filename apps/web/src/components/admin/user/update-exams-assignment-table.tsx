@@ -338,50 +338,63 @@ export const UpdateExamsAssignmentTable = ({
 
 export const UpdateExamsAssignmentTableSkeleton = () => {
 	return (
-		<div className="space-y-4">
-			<div className="space-y-3">
-				<Skeleton className="h-7 w-64" />
-				<Skeleton className="h-4 w-3/4" />
+		<div className="space-y-6">
+			<div className="space-y-1">
+				<h3 className="font-medium text-lg">Assign / Un-Assign Exams</h3>
+				<p className="text-muted-foreground text-sm">
+					Assign or unassign exams for this user. Only exams with no attempts
+					can be un-assigned.
+				</p>
+			</div>
 
-				<div className="flex gap-3">
-					<Skeleton className="h-6 w-24 rounded-full" />
-					<Skeleton className="h-6 w-24 rounded-full" />
+			<div className="flex items-center justify-between">
+				<div className="flex flex-1 items-center gap-3">
+					<div className="relative grid w-full max-w-sm gap-1.5">
+						<Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+						<Input
+							placeholder="Search by exam name..."
+							disabled
+							className="w-full pl-10"
+						/>
+					</div>
+
+					<Select disabled>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Filter by status" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">All Statuses</SelectItem>
+							<SelectItem value="assigned">Assigned</SelectItem>
+							<SelectItem value="unassigned">Unassigned</SelectItem>
+						</SelectContent>
+					</Select>
+					<Button size="icon" variant="destructive" disabled>
+						<FilterX className="size-4.5" />
+					</Button>
 				</div>
 			</div>
-			<div className="my-4 flex items-center justify-between">
-				<div className="flex flex-1 items-center space-x-2">
-					<div className="grid w-full max-w-sm gap-1.5">
-						<Skeleton className="h-4 w-32" />
-						<Skeleton className="h-10 w-full" />
-					</div>
-					<div className="grid gap-1.5">
-						<Skeleton className="h-4 w-16" />
-						<Skeleton className="h-10 w-[180px]" />
-					</div>
-				</div>
-				<div className="flex items-center gap-2">
-					<Skeleton className="h-10 w-24" />
-				</div>
-			</div>
+
 			<div className="rounded-md border">
 				<Table>
 					<TableHeader>
 						<TableRow>
-							{[...Array(3)].map((_, i) => (
-								<TableHead key={i.toString()}>
-									<Skeleton className="h-5 w-full" />
-								</TableHead>
-							))}
+							<TableHead className="w-[50px]" />
+							<TableHead>Exam</TableHead>
+							<TableHead>Status</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{[...Array(10)].map((_, i) => (
+						{Array.from({ length: 10 }).map((_, i) => (
 							<TableRow key={i.toString()}>
-								{[...Array(3)].map((_, j) => (
-									<TableCell key={j.toString()}>
-										<Skeleton className="h-4 w-full" />
-									</TableCell>
-								))}
+								<TableCell>
+									<Checkbox disabled className="size-4.5 translate-y-[2px]" />
+								</TableCell>
+								<TableCell>
+									<Skeleton className="h-5 w-48" />
+								</TableCell>
+								<TableCell>
+									<Skeleton className="h-6 w-24 rounded-md" />
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
@@ -389,8 +402,12 @@ export const UpdateExamsAssignmentTableSkeleton = () => {
 			</div>
 			<div className="flex items-center justify-end py-4">
 				<div className="flex items-center space-x-2">
-					<Skeleton className="h-10 w-20" />
-					<Skeleton className="h-10 w-20" />
+					<Button variant="outline" size="sm" disabled>
+						Previous
+					</Button>
+					<Button variant="outline" size="sm" disabled>
+						Next
+					</Button>
 				</div>
 			</div>
 		</div>

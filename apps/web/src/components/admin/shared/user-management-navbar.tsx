@@ -38,7 +38,7 @@ export const UserManagementNavbar = ({ userId }: { userId: string }) => {
 		},
 		{
 			path: "/dashboard/users/$userId/manage-user",
-			label: "Settings",
+			label: "Manage User",
 			icon: Settings,
 		},
 	];

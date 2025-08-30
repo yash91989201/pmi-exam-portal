@@ -6,13 +6,15 @@ import {
 	ArrowUpDown,
 	ChevronLeft,
 	ChevronRight,
-	Eye,
+	ClipboardPen,
+	ExternalLink,
+	ListOrdered,
 	MoreHorizontal,
+	Settings,
 	Shield,
 	ShieldOff,
 	Trash2,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import {
@@ -36,6 +38,14 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
@@ -203,61 +213,98 @@ export const UsersTable = ({
 export const UsersTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
 	return (
 		<>
-			{/* Table Header and Rows Skeleton */}
-			<div className="w-full">
-				<div className="rounded-md border">
-					{/* Table Header */}
-					<div className="border-b bg-muted/50 px-4 py-3">
-						<div className="flex items-center justify-between">
-							<div className="flex items-center space-x-4">
-								<Skeleton className="h-4 w-20" />
-								<Skeleton className="h-4 w-16" />
-								<Skeleton className="h-4 w-16" />
-								<Skeleton className="h-4 w-16" />
-								<Skeleton className="h-4 w-16" />
-							</div>
-						</div>
-					</div>
-
-					{/* Table Rows */}
-					{Array.from({ length: limit }, (_, i) => (
-						<div
-							key={i.toString()}
-							className="border-b px-4 py-3 last:border-b-0"
-						>
-							<div className="flex items-center justify-between">
-								<div className="flex items-center space-x-4">
-									<div className="flex flex-col gap-1">
-										<Skeleton className="h-4 w-32" />
-										<Skeleton className="h-3 w-48" />
+			<div className="rounded-md border">
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead>
+								<Button variant="ghost" disabled>
+									<span>Name</span>
+									<ArrowUpDown className="ml-2 size-4.5" />
+								</Button>
+							</TableHead>
+							<TableHead>
+								<Button variant="ghost" disabled>
+									Created
+									<ArrowUpDown className="ml-2 h-4 w-4" />
+								</Button>
+							</TableHead>
+							<TableHead>Exams Info</TableHead>
+							<TableHead>Actions</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{Array.from({ length: limit }).map((_, i) => (
+							<TableRow key={i.toString()}>
+								<TableCell>
+									<div className="flex flex-col gap-y-1">
+										<Skeleton className="h-5 w-24" />
+										<Skeleton className="h-4 w-36" />
 									</div>
-									<div className="flex-1" />
-									<div className="flex flex-col gap-1">
-										<Skeleton className="h-5 w-16" />
-									</div>
-									<Skeleton className="h-5 w-12" />
-									<Skeleton className="h-4 w-20" />
-								</div>
-								<Skeleton className="h-8 w-8 rounded" />
-							</div>
-						</div>
-					))}
-				</div>
+								</TableCell>
+								<TableCell>
+									<Skeleton className="h-5 w-20" />
+								</TableCell>
+								<TableCell>
+									<Button variant="outline" size="icon" disabled>
+										<ExternalLink className="size-4.5" />
+									</Button>
+								</TableCell>
+								<TableCell>
+									<Button variant="ghost" className="h-8 w-8 p-0" disabled>
+										<span className="sr-only">Open menu</span>
+										<MoreHorizontal className="h-4 w-4" />
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
 			</div>
-
-			{/* Pagination Skeleton */}
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
-					<Skeleton className="h-4 w-20" />
-					<Skeleton className="h-9 w-[70px]" />
+					<span className="text-sm">Rows per page</span>
+					<Select value={limit.toString()} disabled>
+						<SelectTrigger className="w-[70px]">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="5">5</SelectItem>
+							<SelectItem value="10">10</SelectItem>
+							<SelectItem value="20">20</SelectItem>
+							<SelectItem value="50">50</SelectItem>
+						</SelectContent>
+					</Select>
 				</div>
-				<div className="flex items-center space-x-1">
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-				</div>
+				<Pagination className="mx-0 w-fit justify-end">
+					<PaginationContent>
+						<PaginationItem>
+							<Button
+								variant="outline"
+								size="icon"
+								disabled
+								className="pointer-events-none opacity-50"
+							>
+								<ChevronLeft className="size-4.5" />
+							</Button>{" "}
+						</PaginationItem>
+						{Array.from({ length: 5 }).map((_, i) => (
+							<PaginationItem key={i.toString()}>
+								<Skeleton className="h-9 w-9" />
+							</PaginationItem>
+						))}
+						<PaginationItem>
+							<Button
+								variant="outline"
+								size="icon"
+								disabled
+								className="pointer-events-none opacity-50"
+							>
+								<ChevronRight className="size-4.5" />
+							</Button>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
 			</div>
 		</>
 	);
@@ -294,25 +341,6 @@ export const getColumn = ({
 			),
 		},
 		{
-			accessorKey: "emailVerified",
-			header: "Status",
-			cell: ({ row }) => (
-				<div className="flex flex-col gap-1">
-					<Badge variant={row.original.emailVerified ? "default" : "secondary"}>
-						{row.original.emailVerified ? "Verified" : "Unverified"}
-					</Badge>
-					{row.original.banned && <Badge variant="destructive">Banned</Badge>}
-				</div>
-			),
-		},
-		{
-			accessorKey: "role",
-			header: "Role",
-			cell: ({ row }) => (
-				<Badge variant="outline">{row.original.role || "user"}</Badge>
-			),
-		},
-		{
 			accessorKey: "createdAt",
 			header: ({ column }) => (
 				<Button
@@ -332,22 +360,21 @@ export const getColumn = ({
 			),
 		},
 		{
-			id: "view",
+			id: "exams-info",
+			header: () => <div className="">Exams Info</div>,
 			cell: ({ row }) => (
 				<Link
+					className={buttonVariants({ variant: "outline", size: "icon" })}
 					to="/dashboard/users/$userId"
 					params={{ userId: row.original.id }}
-					className={buttonVariants({
-						size: "icon",
-						variant: "secondary",
-					})}
 				>
-					<Eye className="size-4.5" />
+					<ExternalLink className="size-4.5" />
 				</Link>
 			),
 		},
 		{
 			id: "actions",
+			header: () => <div className="">Actions</div>,
 			cell: ({ row }) => {
 				const user = row.original;
 				return (
@@ -360,11 +387,35 @@ export const getColumn = ({
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem
-								onClick={() => navigator.clipboard.writeText(user.id)}
-							>
-								<Eye className="mr-2 h-4 w-4" />
-								Copy User ID
+							<DropdownMenuItem>
+								<Link
+									to="/dashboard/users/$userId/manage-exams-assignment"
+									params={{ userId: row.original.id }}
+									className="flex items-center gap-1.5"
+								>
+									<ClipboardPen className="size-4.5" />
+									<span>Assign / Un-Assign Exams</span>
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Link
+									to="/dashboard/users/$userId/manage-order"
+									params={{ userId: row.original.id }}
+									className="flex items-center gap-1.5"
+								>
+									<ListOrdered className="size-4.5" />
+									<span>Manage Orders</span>
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Link
+									to="/dashboard/users/$userId/manage-user"
+									params={{ userId: row.original.id }}
+									className="flex items-center gap-1.5"
+								>
+									<Settings className="size-4.5" />
+									<span>Manage User</span>
+								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							{user.banned ? (
