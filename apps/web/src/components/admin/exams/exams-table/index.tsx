@@ -3,13 +3,17 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
+	flexRender,
+	getCoreRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import {
 	ChevronLeft,
 	ChevronRight,
 	MoreHorizontal,
 	Trash2,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import DataTable from "@/components/ui/data-table";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -30,6 +34,14 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { queryUtils } from "@/utils/orpc";
 
@@ -72,9 +84,125 @@ export const ExamsTable = ({
 		});
 	};
 
+	// Define columns
+	const columns: ColumnDef<ExamType>[] = [
+		{
+			accessorKey: "certification",
+			header: () => "Certification",
+			cell: ({ row }) => (
+				<span className="font-medium">{row.getValue("certification")}</span>
+			),
+		},
+		{
+			accessorKey: "mark",
+			header: () => <div className="text-right">Mark</div>,
+			cell: ({ row }) => (
+				<div className="text-right">{row.getValue("mark")}</div>
+			),
+		},
+		{
+			id: "actions",
+			header: () => <div className="">Actions</div>,
+			cell: ({ row }) => {
+				const exam = row.original;
+				return (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" size="icon">
+								<span className="sr-only">Open menu</span>
+								<MoreHorizontal className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+							<DropdownMenuItem
+								onClick={() => handleDeleteExam(exam.id)}
+								className="text-red-600"
+							>
+								<Trash2 className="mr-2 h-4 w-4" />
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				);
+			},
+		},
+	];
+
+	// Initialize table with useReactTable hook
+	const table = useReactTable({
+		data: exams,
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+		// No pagination model - we're handling pagination server-side
+	});
+
 	return (
 		<section>
-			<DataTable columns={getColumns({ handleDeleteExam })} data={exams} />
+			{/* Table implementation with scrollable body */}
+			<div className="flex flex-col gap-3">
+				<div className="overflow-hidden rounded-md border">
+					<Table>
+						<TableHeader className="sticky top-0 z-10 bg-muted/50">
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										return (
+											<TableHead
+												key={header.id}
+												className="font-semibold text-gray-700"
+											>
+												{header.isPlaceholder
+													? null
+													: flexRender(
+															header.column.columnDef.header,
+															header.getContext(),
+														)}
+											</TableHead>
+										);
+									})}
+								</TableRow>
+							))}
+						</TableHeader>
+					</Table>
+					{/* Scrollable table body container */}
+					<div className="max-h-[calc(100vh-24rem)] overflow-y-scroll">
+						<Table>
+							<TableBody>
+								{table.getRowModel().rows?.length ? (
+									table.getRowModel().rows.map((row) => (
+										<TableRow
+											key={row.id}
+											data-state={row.getIsSelected() && "selected"}
+											className="bg-white"
+										>
+											{row.getVisibleCells().map((cell) => (
+												<TableCell key={cell.id}>
+													{flexRender(
+														cell.column.columnDef.cell,
+														cell.getContext(),
+													)}
+												</TableCell>
+											))}
+										</TableRow>
+									))
+								) : (
+									<TableRow>
+										<TableCell
+											colSpan={columns.length}
+											className="h-24 text-center"
+										>
+											No results.
+										</TableCell>
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</div>
+				</div>
+			</div>
+
+			{/* Custom pagination controls */}
 			<div className="my-4 flex items-center justify-between">
 				<div className="flex items-center space-x-2">
 					<span className="text-sm">Rows per page</span>
@@ -158,53 +286,7 @@ export const ExamsTable = ({
 	);
 };
 
-const getColumns = ({
-	handleDeleteExam,
-}: {
-	handleDeleteExam: (examId: string) => void;
-}): ColumnDef<ExamType>[] => [
-	{
-		accessorKey: "certification",
-		header: () => "Certification",
-		cell: ({ row }) => (
-			<span className="font-medium">{row.getValue("certification")}</span>
-		),
-	},
-	{
-		accessorKey: "mark",
-		header: () => <div className="text-right">Mark</div>,
-		cell: ({ row }) => <div className="text-right">{row.getValue("mark")}</div>,
-	},
-	{
-		id: "actions",
-		header: () => <div className="">Actions</div>,
-		cell: ({ row }) => {
-			const exam = row.original;
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" size="icon">
-							<span className="sr-only">Open menu</span>
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem
-							onClick={() => handleDeleteExam(exam.id)}
-							className="text-red-600"
-						>
-							<Trash2 className="mr-2 h-4 w-4" />
-							Delete
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
-		},
-	},
-];
-
-export const ExamsTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
+export const ExamsTableSkeleton = () => {
 	return (
 		<section>
 			{/* Table Header and Rows Skeleton */}
@@ -222,7 +304,7 @@ export const ExamsTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
 					</div>
 
 					{/* Table Rows */}
-					{Array.from({ length: limit }, (_, i) => (
+					{Array.from({ length: 10 }, (_, i) => (
 						<div
 							key={i.toString()}
 							className="border-b px-4 py-3 last:border-b-0"

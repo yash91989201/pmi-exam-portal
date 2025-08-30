@@ -6,6 +6,7 @@ import {
 	CheckCircle,
 	Clock,
 	ExternalLink,
+	Info,
 	User,
 	XCircle,
 } from "lucide-react";
@@ -13,9 +14,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { queryUtils } from "@/utils/orpc";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { queryUtils } from "@/utils/orpc";
 
 const statusConfig = {
 	completed: { icon: CheckCircle, color: "text-green-600", bg: "bg-green-100" },
@@ -86,16 +93,10 @@ export function RecentActivity() {
 											<div className="font-medium text-sm">
 												{attempt.marks !== null ? `${attempt.marks}%` : "-"}
 											</div>
-											<Badge
-												variant={
-													attempt.status === "completed"
-														? "default"
-														: "secondary"
-												}
-												className="text-xs"
-											>
-												{attempt.status}
-											</Badge>
+											<ExamStatusBadge
+												status={attempt.status}
+												terminationReason={attempt.terminationReason}
+											/>
 										</div>
 									</div>
 								);
@@ -125,7 +126,7 @@ export function RecentActivity() {
 							{data.recentUsers.map((user) => (
 								<div
 									key={user.id}
-									className="flex items-center justify-between rounded-lg border p-3"
+									className="mb-3 flex items-center justify-between rounded-lg border p-3"
 								>
 									<div className="flex items-center gap-3">
 										<Avatar className="h-8 w-8">
@@ -164,6 +165,60 @@ export function RecentActivity() {
 	);
 }
 
+const ExamStatusBadge = ({
+	status,
+	terminationReason,
+}: {
+	status: string;
+	terminationReason: string | null;
+}) => {
+	if (status === null) {
+		return null;
+	}
+
+	if (status === "terminated") {
+		return (
+			<div className="flex items-center justify-end gap-1 text-right">
+				<Badge variant={statusVariant[status]} className="capitalize">
+					{status.split("_").join(" ")}
+				</Badge>
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger>
+							<Info className="size-4.5 text-muted-foreground" />
+						</TooltipTrigger>
+						<TooltipContent className="space-y-1.5">
+							<p className="font-semibold text-lg">Cheating Detected !!!</p>
+							<p className="font-medium">{terminationReason}</p>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+			</div>
+		);
+	}
+
+	return (
+		<div className="text-right">
+			<Badge variant={statusVariant[status]} className="capitalize">
+				{status.split("_").join(" ")}
+			</Badge>
+		</div>
+	);
+};
+
+const statusVariant: Record<
+	string,
+	React.ComponentProps<typeof Badge>["variant"]
+> = {
+	assigned: "outline",
+	in_progress: "secondary",
+	started: "secondary",
+	completed: "default",
+	passed: "default",
+	failed: "destructive",
+	aborted: "destructive",
+	terminated: "destructive",
+};
 export function RecentActivitySkeleton() {
 	return (
 		<div className="grid gap-4 md:grid-cols-2">

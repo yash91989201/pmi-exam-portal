@@ -38,7 +38,6 @@ export const UserExamsTable = ({ userId }: { userId: string }) => {
 		}),
 	);
 
-	console.log(userExamsData);
 	return (
 		<section className="space-y-3">
 			<h2 className="font-bold text-xl">Exams Results</h2>

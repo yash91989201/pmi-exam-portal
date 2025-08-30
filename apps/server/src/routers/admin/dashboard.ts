@@ -23,6 +23,7 @@ const RecentActivityOutput = z.object({
 			status: z.string(),
 			marks: z.number().nullable(),
 			completedAt: z.date().nullable(),
+			terminationReason: z.string().nullable(),
 		}),
 	),
 	recentUsers: z.array(
@@ -144,7 +145,6 @@ export const adminDashboardRouter = {
 		.output(RecentActivityOutput)
 		.handler(async ({ context }) => {
 			const [recentAttempts, recentUsers] = await Promise.all([
-				// Recent exam attempts with user and exam info
 				context.db
 					.select({
 						id: examAttempt.id,
@@ -153,6 +153,7 @@ export const adminDashboardRouter = {
 						status: examAttempt.status,
 						marks: examAttempt.marks,
 						completedAt: examAttempt.completedAt,
+						terminationReason: examAttempt.terminationReason,
 					})
 					.from(examAttempt)
 					.innerJoin(userExam, eq(examAttempt.userExamId, userExam.id))

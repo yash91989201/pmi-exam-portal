@@ -1,9 +1,13 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
+import {
+	flexRender,
+	getCoreRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
 import type { UserWithRole } from "better-auth/plugins/admin";
 import {
-	ArrowUpDown,
 	ChevronLeft,
 	ChevronRight,
 	ClipboardPen,
@@ -16,7 +20,6 @@ import {
 	Trash2,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import DataTable from "@/components/ui/data-table";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -120,175 +123,10 @@ export const UsersTable = ({
 		});
 	};
 
-	return (
-		<section>
-			<DataTable
-				columns={getColumn({
-					handleBanUser,
-					handleUnbanUser,
-					handleDeleteUser,
-				})}
-				data={users}
-			/>
-			<div className="my-4 flex items-center justify-between">
-				<div className="flex items-center space-x-2">
-					<span className="text-sm">Rows per page</span>
-					<Select value={limit.toString()} onValueChange={handleLimitChange}>
-						<SelectTrigger className="w-[70px]">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="5">5</SelectItem>
-							<SelectItem value="10">10</SelectItem>
-							<SelectItem value="20">20</SelectItem>
-							<SelectItem value="50">50</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-				<Pagination className="mx-0 w-fit justify-end">
-					<PaginationContent>
-						<PaginationItem>
-							<Link
-								to="/dashboard/users"
-								search={{ page: Math.max(1, page - 1), limit }}
-								className={cn(
-									buttonVariants({
-										variant: "outline",
-										size: "icon",
-									}),
-									!hasPreviousPage && "pointer-events-none opacity-50",
-								)}
-								aria-disabled={!hasPreviousPage}
-								tabIndex={!hasPreviousPage ? -1 : 0}
-							>
-								<ChevronLeft className="size-4.5" />
-							</Link>
-						</PaginationItem>
-						{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-							const pageNum = i + 1;
-							return (
-								<PaginationItem key={pageNum}>
-									<Link
-										to="/dashboard/users"
-										search={{ page: pageNum, limit }}
-										className={cn(
-											buttonVariants({
-												variant: "outline",
-												size: "icon",
-											}),
-											page === pageNum &&
-												"bg-accent font-bold text-accent-foreground hover:bg-accent hover:text-accent-foreground",
-										)}
-										aria-current={page === pageNum ? "page" : undefined}
-									>
-										{pageNum}
-									</Link>
-								</PaginationItem>
-							);
-						})}
-						<PaginationItem>
-							<Link
-								to="/dashboard/users"
-								search={{ page: Math.min(totalPages, page + 1), limit }}
-								className={cn(
-									buttonVariants({
-										variant: "outline",
-										size: "icon",
-									}),
-									!hasNextPage && "pointer-events-none opacity-50",
-								)}
-								aria-disabled={!hasNextPage}
-								tabIndex={!hasNextPage ? -1 : 0}
-							>
-								<ChevronRight className="size-4.5" />
-							</Link>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
-			</div>
-		</section>
-	);
-};
-
-export const UsersTableSkeleton = ({ limit = 10 }: { limit?: number }) => {
-	return (
-		<section>
-			{/* Table Header and Rows Skeleton */}
-			<div className="w-full">
-				<div className="rounded-md border">
-					{/* Table Header */}
-					<div className="border-b bg-muted/50 px-4 py-3">
-						<div className="flex items-center justify-between">
-							<div className="flex items-center space-x-4">
-								<Skeleton className="h-4 w-20" />
-								<Skeleton className="h-4 w-16" />
-								<Skeleton className="h-4 w-16" />
-								<Skeleton className="h-4 w-16" />
-							</div>
-						</div>
-					</div>
-
-					{/* Table Rows */}
-					{Array.from({ length: limit }, (_, i) => (
-						<div
-							key={i.toString()}
-							className="border-b px-4 py-3 last:border-b-0"
-						>
-							<div className="flex items-center justify-between">
-								<div className="flex items-center space-x-20">
-									<div className="flex flex-col gap-y-1.5">
-										<Skeleton className="h-4 w-24" />
-										<Skeleton className="h-3 w-36" />
-									</div>
-									<Skeleton className="h-4 w-20" />
-									<Skeleton className="h-9 w-9 rounded" />
-								</div>
-								<Skeleton className="h-8 w-8 rounded" />
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
-
-			{/* Pagination Skeleton */}
-			<div className="my-4 flex items-center justify-between">
-				<div className="flex items-center space-x-2">
-					<Skeleton className="h-4 w-20" />
-					<Skeleton className="h-9 w-[70px]" />
-				</div>
-				<div className="flex items-center space-x-1">
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-					<Skeleton className="h-9 w-9" />
-				</div>
-			</div>
-		</section>
-	);
-};
-
-export const getColumn = ({
-	handleBanUser,
-	handleDeleteUser,
-	handleUnbanUser,
-}: {
-	handleBanUser: (userId: string) => void;
-	handleUnbanUser: (userId: string) => void;
-	handleDeleteUser: (userId: string) => void;
-}): ColumnDef<UserWithRole>[] => {
 	const columns: ColumnDef<UserWithRole>[] = [
 		{
 			accessorKey: "name",
-			header: ({ column }) => (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					<span>Name</span>
-					<ArrowUpDown className="ml-2 size-4.5" />
-				</Button>
-			),
+			header: "Name",
 			cell: ({ row }) => (
 				<div className="flex flex-col">
 					<span className="font-medium">{row.getValue("name") || "N/A"}</span>
@@ -300,15 +138,7 @@ export const getColumn = ({
 		},
 		{
 			accessorKey: "createdAt",
-			header: ({ column }) => (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					Created
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			),
+			header: "Created At",
 			cell: ({ row }) => (
 				<span className="text-sm">
 					{row.original.createdAt
@@ -407,5 +237,214 @@ export const getColumn = ({
 		},
 	];
 
-	return columns;
+	// Initialize table with useReactTable hook
+	const table = useReactTable({
+		data: users,
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+		// No pagination model - we're handling pagination server-side
+	});
+
+	return (
+		<section>
+			{/* Table implementation with scrollable body */}
+			<div className="flex flex-col gap-3">
+				<div className="overflow-hidden rounded-md border">
+					<Table>
+						<TableHeader className="sticky top-0 z-10 bg-muted/50">
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
+										return (
+											<TableHead
+												key={header.id}
+												className="font-semibold text-gray-700"
+											>
+												{header.isPlaceholder
+													? null
+													: flexRender(
+															header.column.columnDef.header,
+															header.getContext(),
+														)}
+											</TableHead>
+										);
+									})}
+								</TableRow>
+							))}
+						</TableHeader>
+					</Table>
+					{/* Scrollable table body container */}
+					<div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
+						<Table>
+							<TableBody>
+								{table.getRowModel().rows?.length ? (
+									table.getRowModel().rows.map((row) => (
+										<TableRow
+											key={row.id}
+											data-state={row.getIsSelected() && "selected"}
+											className="bg-white"
+										>
+											{row.getVisibleCells().map((cell) => (
+												<TableCell key={cell.id}>
+													{flexRender(
+														cell.column.columnDef.cell,
+														cell.getContext(),
+													)}
+												</TableCell>
+											))}
+										</TableRow>
+									))
+								) : (
+									<TableRow>
+										<TableCell
+											colSpan={columns.length}
+											className="h-24 text-center"
+										>
+											No results.
+										</TableCell>
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</div>
+				</div>
+			</div>
+
+			{/* Custom pagination controls */}
+			<div className="my-4 flex items-center justify-between">
+				<div className="flex items-center space-x-2">
+					<span className="text-sm">Rows per page</span>
+					<Select value={limit.toString()} onValueChange={handleLimitChange}>
+						<SelectTrigger className="w-[70px]">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="5">5</SelectItem>
+							<SelectItem value="10">10</SelectItem>
+							<SelectItem value="20">20</SelectItem>
+							<SelectItem value="50">50</SelectItem>
+						</SelectContent>
+					</Select>
+				</div>
+				<Pagination className="mx-0 w-fit justify-end">
+					<PaginationContent>
+						<PaginationItem>
+							<Link
+								to="/dashboard/users"
+								search={{ page: Math.max(1, page - 1), limit }}
+								className={cn(
+									buttonVariants({
+										variant: "outline",
+										size: "icon",
+									}),
+									!hasPreviousPage && "pointer-events-none opacity-50",
+								)}
+								aria-disabled={!hasPreviousPage}
+								tabIndex={!hasPreviousPage ? -1 : 0}
+							>
+								<ChevronLeft className="size-4.5" />
+							</Link>
+						</PaginationItem>
+						{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+							const pageNum = i + 1;
+							return (
+								<PaginationItem key={pageNum}>
+									<Link
+										to="/dashboard/users"
+										search={{ page: pageNum, limit }}
+										className={cn(
+											buttonVariants({
+												variant: "outline",
+												size: "icon",
+											}),
+											page === pageNum &&
+												"bg-accent font-bold text-accent-foreground hover:bg-accent hover:text-accent-foreground",
+										)}
+										aria-current={page === pageNum ? "page" : undefined}
+									>
+										{pageNum}
+									</Link>
+								</PaginationItem>
+							);
+						})}
+						<PaginationItem>
+							<Link
+								to="/dashboard/users"
+								search={{ page: Math.min(totalPages, page + 1), limit }}
+								className={cn(
+									buttonVariants({
+										variant: "outline",
+										size: "icon",
+									}),
+									!hasNextPage && "pointer-events-none opacity-50",
+								)}
+								aria-disabled={!hasNextPage}
+								tabIndex={!hasNextPage ? -1 : 0}
+							>
+								<ChevronRight className="size-4.5" />
+							</Link>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
+			</div>
+		</section>
+	);
+};
+
+export const UsersTableSkeleton = () => {
+	return (
+		<section>
+			{/* Table Header and Rows Skeleton */}
+			<div className="w-full">
+				<div className="rounded-md border">
+					{/* Table Header */}
+					<div className="border-b bg-muted/50 px-4 py-3">
+						<div className="flex items-center justify-between">
+							<div className="flex items-center space-x-4">
+								<Skeleton className="h-4 w-20" />
+								<Skeleton className="h-4 w-16" />
+								<Skeleton className="h-4 w-16" />
+								<Skeleton className="h-4 w-16" />
+							</div>
+						</div>
+					</div>
+
+					{/* Table Rows */}
+					{Array.from({ length: 10 }, (_, i) => (
+						<div
+							key={i.toString()}
+							className="border-b px-4 py-3 last:border-b-0"
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center space-x-20">
+									<div className="flex flex-col gap-y-1.5">
+										<Skeleton className="h-4 w-24" />
+										<Skeleton className="h-3 w-36" />
+									</div>
+									<Skeleton className="h-4 w-20" />
+									<Skeleton className="h-9 w-9 rounded" />
+								</div>
+								<Skeleton className="h-8 w-8 rounded" />
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* Pagination Skeleton */}
+			<div className="my-4 flex items-center justify-between">
+				<div className="flex items-center space-x-2">
+					<Skeleton className="h-4 w-20" />
+					<Skeleton className="h-9 w-[70px]" />
+				</div>
+				<div className="flex items-center space-x-1">
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+				</div>
+			</div>
+		</section>
+	);
 };
