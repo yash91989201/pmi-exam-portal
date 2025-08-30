@@ -121,40 +121,42 @@ export function RecentActivity() {
 							No recent registrations
 						</p>
 					) : (
-						data.recentUsers.map((user) => (
-							<div
-								key={user.id}
-								className="flex items-center justify-between rounded-lg border p-3"
-							>
-								<div className="flex items-center gap-3">
-									<Avatar className="h-8 w-8">
-										<AvatarFallback className="text-xs">
-											{user.name
-												?.split(" ")
-												.map((n) => n[0])
-												.join("") || user.email.slice(0, 2).toUpperCase()}
-										</AvatarFallback>
-									</Avatar>
-									<div>
-										<div className="font-medium text-sm">
-											{user.name || "Unnamed User"}
-										</div>
-										<div className="text-muted-foreground text-xs">
-											{user.email}
+						<ScrollArea className="h-96">
+							{data.recentUsers.map((user) => (
+								<div
+									key={user.id}
+									className="flex items-center justify-between rounded-lg border p-3"
+								>
+									<div className="flex items-center gap-3">
+										<Avatar className="h-8 w-8">
+											<AvatarFallback className="text-xs">
+												{user.name
+													?.split(" ")
+													.map((n) => n[0])
+													.join("") || user.email.slice(0, 2).toUpperCase()}
+											</AvatarFallback>
+										</Avatar>
+										<div>
+											<div className="font-medium text-sm">
+												{user.name || "Unnamed User"}
+											</div>
+											<div className="text-muted-foreground text-xs">
+												{user.email}
+											</div>
 										</div>
 									</div>
-								</div>
-								<div className="text-right">
-									<div className="flex items-center gap-1 text-muted-foreground text-xs">
-										<Calendar className="h-3 w-3" />
-										{formatDistanceToNow(user.createdAt, { addSuffix: true })}
+									<div className="text-right">
+										<div className="flex items-center gap-1 text-muted-foreground text-xs">
+											<Calendar className="h-3 w-3" />
+											{formatDistanceToNow(user.createdAt, { addSuffix: true })}
+										</div>
+										<Button variant="ghost" size="sm" className="mt-1 h-6">
+											<ExternalLink className="h-3 w-3" />
+										</Button>
 									</div>
-									<Button variant="ghost" size="sm" className="mt-1 h-6">
-										<ExternalLink className="h-3 w-3" />
-									</Button>
 								</div>
-							</div>
-						))
+							))}
+						</ScrollArea>
 					)}
 				</CardContent>
 			</Card>
