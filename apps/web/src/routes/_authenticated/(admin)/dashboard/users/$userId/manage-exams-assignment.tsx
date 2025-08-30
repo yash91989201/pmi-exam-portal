@@ -12,7 +12,7 @@ const RouteSearchSchema = z.object({
 	exam: z.string().optional(),
 	status: z.enum(["all", "assigned", "unassigned"]).default("all").optional(),
 	cursor: z.string().optional(),
-	limit: z.number().catch(10),
+	limit: z.number().default(10).catch(10),
 });
 
 export const Route = createFileRoute(
@@ -40,6 +40,7 @@ export const Route = createFileRoute(
 			}),
 		);
 	},
+	pendingComponent: () => <UpdateExamsAssignmentTableSkeleton />,
 	component: RouteComponent,
 });
 
