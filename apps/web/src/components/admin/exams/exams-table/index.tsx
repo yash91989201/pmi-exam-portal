@@ -222,7 +222,8 @@ export const ExamsTable = () => {
 					page={page}
 					limit={limit}
 					totalPages={totalPages}
-					basePath={`/dashboard/exams?certification=${certification ?? ""}`}
+					basePath={"/dashboard/exams"}
+					search={{ certification }}
 					hasNextPage={hasNextPage}
 					hasPreviousPage={hasPreviousPage}
 				/>
@@ -284,4 +285,3 @@ export const ExamsTableSkeleton = () => {
 		</section>
 	);
 };
-
