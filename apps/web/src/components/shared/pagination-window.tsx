@@ -16,6 +16,7 @@ type PaginationWindowProps = {
 	hasNextPage?: boolean;
 	hasPreviousPage?: boolean;
 	basePath: string; // e.g. '/dashboard/exams'
+	search?: Record<string, string | undefined>;
 	maxItems?: number; // default 5
 };
 
@@ -32,6 +33,7 @@ export const PaginationWindow: FC<PaginationWindowProps> = ({
 	// keeping next/prev flags to allow callers to control button disabled state
 	hasNextPage = true,
 	hasPreviousPage = true,
+	search,
 }) => {
 	const pages: number[] = [];
 
@@ -60,7 +62,7 @@ export const PaginationWindow: FC<PaginationWindowProps> = ({
 				<PaginationItem>
 					<Link
 						to={basePath}
-						search={{ page: Math.max(1, page - 1), limit }}
+						search={{ page: Math.max(1, page - 1), limit, ...search }}
 						className={cn(
 							buttonVariants({ variant: "outline", size: "icon" }),
 							!hasPreviousPage && "pointer-events-none opacity-50",
@@ -77,7 +79,7 @@ export const PaginationWindow: FC<PaginationWindowProps> = ({
 						<PaginationItem key="first">
 							<Link
 								to={basePath}
-								search={{ page: 1, limit }}
+								search={{ page: 1, limit, ...search }}
 								className={cn(
 									buttonVariants({ variant: "outline", size: "icon" }),
 								)}
@@ -93,7 +95,7 @@ export const PaginationWindow: FC<PaginationWindowProps> = ({
 					<PaginationItem key={pageNum}>
 						<Link
 							to={basePath}
-							search={{ page: pageNum, limit }}
+							search={{ page: pageNum, limit, ...search }}
 							className={cn(
 								buttonVariants({ variant: "outline", size: "icon" }),
 								page === pageNum &&
@@ -112,7 +114,7 @@ export const PaginationWindow: FC<PaginationWindowProps> = ({
 						<PaginationItem key="last">
 							<Link
 								to={basePath}
-								search={{ page: totalPages, limit }}
+								search={{ page: totalPages, limit, ...search }}
 								className={cn(
 									buttonVariants({ variant: "outline", size: "icon" }),
 								)}
@@ -126,7 +128,7 @@ export const PaginationWindow: FC<PaginationWindowProps> = ({
 				<PaginationItem>
 					<Link
 						to={basePath}
-						search={{ page: Math.min(totalPages, page + 1), limit }}
+						search={{ page: Math.min(totalPages, page + 1), limit, ...search }}
 						className={cn(
 							buttonVariants({ variant: "outline", size: "icon" }),
 							!hasNextPage && "pointer-events-none opacity-50",
