@@ -249,16 +249,15 @@ export const adminDashboardRouter = {
 		.output(UserActivityOutput)
 		.handler(async ({ context }) => {
 			const [dailyRegistrations, monthlyAttempts] = await Promise.all([
-				// Daily registrations for the last 30 days
 				context.db
 					.select({
-						date: sql<string>`DATE(${user.createdAt})`,
+						date: sql<string>`TO_CHAR(${user.createdAt}, 'YYYY-MM-DD')`,
 						count: count(),
 					})
 					.from(user)
-					.where(sql`${user.createdAt} >= NOW() - INTERVAL '30 days'`)
-					.groupBy(sql`DATE(${user.createdAt})`)
-					.orderBy(sql`DATE(${user.createdAt})`),
+					.where(sql`${user.createdAt} >= CURRENT_DATE - INTERVAL '30 days'`)
+					.groupBy(sql`TO_CHAR(${user.createdAt}, 'YYYY-MM-DD')`)
+					.orderBy(sql`TO_CHAR(${user.createdAt}, 'YYYY-MM-DD')`),
 
 				// Monthly attempts for the last 12 months
 				context.db
