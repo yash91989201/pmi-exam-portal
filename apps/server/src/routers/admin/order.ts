@@ -85,7 +85,7 @@ export const adminOrderRouter = {
 			if (updatedOrdersId.length > 0) {
 				await Promise.all(
 					updatedOrdersId.map(async (updatedOrderId) => {
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: <not null required here>
 						const { orderPriority, orderText } = updatedOrders.find(
 							(updatedOrder) => updatedOrder.id === updatedOrderId,
 						)!;
@@ -101,7 +101,7 @@ export const adminOrderRouter = {
 				);
 				await Promise.all(
 					updatedOrdersId.map(async (updatedOrderId) => {
-						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						// biome-ignore lint/style/noNonNullAssertion: <not null required here>
 						const { orderPriority, orderText } = updatedOrders.find(
 							(updatedOrder) => updatedOrder.id === updatedOrderId,
 						)!;
@@ -144,6 +144,35 @@ export const adminOrderRouter = {
 				message: "Orders updated successfully",
 			};
 		}),
+	syncOrders: adminProcedure.handler(async ({ context }) => {
+		await context.db.delete(userOrders);
+
+		const allOrders = await context.db.query.orders.findMany();
+
+		const allUsers = await context.db.query.user.findMany({
+			where: eq(user.role, "user"),
+		});
+
+		if (allOrders.length === 0 || allUsers.length === 0) {
+			return { success: true, message: "No orders or users to sync." };
+		}
+
+		const newUserOrders = allUsers.flatMap((user) =>
+			allOrders.map((order) => ({
+				userId: user.id,
+				orderId: order.id,
+				orderText: order.orderText,
+				orderPriority: order.orderPriority,
+				isCompleted: true,
+			})),
+		);
+
+		if (newUserOrders.length > 0) {
+			await context.db.insert(userOrders).values(newUserOrders);
+		}
+
+		return { success: true, message: "User orders synced successfully" };
+	}),
 };
 
 export type AdminOrderRouter = typeof adminOrderRouter;
