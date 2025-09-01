@@ -37,7 +37,7 @@ const attemptConfig = {
 
 export function UserActivityCharts() {
 	const { data } = useSuspenseQuery(
-		queryUtils.admin.getUserActivity.queryOptions(),
+		queryUtils.admin.getUserActivity.queryOptions({}),
 	);
 
 	return (
