@@ -90,7 +90,7 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 			<Button
 				variant="ghost"
 				size="icon"
-				className="cursor-grab touch-none active:cursor-grabbing mt-1 flex-shrink-0"
+				className="mt-1 flex-shrink-0 cursor-grab touch-none active:cursor-grabbing"
 				{...attributes}
 				{...listeners}
 			>
@@ -108,7 +108,7 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 									placeholder="Enter order description..."
 									className={cn(
 										"text-base",
-										isCompleted && "line-through text-muted-foreground",
+										isCompleted && "text-muted-foreground line-through",
 									)}
 								/>
 							</FormControl>
@@ -129,7 +129,7 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 							</FormControl>
 							<FormLabel
 								htmlFor={`completed-${id}`}
-								className="cursor-pointer text-sm font-normal text-muted-foreground"
+								className="cursor-pointer font-normal text-muted-foreground text-sm"
 							>
 								Mark as completed
 							</FormLabel>
@@ -137,15 +137,6 @@ const SortableItem = ({ id, index, form, onRemove }: SortableItemProps) => {
 					)}
 				/>
 			</div>
-			<Button
-				type="button"
-				variant="ghost"
-				size="icon"
-				className="mt-1 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
-				onClick={() => onRemove(index)}
-			>
-				<Trash className="h-5 w-5" />
-			</Button>
 		</div>
 	);
 };
@@ -250,21 +241,6 @@ export const ManageOrdersForm = ({ userId }: { userId: string }) => {
 								))}
 							</SortableContext>
 						</DndContext>
-						<Button
-							type="button"
-							variant="outline"
-							className="mt-4"
-							onClick={() =>
-								append({
-									orderText: "",
-									isCompleted: false,
-									orderPriority: fields.length + 1,
-								})
-							}
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Add New Order
-						</Button>
 					</CardContent>
 					<CardFooter className="flex justify-end gap-2 border-t pt-6">
 						<Button

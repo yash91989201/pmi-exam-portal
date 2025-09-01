@@ -84,8 +84,8 @@ export const attemptResponse = pgTable("attempt_response", {
 	questionId: cuid2("question_id")
 		.notNull()
 		.references(() => question.id),
-	optionId: cuid2("option_id").references(() => option.id), // nullable - question might be unanswered
-	score: smallint("score").notNull().default(0), // points earned for this response
+	optionId: cuid2("option_id").references(() => option.id),
+	score: smallint("score").notNull().default(0),
 	isCorrect: boolean("is_correct").notNull().default(false),
 });
 
