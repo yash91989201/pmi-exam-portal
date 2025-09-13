@@ -69,8 +69,21 @@ export async function parseExcelBuffer(
 		}
 
 		const worksheet = workbook.Sheets[sheetName];
-		const jsonData = XLSX.utils.sheet_to_json(worksheet);
-		const validationResult = ExcelImportSchema.parse(jsonData);
+		const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+
+		// Convert all values to strings to ensure type consistency
+		const stringifiedData = jsonData.map((row: any) => {
+			const stringifiedRow: any = {};
+			for (const key in row) {
+				if (row[key] != null) {
+					stringifiedRow[key] = String(row[key]);
+				} else {
+					stringifiedRow[key] = row[key]; // Keep null/undefined as is
+				}
+			}
+			return stringifiedRow;
+		});
+		const validationResult = ExcelImportSchema.parse(stringifiedData);
 
 		return validationResult;
 	} catch (error) {

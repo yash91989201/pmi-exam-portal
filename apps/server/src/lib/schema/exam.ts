@@ -366,4 +366,3 @@ export const UserExamResultSchema = z.object({
 export const ListExamResultsOutput = z.object({
 	results: z.array(UserExamResultSchema),
 });
-
