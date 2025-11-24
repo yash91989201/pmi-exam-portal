@@ -23,11 +23,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
 		meta: [
 			{
-				title: "PMI Exam Portal",
+				title: "PMI Edu",
 			},
 			{
 				name: "description",
-				content: "PMI Exam Portal",
+				content: "PMI Edu",
 			},
 		],
 		links: [
@@ -54,7 +54,7 @@ function RootComponent() {
 			<ThemeProvider
 				attribute="class"
 				storageKey="theme"
-				defaultTheme="light"
+				defaultTheme="dark"
 				disableTransitionOnChange
 			>
 				<div className="grid h-svh grid-rows-[auto_1fr]">

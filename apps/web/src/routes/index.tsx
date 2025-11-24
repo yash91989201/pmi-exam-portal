@@ -30,7 +30,7 @@ export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
 		const session = context.session;
 
-		if (!session) {
+		if (session === null) {
 			return;
 		}
 
@@ -45,7 +45,7 @@ function HomeComponent() {
 	return (
 		<div className="flex min-h-screen flex-col">
 			<Header />
-			<main className="flex-grow bg-background">
+			<main className="grow bg-background">
 				{/* Hero Section */}
 				<section className="bg-background py-12 sm:py-16 lg:py-20 xl:py-24">
 					<div className="container mx-auto px-4">
@@ -54,16 +54,15 @@ function HomeComponent() {
 								<div className="space-y-3 sm:space-y-4">
 									<h1 className="font-bold text-3xl text-foreground sm:text-4xl lg:text-5xl xl:text-6xl">
 										Master Your{" "}
-										<span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+										<span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
 											PMI Certification
 										</span>{" "}
 										Journey
 									</h1>
 									<p className="text-base text-muted-foreground sm:text-lg lg:text-xl">
-										Join thousands of professionals who have advanced their
-										careers through our comprehensive PMI exam preparation
-										platform. Practice with real exam questions and get
-										certified faster.
+										Join thousands of professionals who trust our officially
+										PMI-authorized training platform. Prepare with real
+										exam-style questions and earn your certification faster.
 									</p>
 								</div>
 								<div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -230,7 +229,7 @@ function HomeComponent() {
 				</section>
 
 				{/* CTA Section */}
-				<section className="bg-gradient-to-r from-primary to-secondary py-12 text-primary-foreground sm:py-16 lg:py-20">
+				<section className="bg-linear-to-r from-primary to-secondary py-12 text-primary-foreground sm:py-16 lg:py-20">
 					<div className="container mx-auto px-4 text-center">
 						<div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
 							<h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl">
