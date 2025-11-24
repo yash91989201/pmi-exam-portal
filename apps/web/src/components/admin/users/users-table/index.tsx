@@ -257,7 +257,7 @@ export const UsersTable = ({
 											<TableHead
 												key={header.id}
 												className={cn(
-													"font-semibold text-gray-700",
+													"font-semibold",
 													header.column.id === "exams-info" && "text-right",
 													header.column.id === "actions" && "text-right",
 												)}

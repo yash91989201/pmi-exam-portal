@@ -145,10 +145,7 @@ export const ExamsTable = () => {
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => {
 										return (
-											<TableHead
-												key={header.id}
-												className="font-semibold text-gray-700"
-											>
+											<TableHead key={header.id} className="font-semibold">
 												{header.isPlaceholder
 													? null
 													: flexRender(
