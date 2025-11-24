@@ -168,7 +168,6 @@ export const ExamsTable = () => {
 										<TableRow
 											key={row.id}
 											data-state={row.getIsSelected() && "selected"}
-											className="bg-white"
 										>
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id}>

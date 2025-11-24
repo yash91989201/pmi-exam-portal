@@ -284,7 +284,6 @@ export const UsersTable = ({
 										<TableRow
 											key={row.id}
 											data-state={row.getIsSelected() && "selected"}
-											className="bg-white"
 										>
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id}>
