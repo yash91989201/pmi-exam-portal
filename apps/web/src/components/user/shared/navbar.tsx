@@ -12,8 +12,7 @@ import { authClient } from "@/lib/auth-client";
 
 const links = [
 	{ href: "/exams", label: "Exams" },
-	{ href: "/orders", label: "Orders" },
-	{ href: "/certificates", label: "Certificates" },
+	{ href: "/orders", label: "Orders" }
 ];
 
 export const UserNavbar = () => {
