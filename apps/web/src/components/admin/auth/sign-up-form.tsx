@@ -49,7 +49,7 @@ export const SignUpForm = () => {
 
 	const { mutateAsync: signUpWithEmail } = useMutation({
 		mutationKey: ["sign-up", "email"],
-		mutationFn: async (formData: Omit<AdminSignupSchemaType, "formState">) => {
+		mutationFn: async (formData: AdminSignupSchemaType) => {
 			const signUpRes = await authClient.signUp.email({
 				...formData,
 				name: formData.email.split("@")[0] ?? "",
@@ -69,10 +69,7 @@ export const SignUpForm = () => {
 		},
 	});
 
-	const onSubmit: SubmitHandler<AdminSignupSchemaType> = async ({
-		formState: _,
-		...formData
-	}) => {
+	const onSubmit: SubmitHandler<AdminSignupSchemaType> = async (formData) => {
 		try {
 			const signUpWithEmailRes = await signUpWithEmail(formData);
 
