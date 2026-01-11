@@ -14,7 +14,7 @@ export const Route = createFileRoute("/auth/admin/sign-up")({
 		const { message, data } = await orpcClient.admin.getRegistrationStatus();
 
 		return {
-			registrationEnabled: data?.registrationEnabled,
+			registrationEnabled: true,
 			error: message,
 		};
 	},
