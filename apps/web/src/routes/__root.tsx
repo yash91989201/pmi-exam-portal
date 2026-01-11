@@ -54,7 +54,7 @@ function RootComponent() {
 			<ThemeProvider
 				attribute="class"
 				storageKey="theme"
-				defaultTheme="dark"
+				defaultTheme="light"
 				disableTransitionOnChange
 			>
 				<div className="grid h-svh grid-rows-[auto_1fr]">
