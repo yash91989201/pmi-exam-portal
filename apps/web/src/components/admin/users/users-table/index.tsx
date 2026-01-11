@@ -257,7 +257,7 @@ export const UsersTable = ({
 											<TableHead
 												key={header.id}
 												className={cn(
-													"font-semibold text-gray-700",
+													"font-semibold",
 													header.column.id === "exams-info" && "text-right",
 													header.column.id === "actions" && "text-right",
 												)}
@@ -284,7 +284,6 @@ export const UsersTable = ({
 										<TableRow
 											key={row.id}
 											data-state={row.getIsSelected() && "selected"}
-											className="bg-white"
 										>
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id}>

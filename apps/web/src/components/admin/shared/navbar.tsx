@@ -27,9 +27,9 @@ export const AdminNavbar = () => {
 		},
 	});
 	return (
-		<nav className="border-border border-b bg-background py-6">
+		<nav className="border-border border-b bg-background py-3">
 			<div className="container mx-auto flex items-center justify-between gap-6">
-				<img src="/pmi_logo.webp" alt="PMI Logo" className="h-12 w-auto" />
+				<img src="/pmi_logo.webp" alt="PMI Logo" className="h-14" />
 				<div className="flex flex-1 items-center gap-5">
 					{links.map(({ href, label }) => (
 						<Link
