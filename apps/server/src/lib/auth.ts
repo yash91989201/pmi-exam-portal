@@ -18,6 +18,8 @@ export const auth = betterAuth({
 	trustedOrigins: [env.CORS_ORIGIN],
 	emailAndPassword: {
 		enabled: true,
+		autoSignIn: true,
+		requireEmailVerification: false,
 	},
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
@@ -25,7 +27,6 @@ export const auth = betterAuth({
 		admin(),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
-				console.log(otp);
 				if (type === "sign-in") {
 					await sendSignInOtp({ email, otp });
 				} else if (type === "email-verification") {

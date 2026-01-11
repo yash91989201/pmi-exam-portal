@@ -11,7 +11,7 @@ export const sendSignInOtp = async ({
 	otp: string;
 }) => {
 	await resend.emails.send({
-		from: "PMI India <auth@mail.pmiindia.org>",
+		from: "PMI India <auth@mail.pmisa.in>",
 		to: [email],
 		subject: "Your sign in code",
 		react: <SignInEmail otp={otp} />,
