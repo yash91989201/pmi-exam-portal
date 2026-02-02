@@ -11,12 +11,12 @@ function RouteComponent() {
 			<div className="hidden bg-linear-to-br from-secondary to-chart-3 p-8 text-primary-foreground lg:flex lg:flex-col lg:items-center lg:justify-center">
 				<div className="text-center">
 					<img
-						src="/pmi_logo.webp"
-						alt="PMI Logo"
+						src="/naukri-e-learning.webp"
+						alt="Naukri E-Learning Logo"
 						className="mx-auto mb-4 h-36 w-auto"
 					/>
 					<h1 className="font-bold text-4xl tracking-tight">
-						Welcome back to the PMI Authorized Exam Portal
+						Welcome back to the Naukri E-Learning Authorized Exam Portal
 					</h1>
 					<p className="mt-4 text-lg">
 						Manage exams, users, and results with ease.

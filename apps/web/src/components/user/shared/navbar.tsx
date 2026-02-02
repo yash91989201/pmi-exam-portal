@@ -33,7 +33,7 @@ export const UserNavbar = () => {
 	return (
 		<nav className="border-border border-b bg-background py-6">
 			<div className="container mx-auto flex items-center justify-between gap-6">
-				<img src="/pmi_logo.webp" alt="PMI Logo" className="h-12 w-auto" />
+				<img src="/naukri-e-learning.webp" alt="Naukri E-Learning Logo" className="h-10 w-auto rounded-md" />
 				<div className="flex flex-1 items-center gap-5">
 					{links.map(({ href, label }) => (
 						<Link

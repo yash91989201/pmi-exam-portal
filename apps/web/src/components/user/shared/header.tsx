@@ -6,7 +6,7 @@ export function Header() {
 		<header className="border-border border-b bg-background">
 			<div className="container mx-auto flex h-24 items-center justify-between p-3 md:p-0">
 				<Link to="/" className="flex items-center gap-6">
-					<img src="/pmi_logo.webp" alt="PMI Logo" className="h-18" />
+					<img src="/naukri-e-learning.webp" alt="Naukri E-Learning Logo" className="h-14 rounded-md" />
 				</Link>
 				<div className="flex items-center gap-4">
 					<Button variant="ghost" asChild>

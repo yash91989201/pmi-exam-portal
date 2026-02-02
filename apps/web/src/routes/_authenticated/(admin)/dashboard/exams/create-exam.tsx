@@ -32,7 +32,7 @@ function RouteComponent() {
 							Create New Exam
 						</h1>
 						<p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-							Design comprehensive PMI certification exams with multiple-choice
+							Design comprehensive Naukri E-Learning certification exams with multiple-choice
 							questions, custom scoring, and detailed answer options.
 						</p>
 					</div>

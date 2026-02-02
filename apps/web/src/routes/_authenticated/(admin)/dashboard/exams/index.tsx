@@ -41,7 +41,7 @@ function RouteComponent() {
 			<section className="flex items-center justify-between">
 				<div>
 					<h2 className="font-bold text-3xl tracking-tight">Manage Exams</h2>
-					<p className="">Create and manage PMI certification exams.</p>
+					<p className="">Create and manage Naukri E-Learning certification exams.</p>
 				</div>
 				<Link to="/dashboard/exams/create-exam" className={buttonVariants()}>
 					<Plus className="mr-1 size-4" />

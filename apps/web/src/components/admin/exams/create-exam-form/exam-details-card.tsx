@@ -58,7 +58,7 @@ export const ExamDetailsCard = () => {
 							Exam Information
 						</CardTitle>
 						<p className="mt-2 text-muted-foreground">
-							Set up the basic details for your PMI certification exam
+							Set up the basic details for your Naukri E-Learning certification exam
 						</p>
 					</div>
 				</div>
@@ -78,7 +78,7 @@ export const ExamDetailsCard = () => {
 								/>
 							</FormControl>
 							<FormDescription>
-								Set up the basic details for your PMI certification exam
+								Set up the basic details for your Naukri E-Learning certification exam
 							</FormDescription>
 							<FormMessage />
 						</FormItem>

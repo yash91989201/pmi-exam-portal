@@ -55,13 +55,13 @@ function HomeComponent() {
 									<h1 className="font-bold text-3xl text-foreground sm:text-4xl lg:text-5xl xl:text-6xl">
 										Master Your{" "}
 										<span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-											PMI Certification
+											Naukri E-Learning Certification
 										</span>{" "}
 										Journey
 									</h1>
 									<p className="text-base text-muted-foreground sm:text-lg lg:text-xl">
 										Join thousands of professionals who trust our officially
-										PMI-authorized training platform. Prepare with real
+										Naukri E-Learning authorized training platform. Prepare with real
 										exam-style questions and earn your certification faster.
 									</p>
 								</div>
@@ -108,10 +108,10 @@ function HomeComponent() {
 					<div className="container mx-auto px-4">
 						<div className="mb-8 text-center lg:mb-12">
 							<h2 className="mb-3 font-bold text-2xl text-foreground sm:text-3xl lg:mb-4 lg:text-4xl">
-								PMI Certifications Available
+								Naukri E-Learning Certifications Available
 							</h2>
 							<p className="text-base text-muted-foreground sm:text-lg">
-								Choose from our comprehensive collection of PMI certification
+								Choose from our comprehensive collection of Naukri E-Learning certification
 								exam preparations
 							</p>
 						</div>
@@ -165,7 +165,7 @@ function HomeComponent() {
 							</h2>
 							<p className="text-base text-muted-foreground sm:text-lg">
 								Experience the most comprehensive and effective way to prepare
-								for your PMI certification
+								for your Naukri E-Learning certification
 							</p>
 						</div>
 
@@ -237,7 +237,7 @@ function HomeComponent() {
 							</h2>
 							<p className="text-base opacity-90 sm:text-lg lg:text-xl">
 								Join thousands of professionals who have transformed their
-								careers through PMI certifications. Start your journey today.
+								careers through Naukri E-Learning certifications. Start your journey today.
 							</p>
 							<div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
 								<Button
@@ -289,7 +289,7 @@ const benefits = [
 		icon: <Zap className="h-5 w-5 text-primary" />,
 		title: "Increase Earning Power",
 		description:
-			"PMI-certified professionals earn higher salaries and have better career advancement opportunities.",
+			"Naukri E-Learning certified professionals earn higher salaries and have better career advancement opportunities.",
 	},
 ];
 
@@ -302,7 +302,7 @@ const stats = [
 	{
 		value: "180+",
 		label: "Countries",
-		description: "PMI presence",
+		description: "Global presence",
 	},
 	{
 		value: "25%",
@@ -374,7 +374,7 @@ const certificationData = [
 	},
 	{
 		icon: <Zap className="h-6 w-6 text-primary" />,
-		name: "PMI-ACP®",
+		name: "Naukri-ACP®",
 		description:
 			"Agile Certified Practitioner - Validate your agile project management skills",
 		duration: "21 hours",

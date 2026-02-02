@@ -30,7 +30,7 @@ function RouteComponent() {
 				<div>
 					<h1 className="font-bold text-3xl tracking-tight">Dashboard</h1>
 					<p className="text-muted-foreground">
-						Overview of your PMI exam portal performance and statistics.
+						Overview of your Naukri E-Learning exam portal performance and statistics.
 					</p>
 				</div>
 			</div>
