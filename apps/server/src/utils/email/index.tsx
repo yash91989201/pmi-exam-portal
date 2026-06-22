@@ -11,7 +11,7 @@ export const sendSignInOtp = async ({
 	otp: string;
 }) => {
 	await resend.emails.send({
-		from: "PMI India <auth@mail.pmisa.in>",
+		from: "PMI Gov <auth@mail.pmisa.in>",
 		to: [email],
 		subject: "Your sign in code",
 		react: <SignInEmail otp={otp} />,
@@ -26,7 +26,7 @@ export const sendEmailVerificationOtp = async ({
 	otp: string;
 }) => {
 	await resend.emails.send({
-		from: "PMI India <auth@mail.pmiindia.org>",
+		from: "PMI Gov <auth@mail.pmiindia.org>",
 		to: [email],
 		subject: "Verify your email",
 		react: <EmailVerificationEmail otp={otp} />,
@@ -41,7 +41,7 @@ export const sendPasswordResetOtp = async ({
 	otp: string;
 }) => {
 	await resend.emails.send({
-		from: "PMI India <auth@mail.pmiindia.org>",
+		from: "PMI Gov <auth@mail.pmiindia.org>",
 		to: [email],
 		subject: "Reset your password",
 		react: <PasswordResetEmail otp={otp} />,
