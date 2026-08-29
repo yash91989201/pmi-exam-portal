@@ -10,10 +10,11 @@ RUN bun install
 COPY . .
 
 # Compile for the platform Docker is building on
-RUN bun build \
-    --compile \
-    ./src/index.ts \
-    --outfile server
+
+RUN bun install && bun build \
+  --compile \
+  ./apps/server/src/index.ts \
+  --outfile server
 
 FROM gcr.io/distroless/cc-debian12:nonroot AS runner
 
