@@ -1,5 +1,5 @@
 # Build stage
-FROM oven/bun:1.2.21 AS builder
+FROM oven/bun:1.4.0 AS builder
 WORKDIR /app
 
 # Copy package files for dependency resolution
@@ -17,27 +17,26 @@ COPY apps/server ./apps/server
 ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
 
-ARG VITE_ALLOWED_HOSTS
-ENV VITE_ALLOWED_HOSTS=$VITE_ALLOWED_HOSTS
-
 # Build the web application
 WORKDIR /app/apps/web
 RUN bun run build
 
-# Production stage
-FROM oven/bun:1.2.21-slim AS production
+# Production stage - static SPA served by nginx
+FROM nginx:1.29-alpine AS production
 
-WORKDIR /app/apps/web
+# Drop the default nginx site and install the SPA config
+RUN rm -f /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built files maintaining the expected structure
-COPY --from=builder /app/apps/web/dist ./dist
-COPY --from=builder /app/apps/web/package.json ./package.json
-COPY --from=builder /app/apps/web/vite.config.ts ./vite.config.ts
+# Static build output: index.html, assets/, and files copied from apps/web/public
+COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
 
-RUN bun add vite@latest
+# Listen on 8080 so nginx can bind as the unprivileged nginx user
+EXPOSE 8080
 
-# Expose port
-EXPOSE 5173
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:8080/index.html || exit 1
 
-# Start the application
-ENTRYPOINT ["bunx", "vite", "preview", "--host", "0.0.0.0", "--port", "5173"]
+STOPSIGNAL SIGQUIT
+
+CMD ["nginx", "-g", "daemon off;"]
