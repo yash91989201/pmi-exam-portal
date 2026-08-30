@@ -16,6 +16,7 @@
 		"db:watch": "docker compose up",
 		"db:stop": "docker compose stop",
 		"db:down": "docker compose down",
+		"db:import-exams": "bun run scripts/migrate-exams.ts",
 		"update": "bun update --latest"
 	},
 	"dependencies": {
