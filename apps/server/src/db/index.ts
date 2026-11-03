@@ -1,9 +1,11 @@
-import { drizzle } from "drizzle-orm/bun-sql";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "@/db/schema";
 import * as authSchema from "@/db/schema/auth";
 import { env } from "@/env";
 
-export const db = drizzle(env.DATABASE_URL, {
+// node-postgres driver: works on Node and Bun (bun-sql needs the Bun runtime).
+export const db = drizzle(new Pool({ connectionString: env.DATABASE_URL }), {
 	schema: { ...schema, ...authSchema },
 });
 

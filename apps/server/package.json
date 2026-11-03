@@ -20,6 +20,7 @@
 		"update": "bun update --latest"
 	},
 	"dependencies": {
+		"@hono/node-server": "^2.1.6",
 		"@orpc/client": "^1.8.5",
 		"@orpc/server": "^1.8.5",
 		"@paralleldrive/cuid2": "2.2.2",
