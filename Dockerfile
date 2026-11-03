@@ -1,14 +1,16 @@
 # Build stage
-FROM oven/bun:1.4.4 AS builder
+# Node, not Bun: the deploy host CPU lacks SSE4.2, which every Bun build requires.
+FROM node:22-slim AS builder
 WORKDIR /app
 
 # Copy package files for dependency resolution
-COPY package.json bun.lock ./
+COPY package.json ./
 COPY apps/web/package.json ./apps/web/
 COPY apps/server/package.json ./apps/server/
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# No package-lock.json in repo (bun.lock is Bun-only), so resolution is not pinned.
+# --legacy-peer-deps: npm's strict peer check rejects what Bun installs happily.
+RUN npm install --no-audit --no-fund --legacy-peer-deps
 
 # Copy all source code needed for web build (web app needs server for type definitions and schemas)
 COPY apps/web ./apps/web
@@ -18,8 +20,7 @@ ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
 
 # Build the web application
-WORKDIR /app/apps/web
-RUN bun run build
+RUN npm run build --workspace web
 
 # Production stage - static SPA served by nginx
 FROM nginx:1.29-alpine AS production
